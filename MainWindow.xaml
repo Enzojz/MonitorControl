@@ -4,17 +4,35 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+	    xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:MonitorControl"
         mc:Ignorable="d"
-        Title="MainWindows"
+        Title="Monitor Control"
         SizeToContent="WidthAndHeight"
         WindowStyle="None" 
         ResizeMode="NoResize"
+        ShowTitleBar="False"
+        ShowCloseButton="False"
+        BorderThickness="0"
         >
+    <i:Interaction.Behaviors>
+        <Behaviours:BorderlessWindowBehavior/>
+    </i:Interaction.Behaviors>
     <Window.DataContext>
         <local:MonitorFn/>
     </Window.DataContext>
-    <ListView ItemsSource="{Binding Monitors}" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" Width="Auto" Height="Auto">
+    <Window.Style>
+        <Style TargetType="Window">
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsHidden}" Value="False">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+    <ListView ItemsSource="{Binding Monitors}" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" Width="Auto" Height="Auto" BorderThickness="0" Padding="10">
         <ListView.ItemContainerStyle>
             <Style TargetType="ListViewItem">
                 <Setter Property="Template">

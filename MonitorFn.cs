@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Diagnostics;
+using Microsoft.Win32;
+using System.Windows.Media.Animation;
 
 namespace MonitorControl
 {
@@ -38,7 +41,7 @@ namespace MonitorControl
     }
     #endregion
 
-    class MonitorFn
+    class MonitorFn : INotifyPropertyChanged
     {
         #region WINAPI Import
         [Flags]
@@ -153,7 +156,7 @@ namespace MonitorControl
 
         delegate bool GetState(IntPtr a, out uint min, out uint current, out uint max);
 
-        public class Monitor
+        public class Monitor : INotifyPropertyChanged
         {
             public Monitor(PHYSICAL_MONITOR m, string DeviceName, int index)
             {
@@ -187,7 +190,6 @@ namespace MonitorControl
             {
                 if (item.enabled)
                 {
-
                     var newVal = (uint)(value * 0.01 * item.range) + item.min;
                     if (newVal != item.current)
                     {
@@ -202,31 +204,51 @@ namespace MonitorControl
             public uint Brightness
             {
                 get => getValue(brightness);
-                set => setValue(ref brightness, value, SetMonitorBrightness);
+                set
+                {
+                    setValue(ref brightness, value, SetMonitorBrightness);
+                    OnPropertyChanged("Brightness");
+                }
             }
 
             public uint Contrast
             {
                 get => getValue(contrast);
-                set => setValue(ref contrast, value, SetMonitorContrast);
+                set
+                {
+                    setValue(ref contrast, value, SetMonitorContrast);
+                    OnPropertyChanged("Contrast");
+                }
             }
 
             public uint Red
             {
                 get => getValue(red);
-                set => setValue(ref red, value, (h, v) => SetMonitorRedGreenOrBlueGain(h, MC_GAIN_TYPE.MC_RED_GAIN, v));
+                set
+                {
+                    setValue(ref red, value, (h, v) => SetMonitorRedGreenOrBlueGain(h, MC_GAIN_TYPE.MC_RED_GAIN, v));
+                    OnPropertyChanged("Red");
+                }
             }
 
             public uint Green
             {
                 get => getValue(green);
-                set => setValue(ref green, value, (h, v) => SetMonitorRedGreenOrBlueGain(h, MC_GAIN_TYPE.MC_GREEN_GAIN, v));
+                set
+                {
+                    setValue(ref green, value, (h, v) => SetMonitorRedGreenOrBlueGain(h, MC_GAIN_TYPE.MC_GREEN_GAIN, v));
+                    OnPropertyChanged("Green");
+                }
             }
 
             public uint Blue
             {
                 get => getValue(blue);
-                set => setValue(ref blue, value, (h, v) => SetMonitorRedGreenOrBlueGain(h, MC_GAIN_TYPE.MC_BLUE_GAIN, v));
+                set
+                {
+                    setValue(ref blue, value, (h, v) => SetMonitorRedGreenOrBlueGain(h, MC_GAIN_TYPE.MC_BLUE_GAIN, v));
+                    OnPropertyChanged("Blue");
+                }
             }
 
             public DeviceProfile Profile
@@ -237,6 +259,9 @@ namespace MonitorControl
 
             public string Description { private set; get; }
             public string DeviceName { private set; get; }
+            #endregion
+
+            #region Private memebrs
             private (bool, uint current, uint min, uint range) brightness;
             private (bool, uint current, uint min, uint range) contrast;
             private (bool, uint current, uint min, uint range) red;
@@ -245,6 +270,18 @@ namespace MonitorControl
             private IntPtr hMonitor;
             #endregion
 
+            #region PropertyChanged
+            private void OnPropertyChanged(string propertyName)
+            {
+                PropertyChangedEventHandler handler = PropertyChanged;
+                if (handler != null)
+                {
+                    handler(this, new PropertyChangedEventArgs(propertyName));
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            #endregion
         }
 
         public MonitorFn()
@@ -264,26 +301,37 @@ namespace MonitorControl
 
             Profiles = new Dictionary<String, Dictionary<string, DeviceProfile>>();
 
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(
-                typeof(Dictionary<String, Dictionary<string, DeviceProfile>>),
-                new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
-            );
 
-            string filepath = "profile.json";
+
+            Action createNewProfile = () =>
+            {
+                if (Profiles.Count == 0 || !Profiles.ContainsKey("Default"))
+                    Profiles["Default"] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+                WriteProfile();
+            };
+
             if (File.Exists(filepath))
             {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(
+                    typeof(Dictionary<String, Dictionary<string, DeviceProfile>>),
+                    new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
+                );
+                bool hasException = false;
                 var stream = File.OpenRead(filepath);
-                Profiles = (Dictionary<String, Dictionary<string, DeviceProfile>>)ser.ReadObject(stream);
+                try
+                {
+                    Profiles = (Dictionary<String, Dictionary<string, DeviceProfile>>)ser.ReadObject(stream);
+                }
+                catch (SerializationException e)
+                {
+                    hasException = true;
+                }
                 stream.Close();
+                if (hasException)
+                    createNewProfile();
             }
             else
-            {
-                if (Profiles.Count == 0)
-                    Profiles["Default"] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
-                var stream = File.CreateText(filepath);
-                ser.WriteObject(stream.BaseStream, Profiles);
-                stream.Close();
-            }
+                createNewProfile();
 
             LoadProfile("Default");
 
@@ -300,28 +348,30 @@ namespace MonitorControl
                     notifyIcon.Icon = new System.Drawing.Icon(stream);
                 }
 
-                notifyIcon.ContextMenu.Popup += (s, e) =>
-                {
-                    notifyIcon.ContextMenu.MenuItems.Clear();
-                    foreach (var k in Profiles.Keys)
-                    {
-                        notifyIcon.ContextMenu.MenuItems.Add(new System.Windows.Forms.MenuItem(k, (se, ev) => LoadProfile(k)));
-                    }
-                };
+                LoadNotifyContextMenu();
             }
+
+            IsHidden = true;
         }
 
-        ~MonitorFn()
-        {
-            notifyIcon.Icon.Dispose();
-            notifyIcon.Dispose();
-            notifyIcon = null;
-        }
+
+        public bool IsHidden { set; get; }
 
         public Monitor[] Monitors
         {
             get;
             private set;
+        }
+
+        private void WriteProfile()
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(
+                typeof(Dictionary<String, Dictionary<string, DeviceProfile>>),
+                new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
+            );
+            var stream = File.CreateText(filepath);
+            ser.WriteObject(stream.BaseStream, Profiles);
+            stream.Close();
         }
 
         public void LoadProfile(string profile)
@@ -334,11 +384,101 @@ namespace MonitorControl
                     if (p.ContainsKey(m.DeviceName))
                         m.Profile = p[m.DeviceName];
                 }
+                currentProfile = profile;
             }
+        }
+
+        public void SaveProfile(string profile)
+        {
+            Profiles[profile] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+            WriteProfile();
+            currentProfile = profile;
         }
 
         public Dictionary<String, Dictionary<string, DeviceProfile>> Profiles { set; get; }
 
+        private void LoadNotifyContextMenu()
+        {
+            foreach (var k in Profiles.Keys)
+            {
+                notifyIcon.ContextMenu.MenuItems.Add(k, (s, e) => LoadProfile(k));
+            }
+
+            notifyIcon.ContextMenu.MenuItems.Add("-");
+            notifyIcon.ContextMenu.MenuItems.Add("Save Current Profile", (s, e) =>
+            {
+                var diag = new NameProfile(this.SaveProfile);
+                diag.DataContext = this;
+                diag.ShowDialog();
+            }
+            );
+            notifyIcon.ContextMenu.MenuItems.Add("Delete Current Profile", (s, e) =>
+            {
+                if (currentProfile != "Default" && Profiles.ContainsKey(currentProfile))
+                {
+                    notifyIcon.ContextMenu.MenuItems.RemoveByKey(currentProfile);
+                    Profiles.Remove(currentProfile);
+                    WriteProfile();
+                }
+            });
+            notifyIcon.ContextMenu.MenuItems.Add("-");
+            notifyIcon.ContextMenu.MenuItems.Add(new MenuItem("Auto-start", (s, e) =>
+            {
+                var path = Process.GetCurrentProcess().MainModule.FileName;
+                var m = (MenuItem)s;
+                var runKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+
+                if (runKey.GetValue("MonitorControl.exe", null) == null)
+                {
+                    runKey.SetValue("MonitorControl.exe", path);
+                    m.Checked = true;
+                }
+                else
+                {
+                    runKey.DeleteValue("MonitorControl.exe");
+                    m.Checked = false;
+                }
+            })
+            { Checked = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("MonitorControl.exe", null) != null }
+            );
+            notifyIcon.ContextMenu.MenuItems.Add("Quit", (s, e) =>
+            {
+                notifyIcon.Icon.Dispose();
+                notifyIcon.Dispose();
+                notifyIcon = null;
+                System.Windows.Application.Current.Shutdown();
+            });
+
+            notifyIcon.Click += (s, e) =>
+            {
+                var me = (MouseEventArgs)e;
+                if (me.Button.HasFlag(MouseButtons.Left))
+                {
+                    IsHidden = !IsHidden;
+                    OnPropertyChanged("IsHidden");
+                }
+            };
+        }
+
+        #region Private members
+
+        string currentProfile;
+        const string filepath = "profile.json";
         NotifyIcon notifyIcon;
+
+        #endregion
+
+        #region PropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
     }
 }

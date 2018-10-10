@@ -1,0 +1,41 @@
+﻿<Controls:MetroWindow x:Class="MonitorControl.NameProfile"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+	    xmlns:Behaviours="clr-namespace:MahApps.Metro.Behaviours;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:MonitorControl"
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight"
+        WindowStyle="None" 
+        ResizeMode="NoResize"
+        ShowTitleBar="False"
+        ShowCloseButton="False"
+        BorderThickness="0"
+>
+    <StackPanel Orientation="Horizontal">
+        <ComboBox Margin="10" IsEditable="True" Width="250" ItemsSource="{Binding Profiles}" Name="ProfileName" Text="{Binding CurrentProfile, Mode=OneTime}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Key}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Margin="10" Name="BtnOK">
+            <Viewbox Width="15">
+                <Polygon Fill="Chartreuse" Points="198.098,24.326 87.543,134.881 38.891,86.229 0,125.121 87.543,212.662 236.988,63.217"/>
+            </Viewbox>
+        </Button>
+        <Button Margin="10" Name="BtnCancel" Click="BtnCancel_Click">
+            <Viewbox Width="15">
+                <Path Fill="Red">
+                    <Path.Data>
+                        M 0 170 l 65.555 -65.555 L 0 38.891 L 38.891 0 l 65.555 65.555 L 170 0 l 38.891 38.891 l -65.555 65.555 L 208.891 170 L 170 208.891 l -65.555 -65.555 l -65.555 65.555 L 0 170 Z
+                    </Path.Data>
+                </Path>
+            </Viewbox>
+        </Button>
+    </StackPanel>
+</Controls:MetroWindow>
