@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\Costura.Fody.3.1.4\build\Costura.Fody.props" Condition="Exists('packages\Costura.Fody.3.1.4\build\Costura.Fody.props')" />
+  <Import Project="packages\Costura.Fody.3.1.6\build\Costura.Fody.props" Condition="Exists('packages\Costura.Fody.3.1.6\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -38,14 +38,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
-    </Reference>
-    <Reference Include="Costura, Version=3.1.4.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>packages\Costura.Fody.3.1.4\lib\net46\Costura.dll</HintPath>
-    </Reference>
-    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\MahApps.Metro.1.6.5\lib\net47\MahApps.Metro.dll</HintPath>
+    <Reference Include="Costura, Version=3.1.6.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>packages\Costura.Fody.3.1.6\lib\net46\Costura.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -53,9 +47,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -93,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MonitorFn.cs" />
+    <Compile Include="MouseWheelBehavior.cs" />
     <Compile Include="NameProfile.xaml.cs">
       <DependentUpon>NameProfile.xaml</DependentUpon>
     </Compile>
@@ -131,14 +123,12 @@
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\Fody.3.2.14\build\Fody.targets" Condition="Exists('packages\Fody.3.2.14\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\Costura.Fody.3.1.4\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.3.1.4\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('packages\Costura.Fody.3.1.4\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.3.1.4\build\Costura.Fody.targets'))" />
-    <Error Condition="!Exists('packages\Fody.3.2.9\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.3.2.9\build\Fody.targets'))" />
+    <Error Condition="!Exists('packages\Fody.3.2.14\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.3.2.14\build\Fody.targets'))" />
+    <Error Condition="!Exists('packages\Costura.Fody.3.1.6\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Costura.Fody.3.1.6\build\Costura.Fody.props'))" />
   </Target>
-  <Import Project="packages\Costura.Fody.3.1.4\build\Costura.Fody.targets" Condition="Exists('packages\Costura.Fody.3.1.4\build\Costura.Fody.targets')" />
-  <Import Project="packages\Fody.3.2.9\build\Fody.targets" Condition="Exists('packages\Fody.3.2.9\build\Fody.targets')" />
 </Project>

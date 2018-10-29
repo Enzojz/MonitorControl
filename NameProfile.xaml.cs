@@ -18,7 +18,7 @@ namespace MonitorControl
     /// <summary>
     /// NameProfile.xaml 的交互逻辑
     /// </summary>
-    public partial class NameProfile
+    public partial class NameProfile : Window
     {
         public NameProfile(Action<string> saveProfile)
         {

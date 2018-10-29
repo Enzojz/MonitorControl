@@ -1,9 +1,8 @@
-﻿using MahApps.Metro.Controls;
-using System.Windows;
+﻿using System.Windows;
 
 namespace MonitorControl
 {
-    public partial class MainWindow
+    public partial class MainWindow : Window
     {
         public MainWindow()
         {
