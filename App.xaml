@@ -13,4 +13,13 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>-->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PresentationFramework.Luna, Version=3.0.0.0,
+ Culture=neutral, PublicKeyToken=31bf3856ad364e35,
+ ProcessorArchitecture=MSIL;component/themes/luna.normalcolor.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

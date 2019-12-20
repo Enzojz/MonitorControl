@@ -424,13 +424,13 @@ namespace MonitorControl
             notifyIcon.ContextMenu.MenuItems.Add("-");
             notifyIcon.ContextMenu.MenuItems.Add(new MenuItem("Auto-start", (s, e) =>
             {
-                var path = Process.GetCurrentProcess().MainModule.FileName;
+                var path = String.Format("\"{0}\"", Process.GetCurrentProcess().MainModule.FileName);
                 var m = (MenuItem)s;
                 var runKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
 
-                if (runKey.GetValue("MonitorControl.exe", null) == null)
+                if (runKey.GetValue("MonitorControl", null) == null)
                 {
-                    runKey.SetValue("MonitorControl.exe", path);
+                    runKey.SetValue("MonitorControl", path);
                     m.Checked = true;
                 }
                 else
