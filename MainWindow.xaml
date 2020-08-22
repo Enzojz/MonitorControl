@@ -11,11 +11,7 @@
         WindowStyle="None" 
         ResizeMode="NoResize"
         BorderThickness="0"
-        ShowInTaskbar="False"
         >
-    <Window.DataContext>
-        <local:MonitorFn/>
-    </Window.DataContext>
     <Window.Style>
         <Style TargetType="Window">
             <Setter Property="Visibility" Value="Hidden"/>

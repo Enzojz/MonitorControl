@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Json;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.Windows.Media.Animation;
+using System.Windows.Shell;
 
 namespace MonitorControl
 {
@@ -284,7 +285,7 @@ namespace MonitorControl
             #endregion
         }
 
-        public MonitorFn()
+        public MonitorFn(String profile)
         {
             Monitors = Screen.AllScreens
                 .Select(screen =>
@@ -322,7 +323,7 @@ namespace MonitorControl
                 {
                     Profiles = (Dictionary<String, Dictionary<string, DeviceProfile>>)ser.ReadObject(stream);
                 }
-                catch (SerializationException e)
+                catch (SerializationException)
                 {
                     hasException = true;
                 }
@@ -333,14 +334,14 @@ namespace MonitorControl
             else
                 createNewProfile();
 
-            LoadProfile("Default");
+            //LoadProfile(profile ?? "Default");
 
             {
                 notifyIcon = new NotifyIcon()
                 {
                     Text = "Monitor Control",
                     Visible = true,
-                    ContextMenu = new ContextMenu()
+                    ContextMenuStrip = new ContextMenuStrip()
                 };
 
                 using (Stream stream = System.Windows.Application.GetResourceStream(new Uri("brightness.ico", UriKind.Relative)).Stream)
@@ -352,6 +353,33 @@ namespace MonitorControl
             }
 
             IsHidden = true;
+
+            //var currentJumplist = JumpList.GetJumpList(App.Current);
+            //var path = String.Format("\"{0}\"", Process.GetCurrentProcess().MainModule.FileName);
+            //foreach (var k in Profiles.Keys)
+            //{
+            //    var jt = new JumpTask
+            //    {
+            //        ApplicationPath = path,
+            //        Arguments = k,
+            //        Title = k,
+            //        CustomCategory = "Profile"
+            //    };
+
+            //    currentJumplist.JumpItems.Add(jt);
+            //}
+            //currentJumplist.Apply();
+        }
+
+        public void OnExit()
+        {
+            if (notifyIcon != null)
+            {
+                notifyIcon.Visible = false;
+                notifyIcon.Icon.Dispose();
+                notifyIcon.Dispose();
+                notifyIcon = null;
+            }
         }
 
 
@@ -401,32 +429,33 @@ namespace MonitorControl
         {
             foreach (var k in Profiles.Keys)
             {
-                notifyIcon.ContextMenu.MenuItems.Add(k, (s, e) => LoadProfile(k));
+                notifyIcon.ContextMenuStrip.Items.Add(k, null, (s, e) => LoadProfile(k));
             }
 
-            notifyIcon.ContextMenu.MenuItems.Add("-");
-            notifyIcon.ContextMenu.MenuItems.Add("Save Current Profile", (s, e) =>
+            notifyIcon.ContextMenuStrip.Items.Add("-");
+            notifyIcon.ContextMenuStrip.Items.Add("Save Current Profile", null, (s, e) =>
             {
                 var diag = new NameProfile(this.SaveProfile);
                 diag.DataContext = this;
                 diag.ShowDialog();
             }
             );
-            notifyIcon.ContextMenu.MenuItems.Add("Delete Current Profile", (s, e) =>
+            notifyIcon.ContextMenuStrip.Items.Add("Delete Current Profile", null, (s, e) =>
             {
                 if (currentProfile != "Default" && Profiles.ContainsKey(currentProfile))
                 {
-                    notifyIcon.ContextMenu.MenuItems.RemoveByKey(currentProfile);
+                    notifyIcon.ContextMenuStrip.Items.RemoveByKey(currentProfile);
                     Profiles.Remove(currentProfile);
                     WriteProfile();
                 }
             });
-            notifyIcon.ContextMenu.MenuItems.Add("-");
-            notifyIcon.ContextMenu.MenuItems.Add(new MenuItem("Auto-start", (s, e) =>
+            notifyIcon.ContextMenuStrip.Items.Add("-");
+
+            notifyIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Auto-start", null, (s, e) =>
             {
-                var path = String.Format("\"{0}\"", Process.GetCurrentProcess().MainModule.FileName);
-                var m = (MenuItem)s;
-                var runKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+                var path = Process.GetCurrentProcess().MainModule.FileName;
+                var m = (ToolStripMenuItem)s;
+                var runKey = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
 
                 if (runKey.GetValue("MonitorControl", null) == null)
                 {
@@ -435,17 +464,15 @@ namespace MonitorControl
                 }
                 else
                 {
-                    runKey.DeleteValue("MonitorControl.exe");
+                    runKey.DeleteValue("MonitorControl");
                     m.Checked = false;
                 }
             })
-            { Checked = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("MonitorControl.exe", null) != null }
+            { Checked = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run").GetValue("MonitorControl", null) != null }
             );
-            notifyIcon.ContextMenu.MenuItems.Add("Quit", (s, e) =>
+
+            notifyIcon.ContextMenuStrip.Items.Add("Quit", null, (s, e) =>
             {
-                notifyIcon.Icon.Dispose();
-                notifyIcon.Dispose();
-                notifyIcon = null;
                 System.Windows.Application.Current.Shutdown();
             });
 

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MonitorControl.Core": {
+      "commandName": "Project",
+      "commandLineArgs": "200cd/m²"
+    }
+  }
+}
