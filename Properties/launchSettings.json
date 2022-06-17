@@ -1,8 +1,10 @@
 {
   "profiles": {
-    "MonitorControl.Core": {
-      "commandName": "Project",
-      "commandLineArgs": "200cd/m²"
+    "MonitorControl (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MonitorControl (Unpackaged)": {
+      "commandName": "Project"
     }
   }
 }
