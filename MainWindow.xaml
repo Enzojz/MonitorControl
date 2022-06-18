@@ -9,16 +9,7 @@
     >
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
-            <DataTemplate x:DataType="local:Monitor" x:Key="MonitorItemTemplate">
-                <local:MonitorTweaker DataContext="{Binding}"/>
-            </DataTemplate>
-            <DataTemplate x:DataType="x:String" x:Key="ProfileItemTemplate">
-                <local:Profile DataContext="{Binding}"/>
-            </DataTemplate>
-            <local:MonitorControlDataTemplateSelector x:Key="TemplateSelector"
-                Monitor="{StaticResource MonitorItemTemplate}"
-                Profile="{StaticResource ProfileItemTemplate}"
-            />
+            <local:MonitorFn x:Name="Instance"></local:MonitorFn>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="44" />
@@ -32,6 +23,7 @@
             <TextBlock x:Name="AppTitle"
                        Text="Monitor Control"
                        VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
                        Margin="18,0,0,0">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
@@ -40,23 +32,47 @@
                 </TextBlock.Style>
             </TextBlock>
         </Border>
-        <NavigationView x:Name="NavLinksList" Grid.Row="1" IsBackButtonVisible="Collapsed" IsSettingsVisible="False"
-            MenuItemsSource="{x:Bind Instance.Monitors}">
-            <NavigationView.DataContext>
-                <local:MonitorFn x:Name="Instance"></local:MonitorFn>
-            </NavigationView.DataContext>
+        <NavigationView 
+            x:Name="NavLinksList" 
+            Grid.Row="1" 
+            IsBackEnabled="False"
+            IsBackButtonVisible="Collapsed" 
+            IsSettingsVisible="False"
+            MenuItemsSource="{x:Bind Instance.Monitors}"
+            IsPaneToggleButtonVisible="False"
+            ExpandedModeThresholdWidth="800"
+            CompactModeThresholdWidth="800"
+            OpenPaneLength="250"
+            >
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="local:Monitor">
-                    <NavigationViewItem Icon="GoToStart" Content="{x:Bind Description}" Tag="{x:Bind Description}" />
+                    <NavigationViewItem Icon="GoToStart" Content="{x:Bind Description}" />
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
             <NavigationView.PaneFooter>
-                <StackPanel Orientation="Vertical" Visibility="Collapsed">
+                <StackPanel Orientation="Vertical">
+                    <NavigationViewItem Icon="Save" Content="Load Profile"/>
+                    <NavigationViewItem Icon="Save" Content="Save Profile"/>
+                    <NavigationViewItem Icon="Setting" Content="Settings"/>
                 </StackPanel>
             </NavigationView.PaneFooter>
-            <Frame 
-                ContentTemplateSelector="{StaticResource TemplateSelector}" 
-                DataContext="{Binding ElementName=NavLinksList, Path=SelectedItem}"/>
+
+            <Frame Content="{Binding ElementName=NavLinksList, Path=SelectedItem, Mode=TwoWay}">
+                <Frame.ContentTemplateSelector>
+                    <local:MonitorControlDataTemplateSelector>
+                        <local:MonitorControlDataTemplateSelector.Monitor>
+                            <DataTemplate x:DataType="local:Monitor">
+                                <local:MonitorTweaker DataContext="{Binding}"/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Monitor>
+                        <local:MonitorControlDataTemplateSelector.Profile>
+                            <DataTemplate x:DataType="x:String">
+                                <local:Profile DataContext="{Binding}"/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Profile>
+                    </local:MonitorControlDataTemplateSelector>
+                </Frame.ContentTemplateSelector>
+            </Frame>
         </NavigationView>
     </Grid>
 </Window>
