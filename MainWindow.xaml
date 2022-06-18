@@ -7,10 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d"
     >
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.Resources>
-            <local:MonitorFn x:Name="Instance"></local:MonitorFn>
-        </Grid.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{x:Bind Instance}">
         <Grid.RowDefinitions>
             <RowDefinition Height="44" />
             <RowDefinition Height="*" />
@@ -38,7 +35,7 @@
             IsBackEnabled="False"
             IsBackButtonVisible="Collapsed" 
             IsSettingsVisible="False"
-            MenuItemsSource="{x:Bind Instance.Monitors}"
+            MenuItemsSource="{Binding Monitors}"
             IsPaneToggleButtonVisible="False"
             ExpandedModeThresholdWidth="800"
             CompactModeThresholdWidth="800"

@@ -35,8 +35,9 @@ namespace MonitorControl
                 // the custom title bar element.
                 AppTitleBar.Visibility = Visibility.Collapsed;
             }
-
         }
+
+        internal MonitorFn Instance => App.Instance;
     }
 
 

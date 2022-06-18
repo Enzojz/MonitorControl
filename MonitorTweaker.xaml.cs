@@ -24,6 +24,11 @@ namespace MonitorControl
         {
             this.InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
+            DataContextChanged += (s, e) => ShowWindowIdentityAndHide();
+        }
+        public void ShowWindowIdentityAndHide()
+        {
+
         }
 
         public Monitor Monitor => DataContext as Monitor;

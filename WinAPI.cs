@@ -216,6 +216,9 @@ namespace MonitorControl
 
         [DllImport("dxva2.dll", SetLastError = true)]
         public extern static bool SetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, uint dwNewGain);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public extern static uint GetDpiForWindow(IntPtr hWindow);
     }
 
 }
