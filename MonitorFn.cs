@@ -40,12 +40,12 @@ namespace MonitorControl
                 .Select((m, i) => new Monitor(m.monitor, m.deviceName, i))
                 .ToArray();
 
-            Profiles = new Dictionary<String, Dictionary<string, DeviceProfile>>();
+            profiles = new Dictionary<String, Dictionary<string, DeviceProfile>>();
 
             Action createNewProfile = () =>
             {
-                if (Profiles.Count == 0 || !Profiles.ContainsKey("Default"))
-                    Profiles["Default"] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+                if (profiles.Count == 0 || !profiles.ContainsKey("Default"))
+                    profiles["Default"] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
                 WriteProfile();
             };
 
@@ -59,7 +59,7 @@ namespace MonitorControl
                 var stream = File.OpenRead(filepath);
                 try
                 {
-                    Profiles = (Dictionary<String, Dictionary<string, DeviceProfile>>)ser.ReadObject(stream);
+                    profiles = (Dictionary<String, Dictionary<string, DeviceProfile>>)ser.ReadObject(stream);
                 }
                 catch (SerializationException e)
                 {
@@ -77,13 +77,13 @@ namespace MonitorControl
             //IsHidden = true;
         }
 
-        public bool IsHidden { set; get; }
-
         public Monitor[] Monitors
         {
             get;
             private set;
         }
+
+        public List<String> Profiles => profiles.Keys.ToList();
 
         private void WriteProfile()
         {
@@ -92,7 +92,7 @@ namespace MonitorControl
                 new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
             );
             var stream = File.CreateText(filepath);
-            ser.WriteObject(stream.BaseStream, Profiles);
+            ser.WriteObject(stream.BaseStream, profiles);
             stream.Close();
         }
 
@@ -112,18 +112,19 @@ namespace MonitorControl
 
         public void SaveProfile(string profile)
         {
-            Profiles[profile] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+            profiles[profile] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
             WriteProfile();
             currentProfile = profile;
+            OnPropertyChanged("Profiles");
         }
 
-        public Dictionary<String, Dictionary<string, DeviceProfile>> Profiles { set; get; }
 
 
         #region Private members
 
         string currentProfile;
         const string filepath = "profile.json";
+        Dictionary<String, Dictionary<string, DeviceProfile>> profiles { set; get; }
 
         #endregion
 

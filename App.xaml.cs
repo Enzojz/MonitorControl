@@ -62,7 +62,7 @@ namespace MonitorControl
             appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = (int)(900 * dpiScaling), Height = (int)((baseHeight < 380 ? 380 : baseHeight) * dpiScaling)});
 
             var presenter = appWindow.Presenter as OverlappedPresenter;
-            presenter.IsResizable = false;
+            //presenter.IsResizable = false;
 
             m_window.Activate();
             

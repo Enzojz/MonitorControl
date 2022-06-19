@@ -14,8 +14,11 @@
     <UseWPF>False</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ThemedWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Load.xaml" />
     <None Remove="MonitorTweaker.xaml" />
-    <None Remove="Profile.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,7 +47,7 @@
     <Page Update="MonitorTweaker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Profile.xaml">
+    <Page Update="Load.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="profile.json">

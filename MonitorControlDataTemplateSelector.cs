@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 
 namespace MonitorControl
 {
@@ -12,17 +13,11 @@ namespace MonitorControl
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject dp)
         {
             if (item is Monitor)
-            {
                 return Monitor;
-            }
-            else if (item is String)
-            {
+            if (item is List<String>)
                 return Profile;
-            }
             else
-            {
                 return null;
-            }
         }
     }
 }

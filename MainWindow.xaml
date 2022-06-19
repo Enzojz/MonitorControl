@@ -40,31 +40,35 @@
             ExpandedModeThresholdWidth="800"
             CompactModeThresholdWidth="800"
             OpenPaneLength="250"
+            SelectionChanged="SelectionChanged"
             >
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="local:Monitor">
-                    <NavigationViewItem Icon="GoToStart" Content="{x:Bind Description}" />
+                    <NavigationViewItem Content="{x:Bind Description}">
+                        <NavigationViewItem.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F4;"/>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
             <NavigationView.PaneFooter>
                 <StackPanel Orientation="Vertical">
-                    <NavigationViewItem Icon="OpenLocal" Content="Load Profile"/>
-                    <NavigationViewItem Icon="SaveLocal" Content="Save Profile"/>
-                    <NavigationViewItem Icon="Setting" Content="Settings"/>
+                    <NavigationViewItem Icon="Copy" Content="Profiles" Tapped="ProfileSelected"/>
+                    <NavigationViewItem Icon="Setting" Content="Settings" Tapped="SettingSelected"/>
                 </StackPanel>
             </NavigationView.PaneFooter>
 
-            <Frame Content="{Binding ElementName=NavLinksList, Path=SelectedItem, Mode=TwoWay}">
+            <Frame x:Name="ContentFrame">
                 <Frame.ContentTemplateSelector>
                     <local:MonitorControlDataTemplateSelector>
                         <local:MonitorControlDataTemplateSelector.Monitor>
-                            <DataTemplate x:DataType="local:Monitor">
-                                <local:MonitorTweaker DataContext="{Binding}"/>
+                            <DataTemplate>
+                                <local:MonitorTweaker/>
                             </DataTemplate>
                         </local:MonitorControlDataTemplateSelector.Monitor>
                         <local:MonitorControlDataTemplateSelector.Profile>
-                            <DataTemplate x:DataType="x:String">
-                                <local:Profile DataContext="{Binding}"/>
+                            <DataTemplate>
+                                <local:Profile/>
                             </DataTemplate>
                         </local:MonitorControlDataTemplateSelector.Profile>
                     </local:MonitorControlDataTemplateSelector>
