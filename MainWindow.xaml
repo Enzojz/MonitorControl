@@ -68,7 +68,7 @@
                         </local:MonitorControlDataTemplateSelector.Monitor>
                         <local:MonitorControlDataTemplateSelector.Profile>
                             <DataTemplate>
-                                <local:Profile/>
+                                <local:Profiles/>
                             </DataTemplate>
                         </local:MonitorControlDataTemplateSelector.Profile>
                     </local:MonitorControlDataTemplateSelector>

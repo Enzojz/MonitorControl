@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace MonitorControl
 {
@@ -29,4 +31,15 @@ namespace MonitorControl
     }
     #endregion
 
+    #region JSON datas
+    [DataContract]
+    internal class Profile
+    {
+        [DataMember(Order = 1)]
+        public System.Guid Guid { set; get; }
+
+        [DataMember(Order = 2)]
+        public Dictionary<String, DeviceProfile> Monitors { set; get; }
+    }
+    #endregion
 }

@@ -14,7 +14,7 @@ namespace MonitorControl
         {
             if (item is Monitor)
                 return Monitor;
-            if (item is List<String>)
+            if (item is List<ProfileState>)
                 return Profile;
             else
                 return null;

@@ -40,41 +40,9 @@ namespace MonitorControl
                 .Select((m, i) => new Monitor(m.monitor, m.deviceName, i))
                 .ToArray();
 
-            profiles = new Dictionary<String, Dictionary<string, DeviceProfile>>();
 
-            Action createNewProfile = () =>
-            {
-                if (profiles.Count == 0 || !profiles.ContainsKey("Default"))
-                    profiles["Default"] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
-                WriteProfile();
-            };
-
-            if (File.Exists(filepath))
-            {
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(
-                    typeof(Dictionary<String, Dictionary<string, DeviceProfile>>),
-                    new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
-                );
-                bool hasException = false;
-                var stream = File.OpenRead(filepath);
-                try
-                {
-                    profiles = (Dictionary<String, Dictionary<string, DeviceProfile>>)ser.ReadObject(stream);
-                }
-                catch (SerializationException e)
-                {
-                    hasException = true;
-                }
-                stream.Close();
-                if (hasException)
-                    createNewProfile();
-            }
-            else
-                createNewProfile();
-
+            ReadProfile();
             LoadProfile("Default");
-
-            //IsHidden = true;
         }
 
         public Monitor[] Monitors
@@ -83,17 +51,59 @@ namespace MonitorControl
             private set;
         }
 
-        public List<String> Profiles => profiles.Keys.ToList();
+        public List<ProfileState> Profiles => profiles.Select(v => new ProfileState(v.Value.Guid, v.Key)).ToList();
 
         private void WriteProfile()
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(
-                typeof(Dictionary<String, Dictionary<string, DeviceProfile>>),
+                typeof(Dictionary<String, Profile>),
                 new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
             );
             var stream = File.CreateText(filepath);
             ser.WriteObject(stream.BaseStream, profiles);
             stream.Close();
+        }
+
+
+
+
+        private void CreateNewProfile()
+        {
+            if (profiles.Count == 0 || !profiles.ContainsKey("Default"))
+            {
+                profiles["Default"] = new Profile()
+                {
+                    Guid = System.Guid.NewGuid(),
+                    Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
+                };
+            }
+            WriteProfile();
+        }
+
+        private void ReadProfile()
+        {
+            if (File.Exists(filepath))
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(
+                    typeof(Dictionary<String, Profile>),
+                    new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
+                );
+                bool hasException = false;
+                var stream = File.OpenRead(filepath);
+                try
+                {
+                    profiles = (Dictionary<String, Profile>)ser.ReadObject(stream);
+                }
+                catch (SerializationException e)
+                {
+                    hasException = true;
+                }
+                stream.Close();
+                if (hasException)
+                    CreateNewProfile();
+            }
+            else
+                CreateNewProfile();
         }
 
         public void LoadProfile(string profile)
@@ -112,10 +122,45 @@ namespace MonitorControl
 
         public void SaveProfile(string profile)
         {
-            profiles[profile] = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+            if (profiles.ContainsKey(profile))
+            {
+                profiles[profile].Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+            }
+            else
+            {
+                profiles[profile] = new Profile()
+                {
+                    Guid = Guid.NewGuid(),
+                    Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
+                };
+            }
             WriteProfile();
             currentProfile = profile;
             OnPropertyChanged("Profiles");
+        }
+
+        public void RenameProfile(string oldName, string newName)
+        {
+            if (currentProfile == oldName)
+                currentProfile = newName;
+            profiles[newName] = profiles[oldName];
+            profiles.Remove(oldName);
+            WriteProfile();
+            OnPropertyChanged("Profiles");
+        }
+
+        public void RemoveProfile(string profile)
+        {
+            if (profile != "Default")
+            {
+                if (currentProfile == profile)
+                {
+                    currentProfile = "Default";
+                }
+                profiles.Remove(profile);
+                WriteProfile();
+                OnPropertyChanged("Profiles");
+            }
         }
 
 
@@ -124,7 +169,7 @@ namespace MonitorControl
 
         string currentProfile;
         const string filepath = "profile.json";
-        Dictionary<String, Dictionary<string, DeviceProfile>> profiles { set; get; }
+        Dictionary<String, Profile> profiles = new Dictionary<String, Profile>();
 
         #endregion
 

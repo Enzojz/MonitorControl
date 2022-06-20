@@ -1,1 +1,28 @@
-{"Default":{"\\\\.\\DISPLAY1":{"Brightness":94,"Contrast":75,"Red":88,"Green":100,"Blue":78},"\\\\.\\DISPLAY2":{"Brightness":94,"Contrast":75,"Red":95,"Green":100,"Blue":88},"\\\\.\\DISPLAY3":{"Brightness":92,"Contrast":75,"Red":93,"Green":100,"Blue":82}}}
+{
+    "Default": {
+        "Guid": "5629e0dd-6701-486c-b0ca-29726bb64793",
+        "Monitors": {
+            "\\\\.\\DISPLAY1": {
+                "Brightness": 94,
+                "Contrast": 75,
+                "Red": 95,
+                "Green": 100,
+                "Blue": 88
+            },
+            "\\\\.\\DISPLAY2": {
+                "Brightness": 94,
+                "Contrast": 75,
+                "Red": 95,
+                "Green": 100,
+                "Blue": 88
+            },
+            "\\\\.\\DISPLAY3": {
+                "Brightness": 97,
+                "Contrast": 75,
+                "Red": 93,
+                "Green": 100,
+                "Blue": 82
+            }
+        }
+    }
+}

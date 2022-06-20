@@ -21,31 +21,29 @@ namespace MonitorControl
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Profile : Page
+    public sealed partial class Profiles : Page
     {
-        public Profile()
+        public Profiles()
         {
+            ShowCreateRow = Visibility.Visible;
             this.InitializeComponent();
         }
 
-        private void SaveClick(object sender, RoutedEventArgs e)
+        private Visibility ShowCreateRow { get; set; }
+
+        private void RemoveClick(object sender, RoutedEventArgs e)
         {
-            App.Instance.SaveProfile(((Button)sender).DataContext as string);
+            App.Instance.RemoveProfile(((Button)sender).DataContext as string);
         }
+
         private void OpenClick(object sender, RoutedEventArgs e)
         {
             App.Instance.LoadProfile(((Button)sender).DataContext as string);
         }
 
+        internal ProfileState CreateNew = new ProfileState(Guid.NewGuid(), null);
+
         internal MonitorFn Instance => App.Instance;
 
-        private void NewProfilePreviewKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                App.Instance.SaveProfile(((TextBox)sender).Text);
-                e.Handled = true;
-            }
-        }
     }
 }

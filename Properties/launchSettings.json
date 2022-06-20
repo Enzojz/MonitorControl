@@ -1,7 +1,8 @@
 {
   "profiles": {
     "MonitorControl (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "alwaysReinstallApp": true
     },
     "MonitorControl (Unpackaged)": {
       "commandName": "Project"

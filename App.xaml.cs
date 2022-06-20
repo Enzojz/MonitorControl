@@ -34,6 +34,7 @@ namespace MonitorControl
         /// </summary>
         public App()
         {
+            System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.InitializeComponent();
         }
 
