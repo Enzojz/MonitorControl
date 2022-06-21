@@ -9,6 +9,7 @@ namespace MonitorControl
     {
         public DataTemplate Monitor { get; set; }
         public DataTemplate Profile { get; set; }
+        public DataTemplate Setting { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject dp)
         {
@@ -17,7 +18,7 @@ namespace MonitorControl
             if (item is List<ProfileState>)
                 return Profile;
             else
-                return null;
+                return Setting;
         }
     }
 }

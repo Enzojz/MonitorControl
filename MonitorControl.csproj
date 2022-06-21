@@ -21,6 +21,7 @@
   <ItemGroup>
     <None Remove="Load.xaml" />
     <None Remove="MonitorTweaker.xaml" />
+    <None Remove="Setting.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,5 +56,8 @@
     <None Update="profile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Setting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

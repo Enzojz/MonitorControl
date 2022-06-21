@@ -71,6 +71,11 @@
                                 <local:Profiles/>
                             </DataTemplate>
                         </local:MonitorControlDataTemplateSelector.Profile>
+                        <local:MonitorControlDataTemplateSelector.Setting>
+                            <DataTemplate>
+                                <local:Setting/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Setting>
                     </local:MonitorControlDataTemplateSelector>
                 </Frame.ContentTemplateSelector>
             </Frame>
