@@ -31,17 +31,8 @@ namespace MonitorControl
 
         private Visibility ShowCreateRow { get; set; }
 
-        private void RemoveClick(object sender, RoutedEventArgs e)
-        {
-            App.Instance.RemoveProfile(((Button)sender).DataContext as string);
-        }
 
-        private void OpenClick(object sender, RoutedEventArgs e)
-        {
-            App.Instance.LoadProfile(((Button)sender).DataContext as string);
-        }
-
-        internal ProfileState CreateNew = new ProfileState(Guid.NewGuid(), null);
+        internal ProfileState CreateNew = new ProfileState(null, null);
 
         internal MonitorFn Instance => App.Instance;
 

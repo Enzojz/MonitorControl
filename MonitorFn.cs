@@ -51,7 +51,19 @@ namespace MonitorControl
             private set;
         }
 
-        public List<ProfileState> Profiles => profiles.Select(v => new ProfileState(v.Value.Guid, v.Key)).ToList();
+        public ProfileState CurrentProfile
+        {
+            get { return currentProfile != null && profiles.ContainsKey(currentProfile) ? profiles[currentProfile] : null; }
+            set {
+                if (value != null && profiles.ContainsKey(value.Name) && value.Name != currentProfile)
+                {
+                    currentProfile = value.Name;
+                    LoadProfile(currentProfile);
+                }
+            }
+        }
+
+        public List<ProfileState> Profiles => profiles.Values.ToList();
 
         private void WriteProfile()
         {
@@ -60,7 +72,7 @@ namespace MonitorControl
                 new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
             );
             var stream = File.CreateText(filepath);
-            ser.WriteObject(stream.BaseStream, profiles);
+            ser.WriteObject(stream.BaseStream, profiles.ToDictionary(v => v.Key, v => v.Value.Profile));
             stream.Close();
         }
 
@@ -71,11 +83,13 @@ namespace MonitorControl
         {
             if (profiles.Count == 0 || !profiles.ContainsKey("Default"))
             {
-                profiles["Default"] = new Profile()
-                {
-                    Guid = System.Guid.NewGuid(),
-                    Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
-                };
+                profiles["Default"] = new ProfileState("Default",
+                    new Profile()
+                    {
+                        Guid = System.Guid.NewGuid(),
+                        Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
+                    }
+                );
             }
             WriteProfile();
         }
@@ -92,7 +106,8 @@ namespace MonitorControl
                 var stream = File.OpenRead(filepath);
                 try
                 {
-                    profiles = (Dictionary<String, Profile>)ser.ReadObject(stream);
+                    var mapProfiles = (Dictionary<String, Profile>)ser.ReadObject(stream);
+                    profiles = mapProfiles.ToDictionary(v => v.Key, v => new ProfileState(v.Key, v.Value));
                 }
                 catch (SerializationException e)
                 {
@@ -108,58 +123,71 @@ namespace MonitorControl
 
         public void LoadProfile(string profile)
         {
-            //if (Profiles.ContainsKey(profile))
-            //{
-            //    var p = Profiles[profile];
-            //    foreach (var m in Monitors)
-            //    {
-            //        if (p.ContainsKey(m.DeviceName))
-            //            m.Profile = p[m.DeviceName];
-            //    }
-            //    currentProfile = profile;
-            //}
+            if (profiles.ContainsKey(profile))
+            {
+                currentProfile = profile;
+                var p = profiles[profile].Profile.Monitors;
+                foreach (var m in Monitors)
+                {
+                    if (p.ContainsKey(m.DeviceName))
+                        m.Profile = p[m.DeviceName];
+                }
+                OnPropertyChanged("CurrentProfile");
+            }
         }
 
         public void SaveProfile(string profile)
         {
-            if (profiles.ContainsKey(profile))
+            if (profile.Length > 0)
             {
-                profiles[profile].Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
-            }
-            else
-            {
-                profiles[profile] = new Profile()
+                if (profiles.ContainsKey(profile))
                 {
-                    Guid = Guid.NewGuid(),
-                    Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
-                };
+                    profiles[profile].Profile.Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+                }
+                else
+                {
+                    profiles[profile] = new ProfileState(
+                        profile,
+                        new Profile()
+                        {
+                            Guid = Guid.NewGuid(),
+                            Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
+                        });
+                    OnPropertyChanged("Profiles");
+                }
+                WriteProfile();
             }
-            WriteProfile();
-            currentProfile = profile;
-            OnPropertyChanged("Profiles");
         }
 
         public void RenameProfile(string oldName, string newName)
         {
-            if (currentProfile == oldName)
-                currentProfile = newName;
-            profiles[newName] = profiles[oldName];
-            profiles.Remove(oldName);
-            WriteProfile();
-            OnPropertyChanged("Profiles");
+            if (oldName != newName)
+            {
+                profiles[newName] = profiles[oldName];
+                profiles[newName].Name = newName;
+                profiles.Remove(oldName);
+                WriteProfile();
+                OnPropertyChanged("Profiles");
+                if (currentProfile == oldName)
+                {
+                    currentProfile = newName;
+                    OnPropertyChanged("CurrentProfile");
+                }
+            }
         }
 
         public void RemoveProfile(string profile)
         {
             if (profile != "Default")
             {
-                if (currentProfile == profile)
-                {
-                    currentProfile = "Default";
-                }
                 profiles.Remove(profile);
                 WriteProfile();
                 OnPropertyChanged("Profiles");
+                if (currentProfile == profile)
+                {
+                    currentProfile = null;
+                    OnPropertyChanged("CurrentProfile");
+                }
             }
         }
 
@@ -169,7 +197,7 @@ namespace MonitorControl
 
         string currentProfile;
         const string filepath = "profile.json";
-        Dictionary<String, Profile> profiles = new Dictionary<String, Profile>();
+        Dictionary<String, ProfileState> profiles = new Dictionary<String, ProfileState>();
 
         #endregion
 

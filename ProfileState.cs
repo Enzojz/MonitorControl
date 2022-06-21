@@ -12,11 +12,13 @@ namespace MonitorControl
 {
     internal class ProfileState : INotifyPropertyChanged
     {
-        internal ProfileState(Guid guid, String name)
+        internal ProfileState(String name, Profile profile)
         {
-            Guid = guid;
             Name = name;
+            Profile = profile;
         }
+
+        internal Profile Profile;
 
         internal Visibility TextBlockVisibility => IsEditing ? Visibility.Collapsed : Visibility.Visible;
         internal Visibility TextBoxVisibility => !IsEditing ? Visibility.Collapsed : Visibility.Visible;
@@ -31,8 +33,6 @@ namespace MonitorControl
 
         private bool IsEditing;
 
-        private bool IsCurrent;
-
         private bool IsActive;
 
 
@@ -46,10 +46,6 @@ namespace MonitorControl
         {
             IsActive = false;
             Notify();
-        }
-
-        public void Tapped(object sender, TappedRoutedEventArgs e)
-        {
         }
 
         public void ConfirmEditByEnter(object sender, KeyRoutedEventArgs e)
@@ -82,23 +78,10 @@ namespace MonitorControl
             Notify();
         }
 
-        public void Load(object sender, RoutedEventArgs e)
-        {
-            IsEditing = false;
-            Instance.LoadProfile(Name);
-        }
-
         public void Remove(object sender, RoutedEventArgs e)
         {
             IsEditing = false;
             Instance.RemoveProfile(Name);
-        }
-
-
-        public void Rename(object sender, RoutedEventArgs e)
-        {
-            IsEditing = false;
-            Instance.RenameProfile(Name, (sender as Button).Tag.ToString());
         }
 
         public void Edit(object sender, RoutedEventArgs e)
@@ -116,7 +99,7 @@ namespace MonitorControl
                 Name = null;
                 OnPropertyChanged("Name");
             }
-            else 
+            else
                 Instance.SaveProfile(Name);
             Notify();
         }
@@ -127,7 +110,6 @@ namespace MonitorControl
             OnPropertyChanged("TextBlockVisibility");
             OnPropertyChanged("TextBoxVisibility");
             OnPropertyChanged("SaveVisibility");
-            OnPropertyChanged("LoadVisibility");
             OnPropertyChanged("RemoveVisibility");
             OnPropertyChanged("EditVisibility");
         }
