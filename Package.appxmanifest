@@ -13,7 +13,7 @@
 
   <Properties>
     <DisplayName>MonitorControl</DisplayName>
-    <PublisherDisplayName>enzoj</PublisherDisplayName>
+    <PublisherDisplayName>Enzojz</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,7 +32,7 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="MonitorControl"
-        Description="MonitorControl"
+        Description="MonitorControl helps you tweak the brightness, contrast and R/G/B values of your monitor(s)."
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
