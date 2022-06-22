@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace MonitorControl
 {
     delegate bool GetState(IntPtr a, out uint min, out uint current, out uint max);
-    public class Monitor : INotifyPropertyChanged
+    public class Monitor : INotifyPropertyChanged, IDisposable
     {
 
         internal Monitor(WinAPI.PHYSICAL_MONITOR m, String deviceName, int index)
@@ -35,7 +35,6 @@ namespace MonitorControl
             retriveItem(WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue, (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_BLUE_GAIN, out mi, out c, out ma));
         }
 
-        ~Monitor() => WinAPI.DestroyPhysicalMonitor(hMonitor);
 
         private uint getValue((bool enabled, uint current, uint min, uint range) item) => item.enabled ? (item.current - item.min) * 100 / item.range : 0;
         private void setValue(ref (bool enabled, uint current, uint min, uint range) item, uint value, Func<IntPtr, uint, bool> fn)
@@ -130,6 +129,11 @@ namespace MonitorControl
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void Dispose()
+        {
+            WinAPI.DestroyPhysicalMonitor(hMonitor);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

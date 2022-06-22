@@ -10,7 +10,7 @@ using System.IO;
 
 namespace MonitorControl
 {
-    internal class MonitorFn : INotifyPropertyChanged
+    internal class MonitorFn : INotifyPropertyChanged, IDisposable
     {
         public MonitorFn()
         {
@@ -38,14 +38,14 @@ namespace MonitorControl
                 })
                 .SelectMany(s => s)
                 .Select((m, i) => new Monitor(m.monitor, m.deviceName, i))
-                .ToArray();
+                .ToList();
 
 
             ReadProfile();
             LoadProfile("Default");
         }
 
-        public Monitor[] Monitors
+        public List<Monitor> Monitors
         {
             get;
             private set;
@@ -211,6 +211,12 @@ namespace MonitorControl
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void Dispose()
+        {
+            Monitors.ForEach(m => m.Dispose());
+            Monitors.Clear();
         }
         #endregion
     }

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Microsoft.UI.Composition.SystemBackdrops;
 using System.Runtime.InteropServices; // For DllImport
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,7 +14,7 @@ namespace MonitorControl
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public class BackdropManager : Window
+    public class BackdropManager : IDisposable
     {
         public enum BackdropType
         {
@@ -27,8 +28,6 @@ namespace MonitorControl
             m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
             m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
             m_window = window;
-
-            SetBackdrop(BackdropType.Mica);
         }
 
         WindowsSystemDispatcherQueueHelper m_wsdqHelper;
@@ -165,6 +164,21 @@ namespace MonitorControl
                 case ElementTheme.Light: m_configurationSource.Theme = SystemBackdropTheme.Light; break;
                 case ElementTheme.Default: m_configurationSource.Theme = SystemBackdropTheme.Default; break;
             }
+        }
+
+        public void Dispose()
+        {
+            if (m_micaController != null)
+            {
+                m_micaController.Dispose();
+                m_micaController = null;
+            }
+            if (m_acrylicController != null)
+            {
+                m_acrylicController.Dispose();
+                m_acrylicController = null;
+            }
+            m_window = null;
         }
     }
 

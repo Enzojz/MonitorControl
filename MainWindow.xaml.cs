@@ -45,7 +45,14 @@ namespace MonitorControl
 
             m_backdropHelper = new BackdropManager(this);
             m_backdropHelper.SetBackdrop(BackdropManager.BackdropType.Mica);
+            this.Closed += MainWindowClosed;
         }
+
+        private void MainWindowClosed(object sender, WindowEventArgs args)
+        {
+            m_backdropHelper.Dispose();
+        }
+
         internal MonitorFn Instance => App.Instance;
 
         private BackdropManager m_backdropHelper;

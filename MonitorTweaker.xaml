@@ -10,7 +10,7 @@
         <Style TargetType="TextBlock">
             <Setter Property="Grid.Column" Value="2"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
         <Style TargetType="Viewbox">
             <Setter Property="Grid.Column" Value="0"/>
@@ -31,14 +31,19 @@
             <Setter Property="TickPlacement" Value="Inline"/>
         </Style>
         <Style TargetType="FontIcon">
+            <Setter Property="Grid.Column" Value="0"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         </Style>
     </Page.Resources>
     <Grid RowSpacing="10" ColumnSpacing="10" Margin="20, 10, 20, 10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="30"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -88,6 +93,6 @@
         <TextBlock Grid.Row="4" Text="{x:Bind Monitor.Green, Mode=TwoWay}"/>
         <TextBlock Grid.Row="5" Text="{x:Bind Monitor.Blue, Mode=TwoWay}"/>
 
-        <TextBlock Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{x:Bind Monitor.Description}" x:Name="Desc"/>
+        <TextBlock HorizontalAlignment="Right" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{x:Bind Monitor.Description}" x:Name="Desc"/>
     </Grid>
 </Page>
