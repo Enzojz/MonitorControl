@@ -296,8 +296,8 @@ namespace MonitorControl
         internal struct DISPLAYCONFIG_DESKTOP_IMAGE_INFO
         {
             public Point PathSourceSize;
-            public WinAPI.Rect DesktopImageRegion;
-            public WinAPI.Rect DesktopImageClip;
+            public Rect DesktopImageRegion;
+            public Rect DesktopImageClip;
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -313,6 +313,13 @@ namespace MonitorControl
         internal struct DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS
         {
             public uint value;
+        }
+
+        internal enum MonitorDpiType
+        {
+            MDT_EFFECTIVE_DPI = 0,
+            MDT_ANGULAR_DPI = 1,
+            MDT_RAW_DPI = 2,
         }
 
         [DllImport("user32.dll")]
@@ -369,6 +376,9 @@ namespace MonitorControl
 
         [DllImport("dxva2.dll", SetLastError = true)]
         internal extern static bool SetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, uint dwNewGain);
+
+        [DllImport("shcore.dll")]
+        internal static extern uint GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
 
         internal static (DISPLAYCONFIG_PATH_INFO[] displayPaths, DISPLAYCONFIG_MODE_INFO[] displayModes)? GetDisplayConfigs()
         {

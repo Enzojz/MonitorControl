@@ -27,7 +27,6 @@ namespace MonitorControl
         {
             this.InitializeComponent();
 
-
             // Check to see if customization is supported.
             // Currently only supported on Windows 11.
             if (AppWindowTitleBar.IsCustomizationSupported())
@@ -45,13 +44,8 @@ namespace MonitorControl
 
             m_backdropHelper = new BackdropManager(this);
             m_backdropHelper.SetBackdrop(BackdropManager.BackdropType.Mica);
-            this.Closed += MainWindowClosed;
         }
 
-        private void MainWindowClosed(object sender, WindowEventArgs args)
-        {
-            m_backdropHelper.Dispose();
-        }
 
         internal MonitorFn Instance => App.Instance;
 

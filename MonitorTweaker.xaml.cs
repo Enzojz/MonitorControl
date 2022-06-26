@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -24,7 +26,14 @@ namespace MonitorControl
         {
             this.InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
+            DataContextChanged += (s, e) =>
+            {
+                var win = new MonitorIdentifier(Monitor.Description, Monitor.TopLeft);
+                win.Activate();
+            };
+
         }
+
 
         public Monitor Monitor => DataContext as Monitor;
     }

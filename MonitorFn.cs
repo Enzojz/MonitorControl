@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace MonitorControl
@@ -15,13 +14,13 @@ namespace MonitorControl
 
         public MonitorFn()
         {
-
             var displayConfigs = DisplayConfigs().ToDictionary(d => d.id);
             var displays = WinAPI.GetDisplays()
                 .Select(display =>
-                {
-                    var monitors = WinAPI.GetMonitorsFromDisplay(display)
-                    .Select(monitor =>
+                (
+                    deviceName: display.DeviceName,
+                    monitors: WinAPI.GetMonitorsFromDisplay(display)
+                        .Select(monitor =>
                         {
                             var config = displayConfigs[monitor.DeviceID];
                             return (
@@ -30,15 +29,9 @@ namespace MonitorControl
                                 output: config.output,
                                 deviceId: monitor.DeviceID
                             );
-                        }
-                    ).ToList();
-
-                    return
-                        (
-                            deviceName: display.DeviceName,
-                            monitors: monitors
-                        );
-                })
+                        })
+                        .ToList()
+                ))
                 .ToDictionary(dm => dm.deviceName, dm => dm.monitors);
 
             var hMonitors = new List<IntPtr>();
@@ -53,16 +46,17 @@ namespace MonitorControl
                 .SelectMany(hMonitor =>
                 {
                     var monitorInfo = WinAPI.GetMonitorInfo(hMonitor);
+                    var topLeft = new System.Numerics.Vector2(monitorInfo.Monitor.left, monitorInfo.Monitor.top);
                     var physicalMonitors = WinAPI.GetPhysicalMonitorsFromHMONITOR(hMonitor).ToList();
                     var monitors = displays.GetValueOrDefault(monitorInfo.DeviceName);
                     Debug.Assert(physicalMonitors.Count == monitors.Count);
-                    return physicalMonitors.Zip(monitors);
+                    return physicalMonitors.Zip(monitors).Select(m => (m.First, m.Second, topLeft));
                 })
                 .Select((m, i) =>
                 {
-                    var (physicalMonitor, monitor) = m;
+                    var (physicalMonitor, monitor, center) = m;
                     var description = monitor.displayName ?? monitor.description ?? new string(physicalMonitor.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray());
-                    return new Monitor(physicalMonitor, description, monitor.deviceId, i);
+                    return new Monitor(physicalMonitor, description, monitor.deviceId, center, i);
                 })
                 .ToList();
 

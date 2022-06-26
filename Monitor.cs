@@ -3,6 +3,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace MonitorControl
 {
@@ -23,10 +24,11 @@ namespace MonitorControl
                     throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
-        internal Monitor(WinAPI.PHYSICAL_MONITOR m, String description, String deviceId, int index)
+        internal Monitor(WinAPI.PHYSICAL_MONITOR m, String description, String deviceId, Vector2 topLeft, int index)
         {
             hMonitor = m.hPhysicalMonitor;
-            this.DeviceId = deviceId;
+            DeviceId = deviceId;
+            TopLeft = topLeft;
 
             Description = string.Format("#{0}: {1}", index + 1, description);
 
@@ -133,6 +135,8 @@ namespace MonitorControl
 
         public string Description { private set; get; }
         public string DeviceId { private set; get; }
+
+        public Vector2 TopLeft { private set; get; }
         #endregion
 
         #region Private memebrs

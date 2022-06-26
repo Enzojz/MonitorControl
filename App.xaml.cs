@@ -27,7 +27,7 @@ namespace MonitorControl
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
             if (m_instance == null)
             {
@@ -48,10 +48,9 @@ namespace MonitorControl
             appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = (int)(900 * dpiScaling), Height = (int)((baseHeight < 380 ? 380 : baseHeight) * dpiScaling)});
 
             var presenter = appWindow.Presenter as OverlappedPresenter;
-            //presenter.IsResizable = false;
+            presenter.IsResizable = false;
 
             m_window.Activate();
-
         }
 
         private void WindowClosed(object sender, WindowEventArgs args)
