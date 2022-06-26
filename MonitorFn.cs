@@ -1,21 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace MonitorControl
 {
     internal class MonitorFn : INotifyPropertyChanged, IDisposable
     {
+
         public MonitorFn()
         {
-            var hMonitors = new List<IntPtr>();
 
+            var displayConfigs = DisplayConfigs().ToDictionary(d => d.id);
+            var displays = WinAPI.GetDisplays()
+                .Select(display =>
+                {
+                    var monitors = WinAPI.GetMonitorsFromDisplay(display)
+                    .Select(monitor =>
+                        {
+                            var config = displayConfigs[monitor.DeviceID];
+                            return (
+                                description: monitor.DeviceString,
+                                displayName: config.displayName,
+                                output: config.output,
+                                deviceId: monitor.DeviceID
+                            );
+                        }
+                    ).ToList();
+
+                    return
+                        (
+                            deviceName: display.DeviceName,
+                            monitors: monitors
+                        );
+                })
+                .ToDictionary(dm => dm.deviceName, dm => dm.monitors);
+
+            var hMonitors = new List<IntPtr>();
             WinAPI.EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero,
                 (IntPtr hMonitor, IntPtr hdcMonitor, ref WinAPI.Rect lprcMonitor, IntPtr dwData) =>
                 {
@@ -24,22 +50,21 @@ namespace MonitorControl
                 }, IntPtr.Zero);
 
             Monitors = hMonitors
-                .Select(hMonitor =>
+                .SelectMany(hMonitor =>
                 {
-                    var minfo = new WinAPI.MonitorInfoEx();
-                    minfo.Init();
-                    WinAPI.GetMonitorInfo(hMonitor, ref minfo);
-
-                    WinAPI.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, out uint NumberOfPhysicalMonitors);
-                    var PhysicalMonitors = new WinAPI.PHYSICAL_MONITOR[NumberOfPhysicalMonitors];
-                    WinAPI.GetPhysicalMonitorsFromHMONITOR(hMonitor, NumberOfPhysicalMonitors, PhysicalMonitors);
-
-                    return PhysicalMonitors.Select(m => (monitor: m, deviceName: minfo.DeviceName));
+                    var monitorInfo = WinAPI.GetMonitorInfo(hMonitor);
+                    var physicalMonitors = WinAPI.GetPhysicalMonitorsFromHMONITOR(hMonitor).ToList();
+                    var monitors = displays.GetValueOrDefault(monitorInfo.DeviceName);
+                    Debug.Assert(physicalMonitors.Count == monitors.Count);
+                    return physicalMonitors.Zip(monitors);
                 })
-                .SelectMany(s => s)
-                .Select((m, i) => new Monitor(m.monitor, m.deviceName, i))
+                .Select((m, i) =>
+                {
+                    var (physicalMonitor, monitor) = m;
+                    var description = monitor.displayName ?? monitor.description ?? new string(physicalMonitor.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray());
+                    return new Monitor(physicalMonitor, description, monitor.deviceId, i);
+                })
                 .ToList();
-
 
             ReadProfile();
             LoadProfile("Default");
@@ -54,7 +79,8 @@ namespace MonitorControl
         public ProfileState CurrentProfile
         {
             get { return currentProfile != null && profiles.ContainsKey(currentProfile) ? profiles[currentProfile] : null; }
-            set {
+            set
+            {
                 if (value != null && profiles.ContainsKey(value.Name) && value.Name != currentProfile)
                 {
                     currentProfile = value.Name;
@@ -64,6 +90,33 @@ namespace MonitorControl
         }
 
         public List<ProfileState> Profiles => profiles.Values.ToList();
+
+        private static IEnumerable<(string id, string displayName, WinAPI.DisplayConfigOutputTechnology output)> DisplayConfigs()
+        {
+            if (WinAPI.GetDisplayConfigs() is (WinAPI.DISPLAYCONFIG_PATH_INFO[] arrDisplayPaths, WinAPI.DISPLAYCONFIG_MODE_INFO[] arrDisplayModes))
+            {
+                var displayModes = arrDisplayModes
+                    .Where(m => m.infoType == WinAPI.DisplayConfigModeInfoType.Target)
+                    .ToDictionary(m => m.id);
+
+                foreach (var displayPath in arrDisplayPaths)
+                {
+                    var displayMode = displayModes[displayPath.targetInfo.id];
+                    if (displayMode.Equals(default(WinAPI.DISPLAYCONFIG_MODE_INFO)))
+                        continue;
+
+                    if (WinAPI.DisplayConfigGetDeviceInfo(displayMode) is WinAPI.DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName)
+                    {
+                        yield return (
+                                id: deviceName.monitorDevicePath,
+                                displayName: deviceName.monitorFriendlyDeviceName,
+                                output: deviceName.outputTechnology
+                            );
+                    }
+                }
+            }
+            yield break;
+        }
 
         private void WriteProfile()
         {
@@ -76,9 +129,6 @@ namespace MonitorControl
             stream.Close();
         }
 
-
-
-
         private void CreateNewProfile()
         {
             if (profiles.Count == 0 || !profiles.ContainsKey("Default"))
@@ -87,7 +137,7 @@ namespace MonitorControl
                     new Profile()
                     {
                         Guid = System.Guid.NewGuid(),
-                        Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
+                        Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile)
                     }
                 );
             }
@@ -129,8 +179,8 @@ namespace MonitorControl
                 var p = profiles[profile].Profile.Monitors;
                 foreach (var m in Monitors)
                 {
-                    if (p.ContainsKey(m.DeviceName))
-                        m.Profile = p[m.DeviceName];
+                    if (p.ContainsKey(m.DeviceId))
+                        m.Profile = p[m.DeviceId];
                 }
                 OnPropertyChanged("CurrentProfile");
             }
@@ -142,7 +192,7 @@ namespace MonitorControl
             {
                 if (profiles.ContainsKey(profile))
                 {
-                    profiles[profile].Profile.Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile);
+                    profiles[profile].Profile.Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile);
                 }
                 else
                 {
@@ -151,7 +201,7 @@ namespace MonitorControl
                         new Profile()
                         {
                             Guid = Guid.NewGuid(),
-                            Monitors = Monitors.ToDictionary(m => m.DeviceName, m => m.Profile)
+                            Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile)
                         });
                     OnPropertyChanged("Profiles");
                 }

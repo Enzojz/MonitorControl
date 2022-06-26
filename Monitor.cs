@@ -2,37 +2,60 @@
 using System.Linq;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace MonitorControl
 {
     delegate bool GetState(IntPtr a, out uint min, out uint current, out uint max);
     public class Monitor : INotifyPropertyChanged, IDisposable
     {
+        void retriveItem(
+            WinAPI.MC_CAP mc,
+            WinAPI.MC_CAP flag,
+            ref (bool enabled, uint current, uint min, uint range) item,
+            GetState fn)
+        {
+            item = (false, 0, 0, 0);
+            if (mc.HasFlag(flag))
+                if (fn(hMonitor, out uint min, out uint current, out uint max))
+                    item = (true, current, min, max - min);
+                else
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
 
-        internal Monitor(WinAPI.PHYSICAL_MONITOR m, String deviceName, int index)
+        internal Monitor(WinAPI.PHYSICAL_MONITOR m, String description, String deviceId, int index)
         {
             hMonitor = m.hPhysicalMonitor;
-            this.DeviceName = deviceName;
+            this.DeviceId = deviceId;
 
-            Description = string.Format("#{0}: {1}", index + 1, new string(m.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray()));
+            Description = string.Format("#{0}: {1}", index + 1, description);
 
             WinAPI.GetMonitorCapabilities(hMonitor, out uint mc, out uint _);
 
-            void retriveItem(WinAPI.MC_CAP flag, ref (bool enabled, uint current, uint min, uint range) item, GetState fn)
+            var f1 = () => { retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness); };
+            var f2 = () => { retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast); };
+            var f3 = () =>
             {
-                item = (false, 0, 0, 0);
-                if (((WinAPI.MC_CAP)mc).HasFlag(flag))
-                    if (fn(hMonitor, out uint min, out uint current, out uint max))
-                        item = (true, current, min, max - min);
-                    else
-                        throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
+                retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref red,
+                (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_RED_GAIN, out mi, out c, out ma)
+            );
+            };
+            var f4 = () =>
+            {
+                retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref green,
+                (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_GREEN_GAIN, out mi, out c, out ma)
+            );
+            };
+            var f5 = () =>
+            {
+                retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue,
+                (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_BLUE_GAIN, out mi, out c, out ma)
+            );
+            };
 
-            retriveItem(WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness);
-            retriveItem(WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast);
-            retriveItem(WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref red, (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_RED_GAIN, out mi, out c, out ma));
-            retriveItem(WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref green, (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_GREEN_GAIN, out mi, out c, out ma));
-            retriveItem(WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue, (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_BLUE_GAIN, out mi, out c, out ma));
+            var f = new List<Action> { f1, f2, f3, f4, f5 };
+            f.AsParallel().ForAll(f => f());
+
         }
 
 
@@ -109,7 +132,7 @@ namespace MonitorControl
         }
 
         public string Description { private set; get; }
-        public string DeviceName { private set; get; }
+        public string DeviceId { private set; get; }
         #endregion
 
         #region Private memebrs

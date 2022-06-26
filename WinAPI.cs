@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace MonitorControl
 {
     internal class WinAPI
     {
+        private const int CCHDEVICENAME = 32;
+        internal const uint EDD_GET_DEVICE_INTERFACE_NAME = 0x00000001;
+        internal const uint QDC_ONLY_ACTIVE_PATHS = 2;
+        internal const int ERROR_SUCCESS = 0;
+
         [Flags]
-        public enum MC_CAP
+        internal enum MC_CAP
         {
             MC_CAPS_BRIGHTNESS = 0x2,
             MC_CAPS_CONTRAST = 0x4,
@@ -15,7 +21,7 @@ namespace MonitorControl
             MC_CAPS_RED_GREEN_BLUE_DRIVE = 0x20
         }
 
-        public enum MC_GAIN_TYPE
+        internal enum MC_GAIN_TYPE
         {
             MC_RED_GAIN = 0x00,
             MC_GREEN_GAIN = 0x01,
@@ -32,16 +38,67 @@ namespace MonitorControl
         private const int MC_SUPPORTED_COLOR_TEMPERATURE_10000K = 0x40;
         private const int MC_SUPPORTED_COLOR_TEMPERATURE_11500K = 0x80;
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct PHYSICAL_MONITOR
+
+
+        internal enum DisplayConfigOutputTechnology : uint
         {
-            public IntPtr hPhysicalMonitor;
-            [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U2, SizeConst = 128)]
-            public char[] szPhysicalMonitorDescription;
+            Other = 0xFFFFFFFF,
+            HD15 = 0,
+            SVideo = 1,
+            CompositeVideo = 2,
+            ComponenetVideo = 3,
+            DVI = 4,
+            HDMI = 5,
+            LVDS = 6,
+            DJpn = 8,
+            SDI = 9,
+            DisplayPortExtern = 10,
+            DisplayPortEmbedded = 11,
+            UDIExtern = 12,
+            UDIEmbeded = 13,
+            SDTV = 14,
+            Miracast = 15,
+            IndirectWired = 16,
+            IndirectVirtual = 17,
+            Internal = 0x80000000,
+            ForceUint32 = 0xFFFFFFFF
+        }
+
+        internal enum DisplayConfigModeInfoType : uint
+        {
+            Source = 1,
+            Target = 2,
+            DesktopImage = 3,
+            ForceUint32 = 0xFFFFFFFF
+        }
+
+        internal enum DisplayConfigRotation : uint
+        {
+            Identity = 1,
+            Rotate90 = 2,
+            Rotate180 = 3,
+            Rotata270 = 4,
+            ForceUint32 = 0xFFFFFFFF
+        }
+
+        internal enum DISPLAYCONFIG_DEVICE_INFO_TYPE : uint
+        {
+            DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME = 1,
+            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME = 2,
+            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_PREFERRED_MODE = 3,
+            DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME = 4,
+            DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE = 5,
+            DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE = 6,
+            DISPLAYCONFIG_DEVICE_INFO_GET_SUPPORT_VIRTUAL_RESOLUTION = 7,
+            DISPLAYCONFIG_DEVICE_INFO_SET_SUPPORT_VIRTUAL_RESOLUTION = 8,
+            DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO = 9,
+            DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE = 10,
+            DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL = 11,
+            DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 = 0xFFFFFFFF
         }
 
         [Flags()]
-        public enum DisplayDeviceStateFlags : int
+        internal enum DisplayDeviceStateFlags : int
         {
             /// <summary>The device is part of the desktop.</summary>
             AttachedToDesktop = 0x1,
@@ -60,165 +117,347 @@ namespace MonitorControl
             Disconnect = 0x2000000
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct DISPLAY_DEVICE
-        {
-            [MarshalAs(UnmanagedType.U4)]
-            public int cb;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-            public string DeviceName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string DeviceString;
-            [MarshalAs(UnmanagedType.U4)]
-            public DisplayDeviceStateFlags StateFlags;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string DeviceID;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            public string DeviceKey;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct Rect
-        {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
-        }
-
-        // size of a device name string
-        private const int CCHDEVICENAME = 32;
-
-        /// <summary>
-        /// The MONITORINFOEX structure contains information about a display monitor.
-        /// The GetMonitorInfo function stores information into a MONITORINFOEX structure or a MONITORINFO structure.
-        /// The MONITORINFOEX structure is a superset of the MONITORINFO structure. The MONITORINFOEX structure adds a string member to contain a name
-        /// for the display monitor.
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct MonitorInfoEx
-        {
-            /// <summary>
-            /// The size, in bytes, of the structure. Set this member to sizeof(MONITORINFOEX) (72) before calling the GetMonitorInfo function.
-            /// Doing so lets the function determine the type of structure you are passing to it.
-            /// </summary>
-            public int Size;
-
-            /// <summary>
-            /// A RECT structure that specifies the display monitor rectangle, expressed in virtual-screen coordinates.
-            /// Note that if the monitor is not the primary display monitor, some of the rectangle's coordinates may be negative values.
-            /// </summary>
-            public RectStruct Monitor;
-
-            /// <summary>
-            /// A RECT structure that specifies the work area rectangle of the display monitor that can be used by applications,
-            /// expressed in virtual-screen coordinates. Windows uses this rectangle to maximize an application on the monitor.
-            /// The rest of the area in rcMonitor contains system windows such as the task bar and side bars.
-            /// Note that if the monitor is not the primary display monitor, some of the rectangle's coordinates may be negative values.
-            /// </summary>
-            public RectStruct WorkArea;
-
-            /// <summary>
-            /// The attributes of the display monitor.
-            ///
-            /// This member can be the following value:
-            ///   1 : MONITORINFOF_PRIMARY
-            /// </summary>
-            public uint Flags;
-
-            /// <summary>
-            /// A string that specifies the device name of the monitor being used. Most applications have no use for a display monitor name,
-            /// and so can save some bytes by using a MONITORINFO structure.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
-            public string DeviceName;
-
-            public void Init()
-            {
-                this.Size = 40 + 2 * CCHDEVICENAME;
-                this.DeviceName = string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// The RECT structure defines the coordinates of the upper-left and lower-right corners of a rectangle.
-        /// </summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/library/dd162897%28VS.85%29.aspx"/>
-        /// <remarks>
-        /// By convention, the right and bottom edges of the rectangle are normally considered exclusive.
-        /// In other words, the pixel whose coordinates are ( right, bottom ) lies immediately outside of the the rectangle.
-        /// For example, when RECT is passed to the FillRect function, the rectangle is filled up to, but not including,
-        /// the right column and bottom row of pixels. This structure is identical to the RECTL structure.
-        /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
-        public struct RectStruct
+        internal struct PHYSICAL_MONITOR
         {
-            /// <summary>
-            /// The x-coordinate of the upper-left corner of the rectangle.
-            /// </summary>
-            public int Left;
+            internal IntPtr hPhysicalMonitor;
+            [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U2, SizeConst = 128)]
+            internal char[] szPhysicalMonitorDescription;
+        }
 
-            /// <summary>
-            /// The y-coordinate of the upper-left corner of the rectangle.
-            /// </summary>
-            public int Top;
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal struct DISPLAY_DEVICE
+        {
+            [MarshalAs(UnmanagedType.U4)]
+            internal int cb;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            internal string DeviceName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            internal string DeviceString;
+            [MarshalAs(UnmanagedType.U4)]
+            internal DisplayDeviceStateFlags StateFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            internal string DeviceID;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            internal string DeviceKey;
+        }
 
-            /// <summary>
-            /// The x-coordinate of the lower-right corner of the rectangle.
-            /// </summary>
-            public int Right;
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct Point
+        {
+            public int x;
+            public int y;
+        }
 
-            /// <summary>
-            /// The y-coordinate of the lower-right corner of the rectangle.
-            /// </summary>
-            public int Bottom;
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal struct Rect
+        {
+            internal int left;
+            internal int top;
+            internal int right;
+            internal int bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal struct MonitorInfoEx
+        {
+            internal int Size;
+            internal Rect Monitor;
+            internal Rect WorkArea;
+            internal uint Flags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
+            internal string DeviceName;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_PATH_INFO
+        {
+            public DISPLAYCONFIG_PATH_SOURCE_INFO sourceInfo;
+            public DISPLAYCONFIG_PATH_TARGET_INFO targetInfo;
+            public uint flags;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct DISPLAYCONFIG_MODE_INFO
+        {
+            [FieldOffset(0)]
+            public DisplayConfigModeInfoType infoType;
+
+            [FieldOffset(4)]
+            public uint id;
+
+            [FieldOffset(8)]
+            public LUID adapterId;
+
+            [FieldOffset(16)]
+            public DISPLAYCONFIG_TARGET_MODE targetMode;
+
+            [FieldOffset(16)]
+            public DISPLAYCONFIG_SOURCE_MODE sourceMode;
+
+            [FieldOffset(16)]
+            public DISPLAYCONFIG_DESKTOP_IMAGE_INFO desktopImageInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct DISPLAYCONFIG_TARGET_DEVICE_NAME
+        {
+            public DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+            public DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS flags;
+            public DisplayConfigOutputTechnology outputTechnology;
+            public ushort edidManufactureId;
+            public ushort edidProductCodeId;
+            public uint connectorInstance;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string monitorFriendlyDeviceName;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string monitorDevicePath;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_PATH_SOURCE_INFO
+        {
+            public LUID adapterId;
+            public uint id;
+            public uint modeInfoIdx;
+            public uint statusFlags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_PATH_TARGET_INFO
+        {
+            public LUID adapterId;
+            public uint id;
+            public uint modeInfoIdx;
+            public DisplayConfigOutputTechnology outputTechnology;
+            public DisplayConfigRotation rotation;
+            public uint scaling;
+            public DISPLAYCONFIG_RATIONAL refreshRate;
+            public uint scanLineOrdering;
+
+            [MarshalAs(UnmanagedType.Bool)]
+            public bool targetAvailable;
+
+            public uint statusFlags;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct LUID
+        {
+            public uint LowPart;
+            public int HighPart;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_TARGET_MODE
+        {
+            public DISPLAYCONFIG_VIDEO_SIGNAL_INFO targetVideoSignalInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_VIDEO_SIGNAL_INFO
+        {
+            public ulong pixelRate;
+            public DISPLAYCONFIG_RATIONAL hSyncFreq;
+            public DISPLAYCONFIG_RATIONAL vSyncFreq;
+            public DISPLAYCONFIG_2DREGION activeSize;
+            public DISPLAYCONFIG_2DREGION totalSize;
+            public uint videoStandard;
+            public uint scanLineOrdering;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_RATIONAL
+        {
+            public uint Numerator;
+            public uint Denominator;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct DISPLAYCONFIG_2DREGION
+        {
+            public uint cx;
+            public uint cy;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_SOURCE_MODE
+        {
+            public uint width;
+            public uint height;
+            public uint pixelFormat;
+            public Point position;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_DESKTOP_IMAGE_INFO
+        {
+            public Point PathSourceSize;
+            public WinAPI.Rect DesktopImageRegion;
+            public WinAPI.Rect DesktopImageClip;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_DEVICE_INFO_HEADER
+        {
+            public DISPLAYCONFIG_DEVICE_INFO_TYPE type;
+            public uint size;
+            public LUID adapterId;
+            public uint id;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS
+        {
+            public uint value;
         }
 
         [DllImport("user32.dll")]
-        public extern static bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
+        internal extern static bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfoEx lpmi);
+        private extern static bool GetMonitorInfo(IntPtr hMonitor, ref MonitorInfoEx lpmi);
 
-        public delegate bool EnumMonitorsDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
+        internal delegate bool EnumMonitorsDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
 
         [DllImport("user32.dll", SetLastError = false)]
-        public extern static IntPtr MonitorFromPoint(System.Drawing.Point pt, uint dwFlags);
+        private extern static IntPtr MonitorFromPoint(System.Drawing.Point pt, uint dwFlags);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        static extern bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool GetPhysicalMonitorsFromHMONITOR(IntPtr hMonitor, uint dwPhysicalMonitorArraySize, [Out] PHYSICAL_MONITOR[] pPhysicalMonitorArray);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool GetNumberOfPhysicalMonitorsFromHMONITOR(IntPtr hMonitor, out uint pdwNumberOfPhysicalMonitors);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool DestroyPhysicalMonitor(IntPtr hMonitor);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool GetMonitorCapabilities(IntPtr hMonitor, out uint pdwMonitorCapabilities, out uint pdwSupportedColorTemperatures);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool GetMonitorBrightness(IntPtr hMonitor, out uint pdwMinimumBrightness, out uint pdwCurrentBrightness, out uint pdwMaximumBrightness);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool SetMonitorBrightness(IntPtr hMonitor, uint dwNewBrightness);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool GetMonitorContrast(IntPtr hMonitor, out uint pdwMinimumContrast, out uint pdwCurrentContrast, out uint pdwMaximumContrast);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool SetMonitorContrast(IntPtr hMonitor, uint dwNewContrast);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool GetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, out uint pdwMinimumGain, out uint pdwCurrentGain, out uint pdwMaximumGain);
-
-        [DllImport("dxva2.dll", SetLastError = true)]
-        public extern static bool SetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, uint dwNewGain);
+        private extern static bool EnumDisplayDevices(string lpDevice, uint iDevNum, ref DISPLAY_DEVICE lpDisplayDevice, uint dwFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public extern static uint GetDpiForWindow(IntPtr hWindow);
-    }
+        internal extern static uint GetDpiForWindow(IntPtr hWindow);
 
+        [DllImport("user32.dll")]
+        private extern static int GetDisplayConfigBufferSizes(uint flags, out uint numPathArrayElements, out uint numModeInfoArrayElements);
+
+        [DllImport("user32.dll")]
+        private extern static int QueryDisplayConfig(uint flags, ref uint numPathArrayElements, [Out] DISPLAYCONFIG_PATH_INFO[] pathInfoArray, ref uint numModeInfoArrayElements, [Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray, IntPtr currentTopologyId);
+
+        [DllImport("user32.dll")]
+        private extern static int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME requestPacket);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        private extern static bool GetPhysicalMonitorsFromHMONITOR(IntPtr hMonitor, uint dwPhysicalMonitorArraySize, [Out] PHYSICAL_MONITOR[] pPhysicalMonitorArray);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        private extern static bool GetNumberOfPhysicalMonitorsFromHMONITOR(IntPtr hMonitor, out uint pdwNumberOfPhysicalMonitors);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool DestroyPhysicalMonitor(IntPtr hMonitor);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool GetMonitorCapabilities(IntPtr hMonitor, out uint pdwMonitorCapabilities, out uint pdwSupportedColorTemperatures);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool GetMonitorBrightness(IntPtr hMonitor, out uint pdwMinimumBrightness, out uint pdwCurrentBrightness, out uint pdwMaximumBrightness);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool SetMonitorBrightness(IntPtr hMonitor, uint dwNewBrightness);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool GetMonitorContrast(IntPtr hMonitor, out uint pdwMinimumContrast, out uint pdwCurrentContrast, out uint pdwMaximumContrast);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool SetMonitorContrast(IntPtr hMonitor, uint dwNewContrast);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool GetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, out uint pdwMinimumGain, out uint pdwCurrentGain, out uint pdwMaximumGain);
+
+        [DllImport("dxva2.dll", SetLastError = true)]
+        internal extern static bool SetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, uint dwNewGain);
+
+        internal static (DISPLAYCONFIG_PATH_INFO[] displayPaths, DISPLAYCONFIG_MODE_INFO[] displayModes)? GetDisplayConfigs()
+        {
+            if (GetDisplayConfigBufferSizes(
+                QDC_ONLY_ACTIVE_PATHS,
+                out uint pathCount,
+                out uint modeCount) != ERROR_SUCCESS)
+                return null;
+
+            var displayPaths = new DISPLAYCONFIG_PATH_INFO[pathCount];
+            var displayModes = new DISPLAYCONFIG_MODE_INFO[modeCount];
+
+            if (QueryDisplayConfig(
+                QDC_ONLY_ACTIVE_PATHS,
+                ref pathCount,
+                displayPaths,
+                ref modeCount,
+                displayModes,
+                IntPtr.Zero) != ERROR_SUCCESS)
+                return null;
+
+            return (
+                displayPaths,
+                displayModes
+            );
+        }
+
+        internal static DISPLAYCONFIG_TARGET_DEVICE_NAME? DisplayConfigGetDeviceInfo(DISPLAYCONFIG_MODE_INFO displayMode)
+        {
+            var deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
+            {
+                header = new DISPLAYCONFIG_DEVICE_INFO_HEADER
+                {
+                    size = (uint)Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>(),
+                    adapterId = displayMode.adapterId,
+                    id = displayMode.id,
+                    type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME
+                }
+            };
+
+            if (DisplayConfigGetDeviceInfo(ref deviceName) != ERROR_SUCCESS)
+                return null;
+
+            return deviceName;
+        }
+
+        internal static IEnumerable<DISPLAY_DEVICE> GetDisplays()
+        {
+            var size = Marshal.SizeOf<DISPLAY_DEVICE>();
+            var display = new DISPLAY_DEVICE { cb = size };
+
+            for (uint i = 0; EnumDisplayDevices(null, i, ref display, WinAPI.EDD_GET_DEVICE_INTERFACE_NAME); i++)
+            {
+                if (!display.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
+                    continue;
+                yield return display;
+            }
+        }
+
+        internal static IEnumerable<DISPLAY_DEVICE> GetMonitorsFromDisplay(DISPLAY_DEVICE display)
+        {
+            var size = Marshal.SizeOf<DISPLAY_DEVICE>();
+            var monitor = new DISPLAY_DEVICE { cb = size };
+
+            for (uint i = 0; WinAPI.EnumDisplayDevices(display.DeviceName, i, ref monitor, EDD_GET_DEVICE_INTERFACE_NAME); i++)
+            {
+                if (!monitor.StateFlags.HasFlag(DisplayDeviceStateFlags.AttachedToDesktop))
+                    continue;
+                yield return monitor;
+            }
+        }
+
+        internal static MonitorInfoEx GetMonitorInfo(IntPtr hMonitor)
+        {
+            MonitorInfoEx monitorInfo = new MonitorInfoEx
+            {
+                Size = 40 + 2 * CCHDEVICENAME,
+                DeviceName = string.Empty
+            };
+            GetMonitorInfo(hMonitor, ref monitorInfo);
+            return monitorInfo;
+        }
+
+        internal static PHYSICAL_MONITOR[] GetPhysicalMonitorsFromHMONITOR(IntPtr hMonitor)
+        {
+            GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, out uint NumberOfPhysicalMonitors);
+            var PhysicalMonitors = new PHYSICAL_MONITOR[NumberOfPhysicalMonitors];
+            GetPhysicalMonitorsFromHMONITOR(hMonitor, NumberOfPhysicalMonitors, PhysicalMonitors);
+            return PhysicalMonitors;
+        }
+    }
 }
