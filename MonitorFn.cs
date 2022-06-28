@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.UI.Xaml;
 
 namespace MonitorControl
 {
@@ -14,6 +15,9 @@ namespace MonitorControl
 
         public MonitorFn()
         {
+            m_timer = new DispatcherTimer();
+            m_timer.Tick += (object sender, object e) => { Message = null; };
+
             var displayConfigs = DisplayConfigs().ToDictionary(d => d.id);
             var displays = WinAPI.GetDisplays()
                 .Select(display =>
@@ -61,9 +65,35 @@ namespace MonitorControl
                 .ToList();
 
             ReadProfile();
-            LoadProfile("Default");
+            if (App.SettingManager != null && App.SettingManager.ReloadProfile)
+            {
+                LoadProfile(App.SettingManager.DefaultProfile);
+            }
         }
 
+        DispatcherTimer m_timer;
+
+        private string m_message;
+        internal string Message
+        {
+            get => m_message;
+            set
+            {
+                m_message = value;
+                OnPropertyChanged("Message");
+                OnPropertyChanged("ShowMessage");
+
+                if (value != null)
+                {
+                    m_timer.Interval = new TimeSpan(0, 0, 1);
+                    m_timer.Start();
+                }
+
+            }
+        }
+
+        internal bool ShowMessage { get => m_message != null; set => m_message = null; }
+        
         public List<Monitor> Monitors
         {
             get;
@@ -143,23 +173,21 @@ namespace MonitorControl
             if (File.Exists(filepath))
             {
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(
-                    typeof(Dictionary<String, Profile>),
+                    typeof(Dictionary<string, Profile>),
                     new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
                 );
-                bool hasException = false;
-                var stream = File.OpenRead(filepath);
-                try
+                using (var stream = File.OpenRead(filepath))
                 {
-                    var mapProfiles = (Dictionary<String, Profile>)ser.ReadObject(stream);
-                    profiles = mapProfiles.ToDictionary(v => v.Key, v => new ProfileState(v.Key, v.Value));
+                    try
+                    {
+                        var mapProfiles = (Dictionary<string, Profile>)ser.ReadObject(stream);
+                        profiles = mapProfiles.ToDictionary(v => v.Key, v => new ProfileState(v.Key, v.Value));
+                    }
+                    catch (SerializationException e)
+                    {
+                        CreateNewProfile();
+                    }
                 }
-                catch (SerializationException e)
-                {
-                    hasException = true;
-                }
-                stream.Close();
-                if (hasException)
-                    CreateNewProfile();
             }
             else
                 CreateNewProfile();
@@ -177,6 +205,7 @@ namespace MonitorControl
                         m.Profile = p[m.DeviceId];
                 }
                 OnPropertyChanged("CurrentProfile");
+                Message = String.Format("Profile {0} has been loaded!", profile);
             }
         }
 
@@ -187,6 +216,7 @@ namespace MonitorControl
                 if (profiles.ContainsKey(profile))
                 {
                     profiles[profile].Profile.Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile);
+                    Message = String.Format("Profile {0} has been saved!", profile);
                 }
                 else
                 {
@@ -198,6 +228,7 @@ namespace MonitorControl
                             Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile)
                         });
                     OnPropertyChanged("Profiles");
+                    Message = String.Format("Profile {0} has been created!", profile);
                 }
                 WriteProfile();
             }
@@ -212,6 +243,7 @@ namespace MonitorControl
                 profiles.Remove(oldName);
                 WriteProfile();
                 OnPropertyChanged("Profiles");
+                Message = String.Format("Profile {0} has been renamed to {1}!", oldName, newName);
                 if (currentProfile == oldName)
                 {
                     currentProfile = newName;
@@ -227,6 +259,7 @@ namespace MonitorControl
                 profiles.Remove(profile);
                 WriteProfile();
                 OnPropertyChanged("Profiles");
+                Message = String.Format("Profile {0} has been saved!", profile);
                 if (currentProfile == profile)
                 {
                     currentProfile = null;

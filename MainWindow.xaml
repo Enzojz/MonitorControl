@@ -76,9 +76,15 @@
                                 <local:Setting/>
                             </DataTemplate>
                         </local:MonitorControlDataTemplateSelector.Setting>
+                        <local:MonitorControlDataTemplateSelector.Home>
+                            <DataTemplate>
+                                <local:Home/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Home>
                     </local:MonitorControlDataTemplateSelector>
                 </Frame.ContentTemplateSelector>
             </Frame>
         </NavigationView>
+        <InfoBar Grid.Row="1" Severity="Success" Title="{x:Bind Instance.Message,Mode=OneWay}" IsOpen="{x:Bind Instance.ShowMessage, Mode=TwoWay}" Width="500" Background="White" Margin="0, 10, 0, 0"/>
     </Grid>
 </Window>

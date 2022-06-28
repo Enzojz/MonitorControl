@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -24,7 +26,7 @@ namespace MonitorControl
         internal bool RunInBackground = true;
     }
 
-    internal class SettingManager
+    internal class SettingManager : INotifyPropertyChanged
     {
         public SettingManager()
         {
@@ -36,7 +38,7 @@ namespace MonitorControl
 
         public BackdropManager.BackdropType ThemeEnum { get => m_data.Theme; }
 
-        public string Theme
+        internal string Theme
         {
             get => m_data.Theme.ToString();
             set
@@ -47,6 +49,7 @@ namespace MonitorControl
                     m_data.Theme = newValue;
                     ThemeChanged(this, m_data.Theme);
                     Save();
+                    App.Instance.Message = String.Format("Theme changed to {0}.", value);
                 }
                 catch
                 {
@@ -56,27 +59,47 @@ namespace MonitorControl
 
         private SettingData m_data;
 
-        public string DefaultProfile
+        internal string DefaultProfile
         {
-            set { m_data.DefaultProfile = value; }
-            get => m_data.DefaultProfile;
+            set
+            {
+                m_data.DefaultProfile = value;
+                Save();
+                App.Instance.Message = String.Format("Default profile changed to {0}.", value);
+            }
+            get => m_data.DefaultProfile ?? "Default";
         }
 
-        public bool Autostart
+        internal bool Autostart
         {
-            set { m_data.Autostart = value; }
+            set
+            {
+                m_data.Autostart = value;
+                Save();
+                App.Instance.Message = "Setting saved!";
+            }
             get => m_data.Autostart;
         }
 
-        public bool ReloadProfile
+        internal bool ReloadProfile
         {
-            set { m_data.ReloadProfile = value; }
+            set
+            {
+                m_data.ReloadProfile = value;
+                Save();
+                App.Instance.Message = "Setting saved!";
+            }
             get => m_data.ReloadProfile;
         }
 
-        public bool RunInBackground
+        internal bool RunInBackground
         {
-            set { m_data.RunInBackground = value; }
+            set
+            {
+                m_data.RunInBackground = value;
+                Save();
+                App.Instance.Message = "Setting saved!";
+            }
             get => m_data.RunInBackground;
         }
 
@@ -86,9 +109,10 @@ namespace MonitorControl
                 typeof(SettingData),
                 new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
             );
-            var stream = File.CreateText("settings.json");
-            ser.WriteObject(stream.BaseStream, m_data);
-            stream.Close();
+            using (var stream = File.CreateText("settings.json"))
+            {
+                ser.WriteObject(stream.BaseStream, m_data);
+            }
         }
 
         private void Load()
@@ -99,20 +123,37 @@ namespace MonitorControl
                     typeof(SettingData),
                     new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
                 );
-                var stream = File.OpenRead("settings.json");
-                try
+                using (var stream = File.OpenRead("settings.json"))
                 {
-                    m_data = (SettingData)ser.ReadObject(stream);
+                    try
+                    {
+                        m_data = (SettingData)ser.ReadObject(stream);
+                    }
+                    catch (SerializationException e)
+                    {
+                        m_data = new SettingData();
+                        Save();
+                    }
                 }
-                catch (SerializationException e)
-                {
-                    m_data = new SettingData();
-                }
-                stream.Close();
-            } else
+            }
+            else
             {
                 m_data = new SettingData();
+                Save();
             }
         }
+
+        #region PropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
     }
 }

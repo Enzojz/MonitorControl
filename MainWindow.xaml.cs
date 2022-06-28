@@ -71,7 +71,7 @@ namespace MonitorControl
 
         private void SettingSelected(object sender, Microsoft.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            this.ContentFrame.Content = null;
+            this.ContentFrame.Content = 0;
         }
     }
 }

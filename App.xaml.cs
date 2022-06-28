@@ -29,14 +29,14 @@ namespace MonitorControl
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            if (m_instance == null)
-            {
-                m_instance = new MonitorFn();
-            }
-
             if (m_setting == null)
             {
                 m_setting = new SettingManager();
+            }
+
+            if (m_instance == null)
+            {
+                m_instance = new MonitorFn();
             }
 
             m_window = new MainWindow();

@@ -8,23 +8,6 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Margin="10">
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-            <Image Source="/Assets/Square150x150Logo.scale-200.png"
-                   HorizontalAlignment="Left" VerticalAlignment="Top"
-                   Width="120"
-                   Margin="5"
-                   />
-            <StackPanel Orientation="Vertical" Margin="20, 5, 5, 5">
-                <TextBlock>
-                    <Bold>Monitor Control 2.0</Bold><LineBreak/>
-                    Created by Enzojz 2018 - 2022<LineBreak/>
-                    <LineBreak/>
-                    This application was dedicated to my second daughter.<LineBreak/>
-                    She slept alongside my computer so I developed it in order to dim my<LineBreak/>
-                    screens at night and restore the brightness in daytime.<LineBreak/>
-                    As an amateur photographer I added contrast and RGB adjustement for<LineBreak/>ease of color calibration.</TextBlock>
-            </StackPanel>
-        </StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
@@ -52,5 +35,22 @@
                 <ComboBoxItem Content="Classic"/>
             </ComboBox>
         </Grid>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+            <Image Source="/Assets/Square150x150Logo.scale-200.png"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Width="120"
+                   Margin="5"
+                   />
+            <StackPanel Orientation="Vertical" Margin="20, 5, 5, 5">
+                <TextBlock>
+                    <Bold>Monitor Control 2.0</Bold><LineBreak/>
+                    Created by Enzojz 2018 - 2022<LineBreak/>
+                    <LineBreak/>
+                    This application was dedicated to my second daughter.<LineBreak/>
+                    She slept alongside my computer so I developed it in order to dim my<LineBreak/>
+                    screens at night and restore the brightness in daytime.<LineBreak/>
+                    As an amateur photographer I added contrast and RGB adjustement for<LineBreak/>ease of color calibration.</TextBlock>
+            </StackPanel>
+        </StackPanel>
     </StackPanel>
 </Page>

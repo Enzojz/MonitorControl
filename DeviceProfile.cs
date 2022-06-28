@@ -39,7 +39,7 @@ namespace MonitorControl
         public System.Guid Guid { set; get; }
 
         [DataMember(Order = 2)]
-        public Dictionary<String, DeviceProfile> Monitors { set; get; }
+        public Dictionary<string, DeviceProfile> Monitors { set; get; }
     }
     #endregion
 }

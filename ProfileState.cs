@@ -27,9 +27,7 @@ namespace MonitorControl
         internal Visibility RemoveVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
         internal Visibility EditVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
 
-        public string Name { get; set; }
-
-        private Guid Guid;
+        public string Name { get; internal set; }
 
         private bool IsEditing;
 
@@ -101,6 +99,7 @@ namespace MonitorControl
             }
             else
                 Instance.SaveProfile(Name);
+            
             Notify();
         }
 
