@@ -380,6 +380,13 @@ namespace MonitorControl
         [DllImport("shcore.dll")]
         internal static extern uint GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
 
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern IntPtr LoadImage(IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired, uint fuLoad);
+
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, nuint wParam, nint lParam);
+
         internal static (DISPLAYCONFIG_PATH_INFO[] displayPaths, DISPLAYCONFIG_MODE_INFO[] displayModes)? GetDisplayConfigs()
         {
             if (GetDisplayConfigBufferSizes(

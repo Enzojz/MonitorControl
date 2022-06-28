@@ -9,7 +9,7 @@
     >
     <Grid x:Name="MainGrid" DataContext="{x:Bind Instance}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="44" />
+            <RowDefinition Height="44" x:Name="TitleRow"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Border x:Name="AppTitleBar"

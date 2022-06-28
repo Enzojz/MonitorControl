@@ -24,24 +24,23 @@ namespace MonitorControl
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             this.InitializeComponent();
 
-            // Check to see if customization is supported.
-            // Currently only supported on Windows 11.
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
-                this.SetTitleBar(this.AppTitleBar);      // set user ui element as titlebar
+                this.ExtendsContentIntoTitleBar = true;
+                this.SetTitleBar(this.AppTitleBar);
             }
             else
             {
-                // Title bar customization using these APIs is currently
-                // supported only on Windows 11. In other cases, hide
-                // the custom title bar element.
                 AppTitleBar.Visibility = Visibility.Collapsed;
+                TitleRow.Height = new GridLength(0);
             }
+
+            this.Title = "Monitor Control";
 
             m_backdropHelper = new BackdropManager(this);
             App.SettingManager.ThemeChanged += ThemeChanged;

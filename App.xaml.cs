@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -54,6 +55,9 @@ namespace MonitorControl
 
             var presenter = appWindow.Presenter as OverlappedPresenter;
             presenter.IsResizable = false;
+
+            var hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010);
+            WinAPI.SendMessage(hWindow, 0x0080, 0, hIcon);
 
             m_window.Activate();
         }
