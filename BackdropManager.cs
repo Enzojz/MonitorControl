@@ -20,7 +20,7 @@ namespace MonitorControl
         {
             Mica,
             Acrylic,
-            Default,
+            Classic,
         }
 
         public BackdropManager(Window window)
@@ -47,7 +47,7 @@ namespace MonitorControl
             //       call RemoveSystemBackdropTarget() on the old controller and then setup the new
             //       controller, reusing any existing m_configurationSource and Activated/Closed
             //       event handlers.
-            m_currentBackdrop = BackdropType.Default;
+            m_currentBackdrop = BackdropType.Classic;
             if (m_micaController != null)
             {
                 m_micaController.Dispose();

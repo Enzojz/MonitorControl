@@ -12,7 +12,7 @@ namespace MonitorControl
 {
     internal class ProfileState : INotifyPropertyChanged
     {
-        internal ProfileState(String name, Profile profile)
+        internal ProfileState(string name, Profile profile)
         {
             Name = name;
             Profile = profile;
@@ -27,7 +27,7 @@ namespace MonitorControl
         internal Visibility RemoveVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
         internal Visibility EditVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
 
-        internal String Name;
+        public string Name { get; set; }
 
         private Guid Guid;
 

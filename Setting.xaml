@@ -25,20 +25,32 @@
                     As an amateur photographer I added contrast and RGB adjustement for<LineBreak/>ease of color calibration.</TextBlock>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical" Margin="5">
-                <CheckBox Content="Autostart at startup"/>
-                <CheckBox Content="Run in the background"/>
-                <CheckBox Content="Reload profile at startup"/>
+                <CheckBox Content="Autostart at startup" IsChecked="{x:Bind SettingManager.Autostart, Mode=TwoWay}"/>
+                <CheckBox Content="Run in background" IsChecked="{x:Bind SettingManager.RunInBackground, Mode=TwoWay}"/>
+                <CheckBox Content="Reload profile at startup" IsChecked="{x:Bind SettingManager.ReloadProfile, Mode=TwoWay}"/>
             </StackPanel>
-            <ComboBox Header="Default profile" Margin="10">
-                <ComboBoxItem></ComboBoxItem>
+            <ComboBox Grid.Column="1" Header="Default profile" Margin="10" HorizontalAlignment="Center"
+                      ItemsSource="{x:Bind Instance.Profiles}"
+                      DisplayMemberPath="Name"
+                      SelectedValue="{x:Bind SettingManager.DefaultProfile, Mode=TwoWay}"
+                      SelectedValuePath="Name"
+                      />
+            <ComboBox Grid.Column="2" Header="Theme" Margin="10" 
+                      HorizontalAlignment="Center"
+                      SelectedValue="{x:Bind SettingManager.Theme, Mode=TwoWay}"
+                      SelectedValuePath="Content"
+                      >
+                <ComboBoxItem Content="Mica"/>
+                <ComboBoxItem Content="Acrylic"/>
+                <ComboBoxItem Content="Classic"/>
             </ComboBox>
-            <ComboBox Header="Theme" Margin="10">
-                <ComboBoxItem>Mica</ComboBoxItem>
-                <ComboBoxItem>Acrylic</ComboBoxItem>
-                <ComboBoxItem>Classic</ComboBoxItem>
-            </ComboBox>
-        </StackPanel>
+        </Grid>
     </StackPanel>
 </Page>

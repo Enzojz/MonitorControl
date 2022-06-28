@@ -34,6 +34,11 @@ namespace MonitorControl
                 m_instance = new MonitorFn();
             }
 
+            if (m_setting == null)
+            {
+                m_setting = new SettingManager();
+            }
+
             m_window = new MainWindow();
             m_window.Closed += WindowClosed;
 
@@ -61,7 +66,10 @@ namespace MonitorControl
 
         internal static MonitorFn Instance => m_instance;
 
+        internal static SettingManager SettingManager => m_setting;
+
         private Window m_window;
         private static MonitorFn m_instance;
+        private static SettingManager m_setting;
     }
 }

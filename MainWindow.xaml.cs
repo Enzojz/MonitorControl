@@ -43,9 +43,15 @@ namespace MonitorControl
             }
 
             m_backdropHelper = new BackdropManager(this);
-            m_backdropHelper.SetBackdrop(BackdropManager.BackdropType.Mica);
+            m_backdropHelper.SetBackdrop(App.SettingManager.ThemeEnum);
+
+            App.SettingManager.ThemeChanged += ThemeChanged;
         }
 
+        private void ThemeChanged(object sender, BackdropManager.BackdropType backdrop)
+        {
+            m_backdropHelper.SetBackdrop(backdrop);
+        }
 
         internal MonitorFn Instance => App.Instance;
 

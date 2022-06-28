@@ -61,10 +61,10 @@ namespace MonitorControl
             m_backdropHelper = new BackdropManager(this);
             m_backdropHelper.SetBackdrop(BackdropManager.BackdropType.Acrylic);
 
-            //var timer = new DispatcherTimer();
-            //timer.Tick += (object sender, object e) => Close();
-            //timer.Interval = new TimeSpan(0, 0, 1);
-            //timer.Start();
+            var timer = new DispatcherTimer();
+            timer.Tick += (object sender, object e) => Close();
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Start();
         }
 
         public string Label { private set; get; }

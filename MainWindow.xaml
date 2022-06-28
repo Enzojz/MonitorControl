@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d"
     >
-    <Grid Background="Transparent" DataContext="{x:Bind Instance}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{x:Bind Instance}">
         <Grid.RowDefinitions>
             <RowDefinition Height="44" />
             <RowDefinition Height="*" />
