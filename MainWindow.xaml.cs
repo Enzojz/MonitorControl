@@ -11,6 +11,7 @@ using WinRT.Interop;
 using Microsoft.UI;
 using WinRT;
 using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.Xaml.Media;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,14 +44,14 @@ namespace MonitorControl
             }
 
             m_backdropHelper = new BackdropManager(this);
-            m_backdropHelper.SetBackdrop(App.SettingManager.ThemeEnum);
-
             App.SettingManager.ThemeChanged += ThemeChanged;
+            ThemeChanged(null, App.SettingManager.ThemeEnum);
         }
 
         private void ThemeChanged(object sender, BackdropManager.BackdropType backdrop)
         {
             m_backdropHelper.SetBackdrop(backdrop);
+            MainGrid.Background = App.SettingManager.ThemeEnum == BackdropManager.BackdropType.Classic ? Application.Current.Resources["ApplicationPageBackgroundThemeBrush"] as SolidColorBrush : null;
         }
 
         internal MonitorFn Instance => App.Instance;
