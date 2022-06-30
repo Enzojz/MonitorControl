@@ -5,6 +5,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="ProcessHolder.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="MonitorIdentifier.xaml">
       <SubType>Designer</SubType>
     </Page>

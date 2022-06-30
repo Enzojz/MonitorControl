@@ -31,7 +31,6 @@ namespace MonitorControl
         }
 
         WindowsSystemDispatcherQueueHelper m_wsdqHelper;
-        BackdropType m_currentBackdrop;
         MicaController m_micaController;
         DesktopAcrylicController m_acrylicController;
         SystemBackdropConfiguration m_configurationSource;
@@ -47,7 +46,6 @@ namespace MonitorControl
             //       call RemoveSystemBackdropTarget() on the old controller and then setup the new
             //       controller, reusing any existing m_configurationSource and Activated/Closed
             //       event handlers.
-            m_currentBackdrop = BackdropType.Classic;
             if (m_micaController != null)
             {
                 m_micaController.Dispose();

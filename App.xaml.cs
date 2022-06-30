@@ -2,6 +2,7 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
+using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,6 +22,8 @@ namespace MonitorControl
         {
             System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.InitializeComponent();
+            m_holder = new ProcessHolder();
+            m_holder.Closed += HolderClosed;
         }
 
         /// <summary>
@@ -40,39 +43,39 @@ namespace MonitorControl
                 m_instance = new MonitorFn();
             }
 
-            m_window = new MainWindow();
-            m_window.Closed += WindowClosed;
+            m_trayIcon = new TrayIcon();
+            m_trayIcon.LeftButton = () =>
+            {
+                if (m_holder != null)
+                {
+                    m_holder.OpenWindow();
+                }
+            };
 
-            var hWindow = WinRT.Interop.WindowNative.GetWindowHandle(m_window);
-            var idWindow = Win32Interop.GetWindowIdFromWindow(hWindow);
-            float dpi = WinAPI.GetDpiForWindow(hWindow);
-            var dpiScaling = dpi / 96;
-            var appWindow = AppWindow.GetFromWindowId(idWindow);
-
-            int baseHeight = m_instance.Monitors.Count * 40 + 190;
-            
-            appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = (int)(900 * dpiScaling), Height = (int)((baseHeight < 380 ? 380 : baseHeight) * dpiScaling)});
-
-            var presenter = appWindow.Presenter as OverlappedPresenter;
-            presenter.IsResizable = false;
-
-            var hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010);
-            WinAPI.SendMessage(hWindow, 0x0080, 0, hIcon);
-
-            m_window.Activate();
+            m_trayIcon.RightButton = () =>
+            {
+                if (m_holder != null)
+                {
+                    m_holder.CloseWindow();
+                    m_holder.Close();
+                }
+            };
         }
 
-        private void WindowClosed(object sender, WindowEventArgs args)
+        private void HolderClosed(object sender, WindowEventArgs args)
         {
             if (m_instance != null)
                 m_instance.Dispose();
+            m_trayIcon.Dispose();
         }
 
-        internal static MonitorFn Instance => m_instance;
+        internal static MonitorFn Instance { get => m_instance; }
 
-        internal static SettingManager SettingManager => m_setting;
+        internal static SettingManager SettingManager { get => m_setting; }
 
-        private Window m_window;
+        private ProcessHolder m_holder;
+        private TrayIcon m_trayIcon;
+
         private static MonitorFn m_instance;
         private static SettingManager m_setting;
     }
