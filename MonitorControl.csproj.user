@@ -8,22 +8,22 @@
     <Page Update="ProcessHolder.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="MonitorIdentifier.xaml">
+    <Page Update="Views\MonitorIdentifier.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Home.xaml">
+    <Page Update="Views\Home.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Setting.xaml">
+    <Page Update="Views\Setting.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Profiles.xaml">
+    <Page Update="Views\Profiles.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <None Update="MainWindow.xaml">
+    <None Update="Views\MainWindow.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="MonitorTweaker.xaml">
+    <Page Update="Views\MonitorTweaker.xaml">
       <SubType>Designer</SubType>
     </Page>
     <None Update="Package.appxmanifest">

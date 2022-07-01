@@ -40,7 +40,7 @@ namespace MonitorControl
 
             if (m_instance == null)
             {
-                m_instance = new MonitorFn();
+                m_instance = new InstanceCore();
             }
 
             m_trayIcon = new TrayIcon();
@@ -69,14 +69,14 @@ namespace MonitorControl
             m_trayIcon.Dispose();
         }
 
-        internal static MonitorFn Instance { get => m_instance; }
+        internal static InstanceCore Instance { get => m_instance; }
 
         internal static SettingManager SettingManager { get => m_setting; }
 
         private ProcessHolder m_holder;
         private TrayIcon m_trayIcon;
 
-        private static MonitorFn m_instance;
+        private static InstanceCore m_instance;
         private static SettingManager m_setting;
     }
 }

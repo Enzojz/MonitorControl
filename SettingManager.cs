@@ -1,13 +1,8 @@
-﻿using Microsoft.UI.Xaml;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonitorControl
 {
@@ -33,6 +28,8 @@ namespace MonitorControl
             Load();
         }
 
+        private SettingData m_data;
+
         public delegate void BackdropEventHander(object sneder, BackdropManager.BackdropType type);
         public event BackdropEventHander ThemeChanged;
 
@@ -56,8 +53,6 @@ namespace MonitorControl
                 }
             }
         }
-
-        private SettingData m_data;
 
         internal string DefaultProfile
         {

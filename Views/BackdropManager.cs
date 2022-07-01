@@ -1,9 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using WinRT;
 using Microsoft.UI.Composition.SystemBackdrops;
-using System.Runtime.InteropServices; // For DllImport
-using System;
+using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

@@ -15,8 +15,18 @@ namespace MonitorControl
             CreateWindow();
         }
 
-        internal Action Exit;
-        internal Action ShowWindow;
+        private IntPtr m_hInstance = IntPtr.Zero;
+        private IntPtr m_classAtom = IntPtr.Zero;
+        private IntPtr m_hWindow = IntPtr.Zero;
+        private WinAPI.WNDPROC m_windowProc;
+
+
+        private IntPtr m_hMenu;
+
+        internal Action Exit { get; set; }
+        internal Action ShowWindow { get; set; }
+        
+        public const int HWND_MESSAGE = -3;
 
         protected virtual IntPtr OnWindowProc(IntPtr hWnd, WinAPI.WM msg, UIntPtr wParam, IntPtr lParam)
         {
@@ -86,8 +96,6 @@ namespace MonitorControl
             }
         }
 
-        public const int HWND_MESSAGE = -3;
-
         public void CreateWindow()
         {
             // intentionally here, prevents garbage collection
@@ -111,8 +119,8 @@ namespace MonitorControl
 
             this.m_classAtom = new IntPtr(atom);
 
-            this.WindowHandle = WinAPI.CreateWindowEx(0, this.m_classAtom, IntPtr.Zero, 0, 0, 0, 0, 0, new IntPtr(HWND_MESSAGE), IntPtr.Zero, this.m_hInstance, IntPtr.Zero);
-            if (IntPtr.Zero == this.WindowHandle)
+            this.m_hWindow = WinAPI.CreateWindowEx(0, this.m_classAtom, IntPtr.Zero, 0, 0, 0, 0, 0, new IntPtr(HWND_MESSAGE), IntPtr.Zero, this.m_hInstance, IntPtr.Zero);
+            if (IntPtr.Zero == this.m_hWindow)
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error(), "CreateWindowEx failed");
             }
@@ -133,8 +141,7 @@ namespace MonitorControl
 
             WinAPI.Shell_NotifyIcon(WinAPI.NotifyIconMessage.NIM_ADD, ref data);
         }
-
-
+        
         private void RemoveTrayIcon(IntPtr hWnd)
         {
             var data = new WinAPI.NOTIFYICONDATA
@@ -162,18 +169,18 @@ namespace MonitorControl
             uint menuItemID = WinAPI.TrackPopupMenuEx(m_hMenu,
                 WinAPI.TpmFlags.TPM_BOTTOMALIGN,
                 x, y,
-                this.WindowHandle,
+                this.m_hWindow,
                 IntPtr.Zero);
 
         }
-
+        
         public void Dispose()
         {
-            if (WindowHandle != IntPtr.Zero)
+            if (m_hWindow != IntPtr.Zero)
             {
-                WinAPI.DestroyWindow(this.WindowHandle);
+                WinAPI.DestroyWindow(this.m_hWindow);
 
-                WindowHandle = IntPtr.Zero;
+                m_hWindow = IntPtr.Zero;
             }
 
             if (m_classAtom != IntPtr.Zero)
@@ -183,12 +190,5 @@ namespace MonitorControl
             GC.SuppressFinalize(this);
         }
 
-        private IntPtr m_hInstance = IntPtr.Zero;
-        private IntPtr m_classAtom = IntPtr.Zero;
-
-        private WinAPI.WNDPROC m_windowProc;
-        public IntPtr WindowHandle { get; private set; } = IntPtr.Zero;
-
-        private IntPtr m_hMenu;
     }
 }

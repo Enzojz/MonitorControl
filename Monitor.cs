@@ -10,20 +10,6 @@ namespace MonitorControl
     delegate bool GetState(IntPtr a, out uint min, out uint current, out uint max);
     public class Monitor : INotifyPropertyChanged, IDisposable
     {
-        void retriveItem(
-            WinAPI.MC_CAP mc,
-            WinAPI.MC_CAP flag,
-            ref (bool enabled, uint current, uint min, uint range) item,
-            GetState fn)
-        {
-            item = (false, 0, 0, 0);
-            if (mc.HasFlag(flag))
-                if (fn(hMonitor, out uint min, out uint current, out uint max))
-                    item = (true, current, min, max - min);
-                else
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-        }
-
         internal Monitor(WinAPI.PHYSICAL_MONITOR m, String description, String deviceId, Vector2 topLeft, int index)
         {
             hMonitor = m.hPhysicalMonitor;
@@ -59,7 +45,19 @@ namespace MonitorControl
             f.AsParallel().ForAll(f => f());
 
         }
-
+        void retriveItem(
+            WinAPI.MC_CAP mc,
+            WinAPI.MC_CAP flag,
+            ref (bool enabled, uint current, uint min, uint range) item,
+            GetState fn)
+        {
+            item = (false, 0, 0, 0);
+            if (mc.HasFlag(flag))
+                if (fn(hMonitor, out uint min, out uint current, out uint max))
+                    item = (true, current, min, max - min);
+                else
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
 
         private uint getValue((bool enabled, uint current, uint min, uint range) item) => item.enabled ? (item.current - item.min) * 100 / item.range : 0;
         private void setValue(ref (bool enabled, uint current, uint min, uint range) item, uint value, Func<IntPtr, uint, bool> fn)

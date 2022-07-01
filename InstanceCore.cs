@@ -10,10 +10,10 @@ using Microsoft.UI.Xaml;
 
 namespace MonitorControl
 {
-    internal class MonitorFn : INotifyPropertyChanged, IDisposable
+    internal class InstanceCore : INotifyPropertyChanged, IDisposable
     {
 
-        public MonitorFn()
+        public InstanceCore()
         {
             m_timer = new DispatcherTimer();
             m_timer.Tick += (object sender, object e) => { Message = null; };

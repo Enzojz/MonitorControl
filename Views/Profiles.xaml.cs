@@ -34,7 +34,7 @@ namespace MonitorControl
 
         internal ProfileState CreateNew = new ProfileState(null, null);
 
-        internal MonitorFn Instance => App.Instance;
+        internal InstanceCore Instance => App.Instance;
 
     }
 }

@@ -27,7 +27,6 @@
     <None Remove="Load.xaml" />
     <None Remove="MonitorIdentifier.xaml" />
     <None Remove="MonitorTweaker.xaml" />
-    <None Remove="ProcessHolder.xaml" />
     <None Remove="Setting.xaml" />
   </ItemGroup>
 
@@ -54,13 +53,13 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="MonitorTweaker.xaml">
+    <Page Update="Views\MonitorTweaker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Load.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="MonitorIdentifier.xaml">
+    <Page Update="Views\MonitorIdentifier.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="ProcessHolder.xaml">
@@ -69,11 +68,11 @@
     <None Update="profile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Page Update="Home.xaml">
+    <Page Update="Views\Home.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Setting.xaml">
+    <Page Update="Views\Setting.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

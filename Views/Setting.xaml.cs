@@ -15,7 +15,7 @@ namespace MonitorControl
             this.InitializeComponent();
         }
 
-        internal MonitorFn Instance => App.Instance;
+        internal InstanceCore Instance => App.Instance;
         internal SettingManager SettingManager => App.SettingManager;
     }
 }

@@ -41,8 +41,6 @@ namespace MonitorControl
         private const int MC_SUPPORTED_COLOR_TEMPERATURE_10000K = 0x40;
         private const int MC_SUPPORTED_COLOR_TEMPERATURE_11500K = 0x80;
 
-
-
         internal enum DisplayConfigOutputTechnology : uint
         {
             Other = 0xFFFFFFFF,
@@ -312,13 +310,6 @@ namespace MonitorControl
             internal uint value;
         }
 
-        internal enum MonitorDpiType
-        {
-            MDT_EFFECTIVE_DPI = 0,
-            MDT_ANGULAR_DPI = 1,
-            MDT_RAW_DPI = 2,
-        }
-
         #endregion
 
         #region windows
@@ -342,66 +333,6 @@ namespace MonitorControl
             NIF_GUID = 0x00000020,
             NIF_REALTIME = 0x00000040,
             NIF_SHOWTIP = 0x00000080
-        }
-
-        internal enum MenuItem : uint
-        {
-            SC_SIZE = 0xF000,
-            SC_MOVE = 0xF010,
-            SC_MINIMIZE = 0xF020,
-            SC_MAXIMIZE = 0xF030,
-            SC_CLOSE = 0xF060,
-            SC_RESTORE = 0xF120,
-        }
-
-        [Flags]
-        internal enum EnableItem : uint
-        {
-            MF_INSERT = 0x00000000,
-            MF_CHANGE = 0x00000080,
-            MF_APPEND = 0x00000100,
-            MF_DELETE = 0x00000200,
-            MF_REMOVE = 0x00001000,
-            MF_BYCOMMAND = 0x00000000,
-            MF_BYPOSITION = 0x00000400,
-            MF_SEPARATOR = 0x00000800,
-            MF_ENABLED = 0x00000000,
-            MF_GRAYED = 0x00000001,
-            MF_DISABLED = 0x00000002,
-            MF_UNCHECKED = 0x00000000,
-            MF_CHECKED = 0x00000008,
-            MF_USECHECKBITMAPS = 0x00000200,
-            MF_STRING = 0x00000000,
-            MF_BITMAP = 0x00000004,
-            MF_OWNERDRAW = 0x00000100,
-            MF_POPUP = 0x00000010,
-            MF_MENUBARBREAK = 0x00000020,
-            MF_MENUBREAK = 0x00000040,
-            MF_UNHILITE = 0x00000000,
-            MF_HILITE = 0x00000080,
-            MF_DEFAULT = 0x00001000,
-            MF_SYSMENU = 0x00002000,
-            MF_HELP = 0x00004000,
-            MF_RIGHTJUSTIFY = 0x00004000,
-            MF_MOUSESELECT = 0x00008000,
-            MF_END = 0x00000080,  /* Obsolete -- only used by old RES files */
-            MFT_STRING = MF_STRING,
-            MFT_BITMAP = MF_BITMAP,
-            MFT_MENUBARBREAK = MF_MENUBARBREAK,
-            MFT_MENUBREAK = MF_MENUBREAK,
-            MFT_OWNERDRAW = MF_OWNERDRAW,
-            MFT_RADIOCHECK = 0x00000200,
-            MFT_SEPARATOR = MF_SEPARATOR,
-            MFT_RIGHTORDER = 0x00002000,
-            MFT_RIGHTJUSTIFY = MF_RIGHTJUSTIFY,
-            MFS_GRAYED = 0x00000003,
-            MFS_DISABLED = MFS_GRAYED,
-            MFS_CHECKED = MF_CHECKED,
-            MFS_HILITE = MF_HILITE,
-            MFS_ENABLED = MF_ENABLED,
-            MFS_UNCHECKED = MF_UNCHECKED,
-            MFS_UNHILITE = MF_UNHILITE,
-            MFS_DEFAULT = MF_DEFAULT
         }
 
         internal enum WM : uint
@@ -707,8 +638,16 @@ namespace MonitorControl
             MF_BITMAP = 0x00000004,
             MF_CHECKED = 0x00000008,
             MF_DISABLED = 0x00000002,
+            MF_INSERT = 0x00000000,
+            MF_CHANGE = 0x00000080,
+            MF_APPEND = 0x00000100,
+            MF_DELETE = 0x00000200,
+            MF_REMOVE = 0x00001000,
+            MF_BYCOMMAND = 0x00000000,
+            MF_BYPOSITION = 0x00000400,
             MF_ENABLED = 0x00000000,
             MF_GRAYED = 0x00000001,
+            MF_USECHECKBITMAPS = 0x00000200,
             MF_MENUBARBREAK = 0x00000020,
             MF_MENUBREAK = 0x00000040,
             MF_OWNERDRAW = 0x00000100,
@@ -716,6 +655,14 @@ namespace MonitorControl
             MF_SEPARATOR = 0x00000800,
             MF_STRING = 0x00000000,
             MF_UNCHECKED = 0x00000000,
+            MF_UNHILITE = 0x00000000,
+            MF_HILITE = 0x00000080,
+            MF_DEFAULT = 0x00001000,
+            MF_SYSMENU = 0x00002000,
+            MF_HELP = 0x00004000,
+            MF_RIGHTJUSTIFY = 0x00004000,
+            MF_MOUSESELECT = 0x00008000,
+            MF_END = 0x00000080  /* Obsolete -- only used by old RES files */
         }
 
         internal delegate IntPtr WNDPROC(IntPtr hWnd, WM uMsg, UIntPtr wParam, IntPtr lParam);
@@ -804,9 +751,6 @@ namespace MonitorControl
         [DllImport("dxva2.dll", SetLastError = true)]
         internal extern static bool SetMonitorRedGreenOrBlueGain(IntPtr hMonitor, MC_GAIN_TYPE gtGainType, uint dwNewGain);
 
-        [DllImport("shcore.dll")]
-        internal static extern uint GetDpiForMonitor(IntPtr hMonitor, MonitorDpiType dpiType, out uint dpiX, out uint dpiY);
-
         #endregion
 
         #region windows
@@ -837,12 +781,6 @@ namespace MonitorControl
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr CreateWindowEx(uint dwExStyle, IntPtr lpClassName, IntPtr lpWindowName, uint dwStyle,
            int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
-
-        [DllImport("user32.dll")]
-        internal static extern bool EnableMenuItem(IntPtr hMenu, MenuItem uIDEnableItem, EnableItem uEnable);
-
-        [DllImport("user32.dll")]
-        internal static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
         [DllImport("user32.dll")]
         internal static extern IntPtr CreatePopupMenu();

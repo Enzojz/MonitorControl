@@ -71,7 +71,7 @@ namespace MonitorControl
             MainGrid.Background = App.SettingManager.ThemeEnum == BackdropManager.BackdropType.Classic ? Application.Current.Resources["ApplicationPageBackgroundThemeBrush"] as SolidColorBrush : null;
         }
 
-        internal MonitorFn Instance => App.Instance;
+        internal InstanceCore Instance => App.Instance;
 
         private BackdropManager m_backdropHelper;
 

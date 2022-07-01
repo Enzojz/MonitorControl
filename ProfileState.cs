@@ -1,12 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonitorControl
 {
@@ -32,7 +27,6 @@ namespace MonitorControl
         private bool IsEditing;
 
         private bool IsActive;
-
 
         public void PointerEntered(object sender, PointerRoutedEventArgs e)
         {
@@ -103,7 +97,7 @@ namespace MonitorControl
             Notify();
         }
 
-        private MonitorFn Instance => App.Instance;
+        private InstanceCore Instance => App.Instance;
         private void Notify()
         {
             OnPropertyChanged("TextBlockVisibility");

@@ -18,7 +18,7 @@ namespace MonitorControl
                 return Monitor;
             if (item is List<ProfileState>)
                 return Profile;
-            else if (item is int && ((int)item == 0))
+            else if (item is int && (int)item == 0)
                 return Setting;
             else
                 return Home;
