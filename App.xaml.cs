@@ -44,7 +44,7 @@ namespace MonitorControl
             }
 
             m_trayIcon = new TrayIcon();
-            m_trayIcon.LeftButton = () =>
+            m_trayIcon.ShowWindow = () =>
             {
                 if (m_holder != null)
                 {
@@ -52,7 +52,7 @@ namespace MonitorControl
                 }
             };
 
-            m_trayIcon.RightButton = () =>
+            m_trayIcon.Exit = () =>
             {
                 if (m_holder != null)
                 {

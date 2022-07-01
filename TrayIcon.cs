@@ -15,8 +15,8 @@ namespace MonitorControl
             CreateWindow();
         }
 
-        internal Action LeftButton;
-        internal Action RightButton;
+        internal Action Exit;
+        internal Action ShowWindow;
 
         protected virtual IntPtr OnWindowProc(IntPtr hWnd, WinAPI.WM msg, UIntPtr wParam, IntPtr lParam)
         {
@@ -35,10 +35,27 @@ namespace MonitorControl
                     }
                 case WinAPI.WM.WM_COMMAND:
                     {
-                        return IntPtr.Zero;
-                    }
-                case WinAPI.WM.WM_MENUCOMMAND:
-                    {
+                        var command = (int)wParam;
+                        if (command == 0)
+                        {
+                            if (Exit != null)
+                            {
+                                Exit();
+
+                            }
+                        } else if (command == 1)
+                        {
+                            if (ShowWindow != null)
+                            {
+                                ShowWindow();
+
+                            }
+                        } else if (command > 99)
+                        {
+                            var order = command - 100;
+                            var profile = App.Instance.Profiles[order];
+                            App.Instance.LoadProfile(profile.Name);
+                        }
                         return IntPtr.Zero;
                     }
                 case WinAPI.WM.WM_USER:
@@ -47,33 +64,18 @@ namespace MonitorControl
                         {
                             case WinAPI.WM.WM_RBUTTONDOWN:
                                 {
-                                    if (RightButton != null)
-                                    {
-                                        WinAPI.Point pt;
-                                        WinAPI.GetCursorPos(out pt);
-                                        PopupMenu(pt.x, pt.y);
-                                    }
+                                    WinAPI.Point pt;
+                                    WinAPI.GetCursorPos(out pt);
+                                    PopupMenu(pt.x, pt.y);
                                     return IntPtr.Zero;
                                 }
                             case WinAPI.WM.WM_LBUTTONDOWN:
                                 {
-                                    if (LeftButton != null)
+                                    if (ShowWindow != null)
                                     {
-                                        LeftButton();
+                                        ShowWindow();
 
                                     }
-                                    return IntPtr.Zero;
-                                }
-                            case WinAPI.WM.WM_COMMAND:
-                                {
-                                    return IntPtr.Zero;
-                                }
-                            case WinAPI.WM.WM_MENUCOMMAND:
-                                {
-                                    return IntPtr.Zero;
-                                }
-                            case WinAPI.WM.WM_CONTEXTMENU:
-                                {
                                     return IntPtr.Zero;
                                 }
                             default:
@@ -158,7 +160,7 @@ namespace MonitorControl
             WinAPI.AppendMenuA(m_hMenu, WinAPI.MenuFlags.MF_STRING, (UIntPtr)0, WinAPI.StringToByteArray("Exit", Encoding.Default));
             
             uint menuItemID = WinAPI.TrackPopupMenuEx(m_hMenu,
-                WinAPI.TpmFlags.TPM_BOTTOMALIGN | WinAPI.TpmFlags.TPM_RETURNCMD,
+                WinAPI.TpmFlags.TPM_BOTTOMALIGN,
                 x, y,
                 this.WindowHandle,
                 IntPtr.Zero);
