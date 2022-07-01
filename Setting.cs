@@ -21,9 +21,9 @@ namespace MonitorControl
         internal bool RunInBackground = true;
     }
 
-    internal class SettingManager : INotifyPropertyChanged
+    internal class Setting : INotifyPropertyChanged
     {
-        public SettingManager()
+        public Setting()
         {
             Load();
         }

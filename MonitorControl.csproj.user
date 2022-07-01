@@ -14,7 +14,7 @@
     <Page Update="Views\Home.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Setting.xaml">
+    <Page Update="Views\Settings.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\Profiles.xaml">

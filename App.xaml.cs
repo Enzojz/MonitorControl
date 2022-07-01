@@ -35,7 +35,7 @@ namespace MonitorControl
         {
             if (m_setting == null)
             {
-                m_setting = new SettingManager();
+                m_setting = new Setting();
             }
 
             if (m_instance == null)
@@ -71,12 +71,12 @@ namespace MonitorControl
 
         internal static InstanceCore Instance { get => m_instance; }
 
-        internal static SettingManager SettingManager { get => m_setting; }
+        internal static Setting SettingManager { get => m_setting; }
 
         private ProcessHolder m_holder;
         private TrayIcon m_trayIcon;
 
         private static InstanceCore m_instance;
-        private static SettingManager m_setting;
+        private static Setting m_setting;
     }
 }

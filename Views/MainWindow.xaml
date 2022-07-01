@@ -73,7 +73,7 @@
                         </local:MonitorControlDataTemplateSelector.Profile>
                         <local:MonitorControlDataTemplateSelector.Setting>
                             <DataTemplate>
-                                <local:Setting/>
+                                <local:Settings/>
                             </DataTemplate>
                         </local:MonitorControlDataTemplateSelector.Setting>
                         <local:MonitorControlDataTemplateSelector.Home>

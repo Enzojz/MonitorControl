@@ -72,7 +72,7 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\Setting.xaml">
+    <Page Update="Views\Settings.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
