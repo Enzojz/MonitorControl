@@ -5,6 +5,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="PopupMenu.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="ProcessHolder.xaml">
       <SubType>Designer</SubType>
     </Page>

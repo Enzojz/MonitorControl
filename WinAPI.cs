@@ -842,6 +842,10 @@ namespace MonitorControl
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        internal static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, uint wFlags);
+
+
         #endregion
 
         #endregion

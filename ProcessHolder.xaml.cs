@@ -27,8 +27,45 @@ namespace MonitorControl
     {
         private IntPtr m_hWnd;
         private IntPtr m_wndProc;
-        private IntPtr m_hMenu;
         private MainWindow m_window;
+        private PopupMenu m_popupMenu;
+
+        public PopupMenuItem[] MenuItems
+        {
+            get
+            {
+                return App.Instance.Profiles
+                    .Select(profile => new PopupMenuItem() {
+                        Text = profile.Name, 
+                        IsChecked = App.Instance.CurrentProfile != null && App.Instance.CurrentProfile.Profile.Guid == profile.Profile.Guid,
+                        Callback = () => { 
+                            ClosePopup(); 
+                            App.Instance.LoadProfile(profile.Name); 
+                        } 
+                    })
+                    .Union(
+                    new PopupMenuItem[]
+                    {
+                        new PopupMenuItem(),
+                        new PopupMenuItem() { 
+                            Text = "Show Monitor Control", 
+                            Callback = () => { 
+                                ClosePopup(); 
+                                OpenMainWindow(); 
+                            } 
+                        },
+                        new PopupMenuItem() { 
+                            Text = "Exit", 
+                            Callback = () => { 
+                                CloseMainWindow(); 
+                                ClosePopup(); 
+                                Close(); 
+                            } 
+                        }
+                    }
+                    ).ToArray();
+            }
+        }
 
         public ProcessHolder()
         {
@@ -38,18 +75,13 @@ namespace MonitorControl
             this.Closed += OnClosed;
 
             SetTrayIcon();
-            m_hMenu = WinAPI.CreatePopupMenu();
-
-            WinAPI.AppendMenuA(m_hMenu, WinAPI.MenuFlags.MF_STRING, (UIntPtr)1, WinAPI.StringToByteArray("Show Monitor Control", Encoding.Default));
-            WinAPI.AppendMenuA(m_hMenu, WinAPI.MenuFlags.MF_STRING, (UIntPtr)0, WinAPI.StringToByteArray("Exit", Encoding.Default));
-            WinAPI.AppendMenuA(m_hMenu, WinAPI.MenuFlags.MF_SEPARATOR, (UIntPtr)2, null);
-
-            for (int i = 0; i < App.Instance.Profiles.Count; i++)
-            {
-                WinAPI.AppendMenuA(m_hMenu, WinAPI.MenuFlags.MF_STRING, (UIntPtr)(i + 100), WinAPI.StringToByteArray(App.Instance.Profiles[i].Name, Encoding.Default));
-            }
 
             m_wndProc = SetWndProc(m_hWnd, this.OnWindowProc);
+
+            if (!App.SettingManager.RunInBackground)
+            {
+                OpenMainWindow();
+            }
         }
 
         private void OnClosed(object sender, WindowEventArgs args)
@@ -62,42 +94,18 @@ namespace MonitorControl
         {
             switch (msg)
             {
-                case WinAPI.WM.WM_COMMAND:
-                    {
-                        var command = (int)wParam;
-                        if (command == 0)
-                        {
-                            CloseMainWindow();
-                            this.Close();
-                        }
-                        else if (command == 1)
-                        {
-                            OpenMainWindow();
-                        }
-                        else if (command > 99)
-                        {
-                            var order = command - 100;
-                            var profile = App.Instance.Profiles[order];
-                            App.Instance.LoadProfile(profile.Name);
-                        }
-                        return IntPtr.Zero;
-                    }
                 case WinAPI.WM.WM_USER:
                     {
                         switch ((WinAPI.WM)lParam)
                         {
                             case WinAPI.WM.WM_RBUTTONDOWN:
-                                {
-                                    WinAPI.Point pt;
-                                    WinAPI.GetCursorPos(out pt);
-                                    PopupMenu(pt.x, pt.y);
-                                    return IntPtr.Zero;
-                                }
+                                WinAPI.Point pt;
+                                WinAPI.GetCursorPos(out pt);
+                                OpenPopup(pt.x, pt.y);
+                                return IntPtr.Zero;
                             case WinAPI.WM.WM_LBUTTONDOWN:
-                                {
-                                    OpenMainWindow();
-                                    return IntPtr.Zero;
-                                }
+                                OpenMainWindow();
+                                return IntPtr.Zero;
                             default:
                                 return WinAPI.CallWindowProc(m_wndProc, hWnd, msg, wParam, lParam);
                         }
@@ -107,14 +115,23 @@ namespace MonitorControl
             }
         }
 
-        private void PopupMenu(int x, int y)
+        private void OpenPopup(int x, int y)
         {
-            WinAPI.TrackPopupMenuEx(m_hMenu,
-                WinAPI.TpmFlags.TPM_BOTTOMALIGN,
-                x, y,
-                this.m_hWnd,
-                IntPtr.Zero);
+            if (m_popupMenu == null)
+            {
+                m_popupMenu = new PopupMenu(MenuItems);
+                m_popupMenu.BeforeActivated(x, y);
+                m_popupMenu.Activate();
+            }
+        }
 
+        private void ClosePopup()
+        {
+            if (m_popupMenu != null)
+            {
+                m_popupMenu.Close();
+                m_popupMenu = null;
+            }
         }
 
         internal void OpenMainWindow()

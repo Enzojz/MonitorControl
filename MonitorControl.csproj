@@ -27,6 +27,7 @@
     <None Remove="Load.xaml" />
     <None Remove="MonitorIdentifier.xaml" />
     <None Remove="MonitorTweaker.xaml" />
+    <None Remove="PopupMenu.xaml" />
     <None Remove="Setting.xaml" />
   </ItemGroup>
 
@@ -63,6 +64,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="ProcessHolder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="PopupMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="profile.json">
