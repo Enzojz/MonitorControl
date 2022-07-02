@@ -42,31 +42,13 @@ namespace MonitorControl
             {
                 m_instance = new InstanceCore();
             }
-
-            m_trayIcon = new TrayIcon();
-            m_trayIcon.ShowWindow = () =>
-            {
-                if (m_holder != null)
-                {
-                    m_holder.OpenWindow();
-                }
-            };
-
-            m_trayIcon.Exit = () =>
-            {
-                if (m_holder != null)
-                {
-                    m_holder.CloseWindow();
-                    m_holder.Close();
-                }
-            };
         }
 
         private void HolderClosed(object sender, WindowEventArgs args)
         {
             if (m_instance != null)
                 m_instance.Dispose();
-            m_trayIcon.Dispose();
+            //m_trayIcon.Dispose();
         }
 
         internal static InstanceCore Instance { get => m_instance; }
@@ -74,7 +56,6 @@ namespace MonitorControl
         internal static Setting SettingManager { get => m_setting; }
 
         private ProcessHolder m_holder;
-        private TrayIcon m_trayIcon;
 
         private static InstanceCore m_instance;
         private static Setting m_setting;

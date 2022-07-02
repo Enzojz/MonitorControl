@@ -335,6 +335,10 @@ namespace MonitorControl
             NIF_SHOWTIP = 0x00000080
         }
 
+        internal delegate IntPtr WndProcDelegate(IntPtr hwnd, WinAPI.WM message, IntPtr wParam, IntPtr lParam);
+        
+        internal const int GWLP_WNDPROC = -4;
+
         internal enum WM : uint
         {
             WM_NULL = 0x0000,
@@ -688,6 +692,37 @@ namespace MonitorControl
             internal IntPtr hIconSm;
         }
 
+        [Flags]
+        internal enum MIIM
+        {
+            BITMAP = 0x00000080,
+            CHECKMARKS = 0x00000008,
+            DATA = 0x00000020,
+            FTYPE = 0x00000100,
+            ID = 0x00000002,
+            STATE = 0x00000001,
+            STRING = 0x00000040,
+            SUBMENU = 0x00000004,
+            TYPE = 0x00000010
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        internal class MENUITEMINFO
+        {
+            public int cbSize = Marshal.SizeOf(typeof(MENUITEMINFO));
+            public MIIM fMask;
+            public uint fType;
+            public uint fState;
+            public uint wID;
+            public IntPtr hSubMenu;
+            public IntPtr hbmpChecked;
+            public IntPtr hbmpUnchecked;
+            public IntPtr dwItemData;
+            public string dwTypeData = null;
+            public uint cch; // length of dwTypeData
+            public IntPtr hbmpItem;
+        }
+
         #endregion
 
         #endregion
@@ -791,12 +826,21 @@ namespace MonitorControl
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern bool AppendMenuA(IntPtr hMenu, MenuFlags uFlags, UIntPtr uIDNewItem, byte[] lpNewItem);
 
-        [DllImport("coredll.dll", SetLastError = true)]
-        internal static extern uint DestroyMenu(IntPtr hMenu);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern bool InsertMenuItemA(IntPtr hMenu, uint item, bool fByPosition, MENUITEMINFO lpmi);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool DestroyMenu(IntPtr hMenu);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetCursorPos(out Point point);
+        
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam);
 
         #endregion
 
