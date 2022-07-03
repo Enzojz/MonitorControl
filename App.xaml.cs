@@ -20,7 +20,7 @@ namespace MonitorControl
         /// </summary>
         public App()
         {
-            System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.InitializeComponent();
             m_trayIcon = new TrayIcon();
 
@@ -31,7 +31,6 @@ namespace MonitorControl
             
             m_trayIcon.OpenWindow += OpenWindow;
             m_trayIcon.PopupMenu += m_popupMenu.SetPosition;
-
         }
 
         /// <summary>
@@ -52,13 +51,6 @@ namespace MonitorControl
             }
         }
 
-        private void HolderClosed(object sender, WindowEventArgs args)
-        {
-            if (m_instance != null)
-                m_instance.Dispose();
-            m_trayIcon.Dispose();
-        }
-
         internal void OpenWindow()
         {
             if (m_window == null)
@@ -66,14 +58,6 @@ namespace MonitorControl
                 m_window = new MainWindow();
                 m_window.Closed += MainWindowClosed;
                 m_window.Activate();
-            }
-        }
-
-        internal void CloseWindow()
-        {
-            if (m_window != null)
-            {
-                m_window.Close();
             }
         }
 
@@ -87,18 +71,14 @@ namespace MonitorControl
             }
         }
 
-        private void ClosePopup()
-        {
-            if (m_popupMenu != null)
-            {
-                m_popupMenu.Hide();
-            }
-        }
-
         internal void ExitApplication()
         {
             if (m_window != null)
                 m_window.Close();
+
+            if (m_instance != null)
+                m_instance.Dispose();
+
             m_trayIcon.Dispose();
             m_popupMenu.Close();
         }

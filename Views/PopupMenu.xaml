@@ -15,7 +15,7 @@
             <local:PopupMenuDataTemplateSelector>
                 <local:PopupMenuDataTemplateSelector.Item>
                     <DataTemplate x:DataType="local:PopupMenuItem">
-                        <ToggleMenuFlyoutItem Text="{x:Bind Text}" Click="{x:Bind Clicked}" IsChecked="{x:Bind IsChecked}"/>
+                        <ToggleMenuFlyoutItem Text="{x:Bind Text}" Click="{x:Bind Clicked}" IsChecked="{x:Bind IsChecked, Mode=OneWay}"/>
                     </DataTemplate>
                 </local:PopupMenuDataTemplateSelector.Item>
                 <local:PopupMenuDataTemplateSelector.Seperator>
