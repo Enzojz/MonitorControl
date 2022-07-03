@@ -31,7 +31,7 @@ namespace MonitorControl
             presenter.IsResizable = false;
             presenter.SetBorderAndTitleBar(false, false);
 
-            WinAPI.SetWindowLongPtr(m_hWindow, -20, (IntPtr)WinAPI.WS_EX.WS_EX_TOOLWINDOW));
+            WinAPI.SetWindowLongPtr(m_hWindow, -20, (IntPtr)WinAPI.WS_EX.WS_EX_TOOLWINDOW);
 
             m_backdropHelper = new BackdropManager(this);
             App.SettingManager.ThemeChanged += ThemeChanged;
