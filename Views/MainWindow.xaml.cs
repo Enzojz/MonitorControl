@@ -41,14 +41,7 @@ namespace MonitorControl
 
             this.Title = "Monitor Control";
 
-            m_backdropHelper = new BackdropManager(this);
-            App.SettingManager.ThemeChanged += ThemeChanged;
-            ThemeChanged(null, App.SettingManager.ThemeEnum);
-        }
-
-        internal static void BeforeActivated(MainWindow instance)
-        {
-            var hWindow = WinRT.Interop.WindowNative.GetWindowHandle(instance);
+            var hWindow = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var idWindow = Win32Interop.GetWindowIdFromWindow(hWindow);
             float dpi = WinAPI.GetDpiForWindow(hWindow);
             var dpiScaling = dpi / 96;
@@ -63,6 +56,10 @@ namespace MonitorControl
 
             var hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010);
             WinAPI.SendMessage(hWindow, 0x0080, 0, hIcon);
+
+            m_backdropHelper = new BackdropManager(this);
+            App.SettingManager.ThemeChanged += ThemeChanged;
+            ThemeChanged(null, App.SettingManager.ThemeEnum);
         }
 
         private void ThemeChanged(object sender, BackdropManager.BackdropType backdrop)

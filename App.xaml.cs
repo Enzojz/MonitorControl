@@ -22,8 +22,16 @@ namespace MonitorControl
         {
             System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.InitializeComponent();
-            m_holder = new ProcessHolder();
-            m_holder.Closed += HolderClosed;
+            m_trayIcon = new TrayIcon();
+
+            m_popupMenu = new PopupMenu();
+
+            m_popupMenu.OpenWindow += OpenWindow;
+            m_popupMenu.ExitApplication += ExitApplication;
+            
+            m_trayIcon.OpenWindow += OpenWindow;
+            m_trayIcon.PopupMenu += m_popupMenu.SetPosition;
+
         }
 
         /// <summary>
@@ -48,14 +56,60 @@ namespace MonitorControl
         {
             if (m_instance != null)
                 m_instance.Dispose();
-            //m_trayIcon.Dispose();
+            m_trayIcon.Dispose();
+        }
+
+        internal void OpenWindow()
+        {
+            if (m_window == null)
+            {
+                m_window = new MainWindow();
+                m_window.Closed += MainWindowClosed;
+                m_window.Activate();
+            }
+        }
+
+        internal void CloseWindow()
+        {
+            if (m_window != null)
+            {
+                m_window.Close();
+            }
+        }
+
+        private void MainWindowClosed(object sender, WindowEventArgs args)
+        {
+            m_window.Closed -= MainWindowClosed;
+            m_window = null;
+            if (!SettingManager.RunInBackground)
+            {
+                ExitApplication();
+            }
+        }
+
+        private void ClosePopup()
+        {
+            if (m_popupMenu != null)
+            {
+                m_popupMenu.Hide();
+            }
+        }
+
+        internal void ExitApplication()
+        {
+            if (m_window != null)
+                m_window.Close();
+            m_trayIcon.Dispose();
+            m_popupMenu.Close();
         }
 
         internal static InstanceCore Instance { get => m_instance; }
 
         internal static Setting SettingManager { get => m_setting; }
 
-        private ProcessHolder m_holder;
+        private TrayIcon m_trayIcon;
+        private MainWindow m_window;
+        private PopupMenu m_popupMenu;
 
         private static InstanceCore m_instance;
         private static Setting m_setting;

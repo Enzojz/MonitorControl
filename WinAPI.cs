@@ -336,7 +336,7 @@ namespace MonitorControl
         }
 
         internal delegate IntPtr WndProcDelegate(IntPtr hwnd, WinAPI.WM message, IntPtr wParam, IntPtr lParam);
-        
+
         internal const int GWLP_WNDPROC = -4;
 
         internal enum WM : uint
@@ -723,6 +723,58 @@ namespace MonitorControl
             public IntPtr hbmpItem;
         }
 
+        [Flags]
+        internal enum WS : long
+        {
+            WS_BORDER = 0x00800000L,
+            WS_CAPTION = 0x00C00000L,
+            WS_CHILD = 0x40000000L,
+            WS_CHILDWINDOW = 0x40000000L,
+            WS_CLIPCHILDREN = 0x02000000L,
+            WS_CLIPSIBLINGS = 0x04000000L,
+            WS_DISABLED = 0x08000000L,
+            WS_DLGFRAME = 0x00400000L,
+            WS_GROUP = 0x00020000L,
+            WS_HSCROLL = 0x00100000L,
+            WS_ICONIC = 0x20000000L,
+            WS_MAXIMIZE = 0x01000000L,
+            WS_MAXIMIZEBOX = 0x00010000L,
+            WS_MINIMIZE = 0x20000000L,
+            WS_MINIMIZEBOX = 0x00020000L,
+            WS_OVERLAPPED = 0x00000000L,
+            WS_OVERLAPPEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX),
+            WS_POPUP = 0x80000000L,
+            WS_POPUPWINDOW = (WS_POPUP | WS_BORDER | WS_SYSMENU),
+            WS_SIZEBOX = 0x00040000L,
+            WS_SYSMENU = 0x00080000L,
+            WS_TABSTOP = 0x00010000L,
+            WS_THICKFRAME = 0x00040000L,
+            WS_TILED = 0x00000000L,
+            WS_TILEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX),
+            WS_VISIBLE = 0x10000000L,
+            WS_VSCROLL = 0x00200000L
+        }
+
+        [Flags]
+        internal enum CmdShow : int
+        {
+            SW_HIDE = 0,
+            SW_NORMAL = 1,
+            SW_SHOWNORMAL = 1,
+            SW_SHOWMINIMIZED = 2,
+            SW_MAXIMIZE = 3,
+            SW_SHOWMAXIMIZED = 3,
+            SW_SHOWNOACTIVATE = 4,
+            SW_SHOW = 5,
+            SW_MINIMIZE = 6,
+            SW_SHOWMINNOACTIVE = 7,
+            SW_SHOWNA = 8,
+            SW_RESTORE = 9,
+            SW_SHOWDEFAULT = 10,
+            SW_FORCEMINIMIZE = 11
+        }
+
+
         #endregion
 
         #endregion
@@ -821,8 +873,8 @@ namespace MonitorControl
         internal static extern IntPtr CreatePopupMenu();
 
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern uint TrackPopupMenuEx(IntPtr hMenu, TpmFlags uFlags, int x, int y, IntPtr hWnd, IntPtr tpmParams); 
-        
+        internal static extern uint TrackPopupMenuEx(IntPtr hMenu, TpmFlags uFlags, int x, int y, IntPtr hWnd, IntPtr tpmParams);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern bool AppendMenuA(IntPtr hMenu, MenuFlags uFlags, UIntPtr uIDNewItem, byte[] lpNewItem);
 
@@ -835,15 +887,21 @@ namespace MonitorControl
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetCursorPos(out Point point);
-        
+
         [DllImport("user32.dll")]
         internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr GetWindowLongPtrA(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         internal static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, uint wFlags);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        internal static extern IntPtr ShowWindow(IntPtr hWnd, CmdShow nCmdShow);
 
 
         #endregion

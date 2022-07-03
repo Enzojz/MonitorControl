@@ -140,8 +140,11 @@ namespace MonitorControl
                 m_acrylicController.Dispose();
                 m_acrylicController = null;
             }
-            m_window.Activated -= WindowActivated;
-            m_window = null;
+            if (m_window != null)
+            {
+                m_window.Activated -= WindowActivated;
+                m_window = null;
+            }
             m_configurationSource = null;
         }
 

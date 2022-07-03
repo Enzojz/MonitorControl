@@ -63,10 +63,7 @@
     <Page Update="Views\MonitorIdentifier.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="ProcessHolder.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="PopupMenu.xaml">
+    <Page Update="Views\PopupMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="profile.json">
