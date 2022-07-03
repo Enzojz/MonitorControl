@@ -3,6 +3,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 
@@ -36,11 +37,26 @@ namespace MonitorControl
             m_backdropHelper = new BackdropManager(this);
             App.SettingManager.ThemeChanged += ThemeChanged;
             ThemeChanged(null, App.SettingManager.ThemeEnum);
+
+            m_wndProc = this.WindowProc;
+
+            SetTrayIcon();
+            SetWndProc();
+
+            Closed += OnClosed;
+        }
+
+        private void OnClosed(object sender, WindowEventArgs args)
+        {
+            RemoveTrayIcon();
         }
 
         private IntPtr m_hWindow;
         private Rect m_rect;
         private BackdropManager m_backdropHelper;
+
+        private IntPtr m_wndProcLegacy;
+        private WinAPI.WNDPROC m_wndProc;
 
         internal Action OpenWindow;
         internal Action ExitApplication;
@@ -63,9 +79,66 @@ namespace MonitorControl
         {
             WinAPI.SetWindowPos(m_hWindow, 1, (int)m_rect.X, (int)m_rect.Y, (int)m_rect.Width, (int)m_rect.Height, 0x0080);
         }
+
         private void ThemeChanged(object sender, BackdropManager.BackdropType backdrop)
         {
             m_backdropHelper.SetBackdrop(backdrop);
+        }
+
+        private IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam)
+        {
+            switch (msg)
+            {
+                case WinAPI.WM.WM_USER:
+                    switch ((WinAPI.WM)lParam)
+                    {
+                        case WinAPI.WM.WM_RBUTTONDOWN:
+                            WinAPI.Point pt;
+                            WinAPI.GetCursorPos(out pt);
+                            SetPosition(pt.x, pt.y);
+                            break;
+                        case WinAPI.WM.WM_LBUTTONDOWN:
+                            OpenWindow();
+                            break;;
+                    }
+                    break;
+            }
+            return WinAPI.CallWindowProc(m_wndProcLegacy, hWnd, msg, wParam, lParam);
+        }
+
+        private void SetWndProc()
+        {
+            // Thanks to https://www.travelneil.com/wndproc-in-uwp.html so that I avoid to create a raw window
+            m_wndProcLegacy = WinAPI.SetWindowLongPtr(m_hWindow, WinAPI.GWLP_WNDPROC, m_wndProc);
+        }
+
+
+        private void SetTrayIcon()
+        {
+
+            var data = new WinAPI.NOTIFYICONDATA
+            {
+                cbSize = Marshal.SizeOf<WinAPI.NOTIFYICONDATA>(),
+                hWnd = m_hWindow,
+                uFlags = WinAPI.NotifyFlags.NIF_ICON | WinAPI.NotifyFlags.NIF_MESSAGE,
+                uID = 1,
+                hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010),
+                uCallbackMessage = WinAPI.WM.WM_USER,
+            };
+
+            WinAPI.Shell_NotifyIcon(WinAPI.NotifyIconMessage.NIM_ADD, ref data);
+        }
+
+        private void RemoveTrayIcon()
+        {
+            var data = new WinAPI.NOTIFYICONDATA
+            {
+                cbSize = Marshal.SizeOf<WinAPI.NOTIFYICONDATA>(),
+                hWnd = m_hWindow,
+                uID = 1
+            };
+
+            WinAPI.Shell_NotifyIcon(WinAPI.NotifyIconMessage.NIM_DELETE, ref data);
         }
 
         public PopupMenuItem[] MenuItems
@@ -77,7 +150,8 @@ namespace MonitorControl
                     {
                         Text = profile.Name,
                         IsChecked = App.Instance.CurrentProfile != null && App.Instance.CurrentProfile.Profile.Guid == profile.Profile.Guid,
-                        Callback = () => {
+                        Callback = () =>
+                        {
                             Hide();
                             App.Instance.LoadProfile(profile.Name);
                         }

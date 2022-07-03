@@ -22,15 +22,11 @@ namespace MonitorControl
         {
             Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.InitializeComponent();
-            m_trayIcon = new TrayIcon();
 
             m_popupMenu = new PopupMenu();
 
             m_popupMenu.OpenWindow += OpenWindow;
             m_popupMenu.ExitApplication += ExitApplication;
-            
-            m_trayIcon.OpenWindow += OpenWindow;
-            m_trayIcon.PopupMenu += m_popupMenu.SetPosition;
         }
 
         /// <summary>
@@ -79,7 +75,6 @@ namespace MonitorControl
             if (m_instance != null)
                 m_instance.Dispose();
 
-            m_trayIcon.Dispose();
             m_popupMenu.Close();
         }
 
@@ -87,7 +82,6 @@ namespace MonitorControl
 
         internal static Setting SettingManager { get => m_setting; }
 
-        private TrayIcon m_trayIcon;
         private MainWindow m_window;
         private PopupMenu m_popupMenu;
 
