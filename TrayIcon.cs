@@ -12,6 +12,7 @@ namespace MonitorControl
     {
         public TrayIcon()
         {
+            m_wndProc = WindowProc;
             var wndClassEx = new WinAPI.WNDCLASSEX
             {
                 cbSize = Marshal.SizeOf(typeof(WinAPI.WNDCLASSEX)),
@@ -19,7 +20,7 @@ namespace MonitorControl
                 hCursor = IntPtr.Zero,
                 lpszMenuName = string.Empty,
                 lpszClassName = "MonitorControlTrayIcon",
-                lpfnWndProc = WindowProc
+                lpfnWndProc = m_wndProc
             };
 
             var atom = WinAPI.RegisterClassEx(ref wndClassEx);
@@ -40,6 +41,7 @@ namespace MonitorControl
         private IntPtr m_hInstance = IntPtr.Zero;
         private IntPtr m_classAtom = IntPtr.Zero;
         private IntPtr m_hWindow = IntPtr.Zero;
+        private WinAPI.WNDPROC m_wndProc;
 
         internal Action OpenWindow { get; set; }
 
@@ -47,7 +49,7 @@ namespace MonitorControl
 
         public const int HWND_MESSAGE = -3;
 
-        protected virtual IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, UIntPtr wParam, IntPtr lParam)
+        protected virtual IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam)
         {
             switch (msg)
             {
@@ -110,18 +112,8 @@ namespace MonitorControl
         {
             if (m_hWindow != IntPtr.Zero)
             {
-                try
-                {
-                    WinAPI.DestroyWindow(this.m_hWindow);
-                }
-                catch (System.ExecutionEngineException e)
-                {
-
-                }
-                finally
-                {
-                    m_hWindow = IntPtr.Zero;
-                }
+                WinAPI.DestroyWindow(this.m_hWindow);
+                m_hWindow = IntPtr.Zero;
             }
 
             if (m_classAtom != IntPtr.Zero)
