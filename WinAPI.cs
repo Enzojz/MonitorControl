@@ -880,6 +880,7 @@ namespace MonitorControl
         internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, nuint wParam, nint lParam);
 
         [DllImport("shell32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool Shell_NotifyIcon(NotifyIconMessage dwMessage, [In] ref NOTIFYICONDATA pnid);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -887,9 +888,11 @@ namespace MonitorControl
         internal static extern ushort RegisterClassEx([In] ref WNDCLASSEX lpwcx);
 
         [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool DestroyWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -906,12 +909,15 @@ namespace MonitorControl
         internal static extern uint TrackPopupMenuEx(IntPtr hMenu, TpmFlags uFlags, int x, int y, IntPtr hWnd, IntPtr tpmParams);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool AppendMenuA(IntPtr hMenu, MenuFlags uFlags, UIntPtr uIDNewItem, byte[] lpNewItem);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool InsertMenuItemA(IntPtr hMenu, uint item, bool fByPosition, MENUITEMINFO lpmi);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool DestroyMenu(IntPtr hMenu);
 
         [DllImport("user32.dll")]
@@ -929,11 +935,29 @@ namespace MonitorControl
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-        internal static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, uint wFlags);
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, uint wFlags);
 
-        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        [DllImport("user32.dll")]
         internal static extern IntPtr ShowWindow(IntPtr hWnd, CmdShow nCmdShow);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool BringWindowToTop(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr GetActiveWindow();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern IntPtr SetFocus(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
 
         #endregion

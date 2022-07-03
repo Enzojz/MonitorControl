@@ -12,6 +12,7 @@ using Microsoft.UI;
 using WinRT;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml.Media;
+using System.Diagnostics;
 
 
 // To learn more about WinUI, the WinUI project structure,

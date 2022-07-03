@@ -2,6 +2,7 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -53,8 +54,12 @@ namespace MonitorControl
             {
                 m_window = new MainWindow();
                 m_window.Closed += MainWindowClosed;
+                m_window.Activate();
             }
-            m_window.Activate();
+            else
+            {
+                m_window.Activate();
+            }
         }
 
         private void MainWindowClosed(object sender, WindowEventArgs args)

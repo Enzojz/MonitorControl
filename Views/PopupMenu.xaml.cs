@@ -55,7 +55,6 @@ namespace MonitorControl
         }
 
         private IntPtr m_hWindow;
-        private Rect m_rect;
         private BackdropManager m_backdropHelper;
 
         private IntPtr m_wndProcLegacy;
@@ -70,17 +69,16 @@ namespace MonitorControl
             float dpi = WinAPI.GetDpiForWindow(m_hWindow);
             var dpiScaling = dpi / 96;
 
-            m_rect.Width = 200 * dpiScaling;
-            m_rect.Height = (App.Instance.Profiles.Count * 40 + 84) * dpiScaling;
-            m_rect.X = x - m_rect.Width;
-            m_rect.Y = y - m_rect.Height;
+            var width = 200 * dpiScaling;
+            var height = (App.Instance.Profiles.Count * 40 + 84) * dpiScaling;
 
-            WinAPI.SetWindowPos(m_hWindow, -1, (int)m_rect.X, (int)m_rect.Y, (int)m_rect.Width, (int)m_rect.Height, 0x0040);
+            WinAPI.SetWindowPos(m_hWindow, -1, (int)(x - width), (int)(y - height), (int)width, (int)height, 0x0040);
+            WinAPI.SetForegroundWindow(m_hWindow);
         }
 
         internal void Hide()
         {
-            WinAPI.SetWindowPos(m_hWindow, 1, (int)m_rect.X, (int)m_rect.Y, (int)m_rect.Width, (int)m_rect.Height, 0x0080);
+            WinAPI.ShowWindow(m_hWindow, WinAPI.CmdShow.SW_HIDE);
         }
 
         private void ThemeChanged(object sender, BackdropManager.BackdropType backdrop)
@@ -92,6 +90,20 @@ namespace MonitorControl
         {
             switch (msg)
             {
+                case WinAPI.WM.WM_NCACTIVATE:
+                    if (wParam.ToInt32() == 0)
+                    {
+                        var hWindow = WinAPI.GetActiveWindow();
+                        if (hWindow == hWnd)
+                        {
+                            Hide();
+                            if (lParam.ToInt32() == 0)
+                            {
+                                return IntPtr.Zero;
+                            }
+                        }
+                    }
+                    break;
                 case WinAPI.WM.WM_USER:
                     switch ((WinAPI.WM)lParam)
                     {
@@ -102,7 +114,7 @@ namespace MonitorControl
                             break;
                         case WinAPI.WM.WM_LBUTTONDOWN:
                             OpenWindow();
-                            break;;
+                            break; ;
                     }
                     break;
             }
@@ -159,16 +171,11 @@ namespace MonitorControl
                         new PopupMenuItem(),
                         new PopupMenuItem() {
                             Text = "Show Monitor Control",
-                            Callback = () => {
-                                Hide();
-                                OpenWindow();
-                            }
+                            Callback = OpenWindow
                         },
                         new PopupMenuItem() {
                             Text = "Exit",
-                            Callback = () => {
-                                ExitApplication();
-                            }
+                            Callback = ExitApplication
                         }
                     }
                     ).ToArray();
