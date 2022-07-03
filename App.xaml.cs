@@ -53,8 +53,8 @@ namespace MonitorControl
             {
                 m_window = new MainWindow();
                 m_window.Closed += MainWindowClosed;
-                m_window.Activate();
             }
+            m_window.Activate();
         }
 
         private void MainWindowClosed(object sender, WindowEventArgs args)

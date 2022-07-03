@@ -2,6 +2,7 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -41,7 +42,9 @@ namespace MonitorControl
             m_wndProc = this.WindowProc;
 
             SetTrayIcon();
-            SetWndProc();
+
+            // Thanks to https://www.travelneil.com/wndproc-in-uwp.html so that I avoid to create a raw window
+            m_wndProcLegacy = WinAPI.SetWindowLongPtr(m_hWindow, WinAPI.GWLP_WNDPROC, m_wndProc);
 
             Closed += OnClosed;
         }
@@ -104,12 +107,6 @@ namespace MonitorControl
                     break;
             }
             return WinAPI.CallWindowProc(m_wndProcLegacy, hWnd, msg, wParam, lParam);
-        }
-
-        private void SetWndProc()
-        {
-            // Thanks to https://www.travelneil.com/wndproc-in-uwp.html so that I avoid to create a raw window
-            m_wndProcLegacy = WinAPI.SetWindowLongPtr(m_hWindow, WinAPI.GWLP_WNDPROC, m_wndProc);
         }
 
 
