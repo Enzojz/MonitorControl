@@ -142,13 +142,13 @@ namespace MonitorControl
             yield break;
         }
 
-        private void WriteProfile()
+        internal void WriteProfile(string path = filepath)
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(
                 typeof(Dictionary<String, Profile>),
                 new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
             );
-            var stream = File.CreateText(filepath);
+            var stream = File.CreateText(path);
             ser.WriteObject(stream.BaseStream, profiles.ToDictionary(v => v.Key, v => v.Value.Profile));
             stream.Close();
         }
@@ -168,20 +168,21 @@ namespace MonitorControl
             WriteProfile();
         }
 
-        private void ReadProfile()
+        internal void ReadProfile(string path = filepath)
         {
-            if (File.Exists(filepath))
+            if (File.Exists(path))
             {
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(
                     typeof(Dictionary<string, Profile>),
                     new DataContractJsonSerializerSettings() { UseSimpleDictionaryFormat = true }
                 );
-                using (var stream = File.OpenRead(filepath))
+                using (var stream = File.OpenRead(path))
                 {
                     try
                     {
                         var mapProfiles = (Dictionary<string, Profile>)ser.ReadObject(stream);
                         profiles = mapProfiles.ToDictionary(v => v.Key, v => new ProfileState(v.Key, v.Value));
+                        OnPropertyChanged("Profiles");
                     }
                     catch (SerializationException e)
                     {

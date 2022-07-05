@@ -41,7 +41,7 @@ namespace MonitorControl
             var ofn = new WinAPI.OPENFILENAME()
             {
                 lStructSize = Marshal.SizeOf(typeof(WinAPI.OPENFILENAME)),
-                lpstrFilter = "Monitor Control Profile (*.mnp)\0\0",
+                lpstrFilter = "Monitor Control Profile (*.mcp)\0\0",
                 lpstrFile = new string(new char[256]),
                 lpstrFileTitle = new string(new char[64]),
                 lpstrTitle = "Import Monitor Control Profiles"
@@ -51,7 +51,11 @@ namespace MonitorControl
 
             if (WinAPI.GetOpenFileName(ref ofn))
             {
-
+                if (ofn.lpstrFile != null && ofn.lpstrFile.Length > 0 && File.Exists(ofn.lpstrFile))
+                {
+                    App.Instance.ReadProfile(ofn.lpstrFile);
+                    App.Instance.Message = String.Format("Profiles from {0} have been imported!", ofn.lpstrFile);
+                }
             }
         }
         private void ExportClick(object sender, RoutedEventArgs e)
@@ -59,7 +63,7 @@ namespace MonitorControl
             var ofn = new WinAPI.OPENFILENAME()
             {
                 lStructSize = Marshal.SizeOf(typeof(WinAPI.OPENFILENAME)),
-                lpstrFilter = "Monitor Control Profile (*.mnp)\0\0",
+                lpstrFilter = "Monitor Control Profile (*.mcp)\0\0",
                 lpstrFile = new string(new char[256]),
                 lpstrFileTitle = new string(new char[64]),
                 lpstrTitle = "Export Monitor Control Profiles"
@@ -69,7 +73,14 @@ namespace MonitorControl
 
             if (WinAPI.GetSaveFileName(ref ofn))
             {
-
+                if (ofn.lpstrFile != null && ofn.lpstrFile.Length > 0)
+                {
+                    var path = ofn.lpstrFile;
+                    if (Path.GetExtension(path).Length == 0)
+                        path = Path.ChangeExtension(path, "mcp");
+                    App.Instance.WriteProfile(path);
+                    App.Instance.Message = String.Format("Profiles have been exported to: {0}", path);
+                }
             }
         }
 
