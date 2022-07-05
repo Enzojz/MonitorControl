@@ -805,6 +805,35 @@ namespace MonitorControl
         }
 
 
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct OPENFILENAME
+        {
+            public int lStructSize;
+            public IntPtr hwndOwner;
+            public IntPtr hInstance;
+            public string lpstrFilter;
+            public string lpstrCustomFilter;
+            public int nMaxCustFilter;
+            public int nFilterIndex;
+            public string lpstrFile;
+            public int nMaxFile;
+            public string lpstrFileTitle;
+            public int nMaxFileTitle;
+            public string lpstrInitialDir;
+            public string lpstrTitle;
+            public int Flags;
+            public short nFileOffset;
+            public short nFileExtension;
+            public string lpstrDefExt;
+            public IntPtr lCustData;
+            public IntPtr lpfnHook;
+            public string lpTemplateName;
+            public IntPtr pvReserved;
+            public int dwReserved;
+            public int flagsEx;
+        }
+
+
         #endregion
 
         #endregion
@@ -959,6 +988,11 @@ namespace MonitorControl
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        [DllImport("comdlg32.dll", CharSet = CharSet.Auto)]
+        internal static extern bool GetOpenFileName(ref OPENFILENAME ofn);
+
+        [DllImport("comdlg32.dll", CharSet = CharSet.Auto)]
+        internal static extern bool GetSaveFileName(ref OPENFILENAME lpofn);
 
         #endregion
 

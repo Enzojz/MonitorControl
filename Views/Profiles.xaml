@@ -4,16 +4,46 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:MonitorControl" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
-    <Page.Resources>
-        <Style TargetType="AppBarButton" BasedOn="{StaticResource DefaultAppBarButtonStyle}">
-            <Setter Property="FontSize" Value="15"/>
-            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
-            <Setter Property="LabelPosition" Value="Collapsed"/>
-        </Style>
-    </Page.Resources>
     <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollMode="Auto" Padding="5">
         <StackPanel Orientation="Vertical">
+            <CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" ClosedDisplayMode="Compact" OverflowButtonVisibility="Collapsed">
+                <CommandBar.PrimaryCommands>
+                    <AppBarButton Label="New Profile" AllowFocusOnInteraction="True">
+                        <FontIcon Glyph="&#xE710;"/>
+                        <AppBarButton.Flyout>
+                            <Flyout x:Name="CreateNewFlyout">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Text="{x:Bind CreateNew.Name, Mode=OneWay}" VerticalAlignment="Center" Width="300" Margin="0, 0, 10, 0"
+                                             PlaceholderText="Type the name of the new profile" PreviewKeyDown="ConfirmCreateByEnter" x:Name="NTBox" />
+                                    <Button Click="ConfirmCreateByClick" Tag="{Binding Text,ElementName=NTBox, Mode=OneWay}">
+                                        Create
+                                    </Button>
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton Label="Import" Click="ImportClick">
+                        <FontIcon Glyph="&#xE896;"/>
+                    </AppBarButton>
+                    <AppBarButton Label="Export" Click="ExportClick">
+                        <FontIcon Glyph="&#xE898;"/>
+                    </AppBarButton>
+                </CommandBar.PrimaryCommands>
+            </CommandBar>
             <ListView ItemsSource="{x:Bind Instance.Profiles, Mode=OneWay}" SelectedItem="{x:Bind Instance.CurrentProfile, Mode=TwoWay}">
+                <ListView.Resources>
+                    <Style TargetType="AppBarButton" BasedOn="{StaticResource DefaultAppBarButtonStyle}">
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+                        <Setter Property="LabelPosition" Value="Collapsed"/>
+                    </Style>
+                </ListView.Resources>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:ProfileState">
                         <Grid HorizontalAlignment="Stretch" PointerEntered="{x:Bind PointerEntered}" PointerExited="{x:Bind PointerExited}" Height="44">
@@ -23,7 +53,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" Visibility="{x:Bind TextBlockVisibility, Mode=OneWay}"/>
                             <TextBox Text="{x:Bind Name, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                                Visibility="{x:Bind TextBoxVisibility, Mode=OneWay}" PlaceholderText="Create a new profile"
+                                Visibility="{x:Bind TextBoxVisibility, Mode=OneWay}" PlaceholderText="Give the profile a new name"
                                 PreviewKeyDown="{x:Bind ConfirmEditByEnter}" x:Name="TBox" />
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <AppBarButton Click="{x:Bind CancelEdit}" Visibility="{x:Bind TextBoxVisibility, Mode=OneWay}">
@@ -48,20 +78,6 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Grid HorizontalAlignment="Stretch" Margin="5" Height="42"
-                DataContext="{x:Bind CreateNew}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBox Text="{x:Bind CreateNew.Name, Mode=OneWay}" Margin="11, 5, 5, 5" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                        PlaceholderText="Create a new profile" PreviewKeyDown="{x:Bind CreateNew.ConfirmEditByEnter}" x:Name="NTBox" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <AppBarButton Click="{x:Bind CreateNew.Save}" Tag="{Binding Text,ElementName=NTBox, Mode=OneWay}">
-                        <FontIcon Glyph="&#xE710;" />
-                    </AppBarButton>
-                </StackPanel>
-            </Grid>
         </StackPanel>
     </ScrollViewer>
 </Page>

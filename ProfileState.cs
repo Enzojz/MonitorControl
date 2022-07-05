@@ -44,23 +44,33 @@ namespace MonitorControl
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                IsEditing = false;
-                if (Name == null || Name.Length == 0)
+                var newName = (sender as TextBox).Text;
+                if (newName != null && newName.Length > 0)
                 {
-                    Instance.SaveProfile((sender as TextBox).Text);
-                    Name = null;
-                    OnPropertyChanged("Name");
+                    IsEditing = false;
+                    if (Name == null || Name.Length == 0)
+                    {
+                        Instance.SaveProfile(newName);
+                        Name = null;
+                        OnPropertyChanged("Name");
+                    }
+                    else
+                    {
+                        Instance.RenameProfile(Name, (sender as TextBox).Text);
+                        e.Handled = true;
+                    }
                 }
-                else
-                    Instance.RenameProfile(Name, (sender as TextBox).Text);
-                e.Handled = true;
             }
         }
 
         public void ConfirmEdit(object sender, RoutedEventArgs e)
         {
-            IsEditing = false;
-            Instance.RenameProfile(Name, (sender as Button).Tag.ToString());
+            var newName = (sender as Button).Tag.ToString();
+            if (newName != null && newName.Length > 0)
+            {
+                IsEditing = false;
+                Instance.RenameProfile(Name, newName);
+            }
             Notify();
         }
 
@@ -85,15 +95,10 @@ namespace MonitorControl
         public void Save(object sender, RoutedEventArgs e)
         {
             IsEditing = false;
-            if (Name == null || Name.Length == 0)
+            if (Name != null && Name.Length > 0)
             {
-                Instance.SaveProfile((sender as Button).Tag.ToString());
-                Name = null;
-                OnPropertyChanged("Name");
-            }
-            else
                 Instance.SaveProfile(Name);
-            
+            }
             Notify();
         }
 

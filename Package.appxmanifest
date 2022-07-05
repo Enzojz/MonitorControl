@@ -8,11 +8,11 @@
 
   <Identity
     Name="2eed5117-200a-473a-bf2c-03bff9a7a936"
-    Publisher="CN=enzoj"
-    Version="1.0.0.0" />
+    Publisher="CN=Enzojz"
+    Version="2.0.0.0" />
 
   <Properties>
-    <DisplayName>MonitorControl</DisplayName>
+    <DisplayName>Monitor Control</DisplayName>
     <PublisherDisplayName>Enzojz</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -31,13 +31,15 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="MonitorControl"
+        DisplayName="Monitor Control"
         Description="MonitorControl helps you tweak the brightness, contrast and R/G/B values of your monitor(s)."
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
       </uap:VisualElements>
     </Application>
   </Applications>
