@@ -2,6 +2,8 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -24,10 +26,17 @@ namespace MonitorControl
             Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             this.InitializeComponent();
 
+
             m_popupMenu = new PopupMenu();
 
             m_popupMenu.OpenWindow += OpenWindow;
             m_popupMenu.ExitApplication += ExitApplication;
+
+
+            if (!Environment.GetCommandLineArgs().ToList().Exists(p => p == "-silent"))
+            {
+                OpenWindow();
+            }
         }
 
         /// <summary>

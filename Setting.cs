@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.Win32;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization;
@@ -14,7 +16,7 @@ namespace MonitorControl
         [DataMember]
         internal string DefaultProfile = "Default";
         [DataMember]
-        internal bool Autostart = true;
+        internal bool Autostart = false;
         [DataMember]
         internal bool ReloadProfile = false;
         [DataMember]
@@ -28,6 +30,17 @@ namespace MonitorControl
         public Setting()
         {
             Load();
+
+            if (Autostart)
+            {
+                var rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                if (rkApp.GetValue("MonitorControl", null) == null)
+                {
+                    m_data.Autostart = false;
+                }
+            }
+
         }
 
         private SettingData m_data;
@@ -83,6 +96,19 @@ namespace MonitorControl
         {
             set
             {
+                var rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                if (value)
+                {
+                    var q = System.Reflection.Assembly.GetExecutingAssembly();
+                    var exePath = Path.ChangeExtension(System.Reflection.Assembly.GetExecutingAssembly().Location, "exe");
+                    var autorunPath = String.Format("{0} -silent", exePath);
+                    rkApp.SetValue("MonitorControl", autorunPath);
+                }
+                else
+                {
+                    rkApp.DeleteValue("MonitorControl", false);
+                }
+
                 m_data.Autostart = value;
                 Save();
                 App.Instance.Message = "Setting saved!";

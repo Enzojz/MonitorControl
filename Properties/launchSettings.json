@@ -2,6 +2,7 @@
   "profiles": {
     "MonitorControl (Package)": {
       "commandName": "MsixPackage",
+      "commandLineArgs": "/background",
       "alwaysReinstallApp": true
     },
     "MonitorControl (Unpackaged)": {
