@@ -37,14 +37,17 @@ namespace MonitorControl
 
         private void ImportClick(object sender, RoutedEventArgs e)
         {
-
             var ofn = new WinAPI.OPENFILENAME()
             {
                 lStructSize = Marshal.SizeOf(typeof(WinAPI.OPENFILENAME)),
                 lpstrFilter = "Monitor Control Profile (*.mcp)\0\0",
                 lpstrFile = new string(new char[256]),
                 lpstrFileTitle = new string(new char[64]),
-                lpstrTitle = "Import Monitor Control Profiles"
+                lpstrTitle = "Import Monitor Control Profiles",
+                Flags = WinAPI.OPENFILENAME_FLAGS.OFN_ENABLESIZING
+                | WinAPI.OPENFILENAME_FLAGS.OFN_EXPLORER
+                | WinAPI.OPENFILENAME_FLAGS.OFN_NOCHANGEDIR
+                | WinAPI.OPENFILENAME_FLAGS.OFN_PATHMUSTEXIST
             };
             ofn.nMaxFile = ofn.lpstrFile.Length;
             ofn.nMaxFileTitle = ofn.lpstrFileTitle.Length;
@@ -66,7 +69,12 @@ namespace MonitorControl
                 lpstrFilter = "Monitor Control Profile (*.mcp)\0\0",
                 lpstrFile = new string(new char[256]),
                 lpstrFileTitle = new string(new char[64]),
-                lpstrTitle = "Export Monitor Control Profiles"
+                lpstrTitle = "Export Monitor Control Profiles",
+                Flags = WinAPI.OPENFILENAME_FLAGS.OFN_ENABLESIZING
+                | WinAPI.OPENFILENAME_FLAGS.OFN_EXPLORER
+                | WinAPI.OPENFILENAME_FLAGS.OFN_NOCHANGEDIR
+                | WinAPI.OPENFILENAME_FLAGS.OFN_PATHMUSTEXIST
+                | WinAPI.OPENFILENAME_FLAGS.OFN_OVERWRITEPROMPT
             };
             ofn.nMaxFile = ofn.lpstrFile.Length;
             ofn.nMaxFileTitle = ofn.lpstrFileTitle.Length;

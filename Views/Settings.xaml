@@ -14,19 +14,32 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Vertical" Margin="5">
-                <CheckBox Content="Autostart at startup" IsChecked="{x:Bind SettingManager.Autostart, Mode=TwoWay}"/>
-                <CheckBox Content="Run in background" IsChecked="{x:Bind SettingManager.RunInBackground, Mode=TwoWay}"/>
-                <CheckBox Content="Reload profile at startup" IsChecked="{x:Bind SettingManager.ReloadProfile, Mode=TwoWay}"/>
-            </StackPanel>
-            <ComboBox Grid.Column="1" Header="Default profile" Margin="10" HorizontalAlignment="Center"
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Content="Autostart at startup" IsChecked="{x:Bind SettingManager.Autostart, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="1" Content="Run in background" IsChecked="{x:Bind SettingManager.RunInBackground, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="2" Content="Reload profile at startup" IsChecked="{x:Bind SettingManager.ReloadProfile, Mode=TwoWay}"/>
+            <ComboBox Grid.Column="1" Grid.RowSpan="2" Header="Default profile" Margin="0, 10" HorizontalAlignment="Left"
                       ItemsSource="{x:Bind Instance.Profiles}"
                       DisplayMemberPath="Name"
                       SelectedValue="{x:Bind SettingManager.DefaultProfile, Mode=TwoWay}"
                       SelectedValuePath="Name"
                       />
-            <ComboBox Grid.Column="2" Header="Theme" Margin="10" 
-                      HorizontalAlignment="Center"
+            <Grid Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Margin="5">Profile location:</TextBlock>
+                <TextBlock Grid.Column="1" Text="{x:Bind SettingManager.ProfilePath, Mode=OneWay}" Margin="5"/>
+                <Button Grid.Column="2" Click="ProfileLocationClick" Margin="0, 0, 10, 0">Change</Button>
+            </Grid>
+            <ComboBox Grid.Column="2" Grid.RowSpan="2" Header="Theme" Margin="0, 10" 
+                      HorizontalAlignment="Left"
                       SelectedValue="{x:Bind SettingManager.Theme, Mode=TwoWay}"
                       SelectedValuePath="Content"
                       >
@@ -35,7 +48,7 @@
                 <ComboBoxItem Content="Classic"/>
             </ComboBox>
         </Grid>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0, 20, 0, 0">
             <Image Source="/Assets/Square150x150Logo.scale-200.png"
                    HorizontalAlignment="Left" VerticalAlignment="Top"
                    Width="120"

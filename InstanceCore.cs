@@ -64,7 +64,7 @@ namespace MonitorControl
                 })
                 .ToList();
 
-            ReadProfile();
+            ReadProfile(App.SettingManager.ProfilePath);
             if (App.SettingManager != null && App.SettingManager.ReloadProfile)
             {
                 LoadProfile(App.SettingManager.DefaultProfile);
@@ -142,7 +142,7 @@ namespace MonitorControl
             yield break;
         }
 
-        internal void WriteProfile(string path = filepath)
+        internal void WriteProfile(string path)
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(
                 typeof(Dictionary<String, Profile>),
@@ -165,10 +165,10 @@ namespace MonitorControl
                     }
                 );
             }
-            WriteProfile();
+            WriteProfile(App.SettingManager.ProfilePath);
         }
 
-        internal void ReadProfile(string path = filepath)
+        internal void ReadProfile(string path)
         {
             if (File.Exists(path))
             {
@@ -231,7 +231,7 @@ namespace MonitorControl
                     OnPropertyChanged("Profiles");
                     Message = String.Format("Profile {0} has been created!", profile);
                 }
-                WriteProfile();
+                WriteProfile(App.SettingManager.ProfilePath);
             }
         }
 
@@ -242,7 +242,7 @@ namespace MonitorControl
                 profiles[newName] = profiles[oldName];
                 profiles[newName].Name = newName;
                 profiles.Remove(oldName);
-                WriteProfile();
+                WriteProfile(App.SettingManager.ProfilePath);
                 OnPropertyChanged("Profiles");
                 Message = String.Format("Profile {0} has been renamed to {1}!", oldName, newName);
                 if (currentProfile == oldName)
@@ -258,7 +258,7 @@ namespace MonitorControl
             if (profile != "Default")
             {
                 profiles.Remove(profile);
-                WriteProfile();
+                WriteProfile(App.SettingManager.ProfilePath);
                 OnPropertyChanged("Profiles");
                 Message = String.Format("Profile {0} has been saved!", profile);
                 if (currentProfile == profile)
@@ -273,8 +273,8 @@ namespace MonitorControl
 
         #region Private members
 
-        string currentProfile;
-        const string filepath = "profile.json";
+        string currentProfile { get; set; }
+
         Dictionary<String, ProfileState> profiles = new Dictionary<String, ProfileState>();
 
         #endregion

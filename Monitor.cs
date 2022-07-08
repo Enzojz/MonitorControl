@@ -18,25 +18,31 @@ namespace MonitorControl
 
             Description = string.Format("#{0}: {1}", index + 1, description);
 
-            WinAPI.GetMonitorCapabilities(hMonitor, out uint mc, out uint _);
+            WinAPI.GetMonitorCapabilities(hMonitor, out WinAPI.MC_CAP mc, out WinAPI.MC_SUPPORTED_COLOR_TEMPERATURE _);
+            for (int i = 0; i < 3 && mc == 0; i++)
+            {
+                WinAPI.GetMonitorCapabilities(hMonitor, out mc, out _);
+                if (mc != 0)
+                    break;
+            }
 
-            var f1 = () => { retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness); };
-            var f2 = () => { retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast); };
+            var f1 = () => { retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness); };
+            var f2 = () => { retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast); };
             var f3 = () =>
             {
-                retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref red,
+                retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref red,
                 (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_RED_GAIN, out mi, out c, out ma)
             );
             };
             var f4 = () =>
             {
-                retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref green,
+                retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref green,
                 (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_GREEN_GAIN, out mi, out c, out ma)
             );
             };
             var f5 = () =>
             {
-                retriveItem((WinAPI.MC_CAP)mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue,
+                retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue,
                 (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_BLUE_GAIN, out mi, out c, out ma)
             );
             };
@@ -45,22 +51,26 @@ namespace MonitorControl
             f.AsParallel().ForAll(f => f());
 
         }
-        void retriveItem(
-            WinAPI.MC_CAP mc,
-            WinAPI.MC_CAP flag,
-            ref (bool enabled, uint current, uint min, uint range) item,
-            GetState fn)
+
+        void retriveItem(WinAPI.MC_CAP mc, WinAPI.MC_CAP flag, ref Item item, GetState fn)
         {
-            item = (false, 0, 0, 0);
             if (mc.HasFlag(flag))
                 if (fn(hMonitor, out uint min, out uint current, out uint max))
-                    item = (true, current, min, max - min);
+                    item = new Item()
+                    {
+                        enabled = true,
+                        current = current,
+                        min = min,
+                        range = max - min
+                    };
                 else
                     throw new Win32Exception(Marshal.GetLastWin32Error());
+            else
+                item = new Item();
         }
 
-        private uint getValue((bool enabled, uint current, uint min, uint range) item) => item.enabled ? (item.current - item.min) * 100 / item.range : 0;
-        private void setValue(ref (bool enabled, uint current, uint min, uint range) item, uint value, Func<IntPtr, uint, bool> fn)
+        private uint getValue(Item item) => item.enabled ? (item.current - item.min) * 100 / item.range : 0;
+        private void setValue(ref Item item, uint value, Func<IntPtr, uint, bool> fn)
         {
             if (item.enabled)
             {
@@ -137,12 +147,21 @@ namespace MonitorControl
         public Vector2 TopLeft { private set; get; }
         #endregion
 
+        private struct Item
+        {
+            public Item() { }
+            internal bool enabled = false;
+            internal uint current = 0;
+            internal uint min = 0;
+            internal uint range = 0;
+        }
+
         #region Private memebrs
-        private (bool, uint current, uint min, uint range) brightness;
-        private (bool, uint current, uint min, uint range) contrast;
-        private (bool, uint current, uint min, uint range) red;
-        private (bool, uint current, uint min, uint range) green;
-        private (bool, uint current, uint min, uint range) blue;
+        private Item brightness;
+        private Item contrast;
+        private Item red;
+        private Item green;
+        private Item blue;
         private IntPtr hMonitor;
         #endregion
 

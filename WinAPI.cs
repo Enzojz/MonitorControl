@@ -15,7 +15,7 @@ namespace MonitorControl
 
         #region monitors
         [Flags]
-        internal enum MC_CAP
+        internal enum MC_CAP : uint
         {
             MC_CAPS_BRIGHTNESS = 0x2,
             MC_CAPS_CONTRAST = 0x4,
@@ -31,15 +31,19 @@ namespace MonitorControl
             MC_BLUE_GAIN = 0x02,
         }
 
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_NONE = 0x00;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_4000K = 0x01;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_5000K = 0x02;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_6500K = 0x04;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_7500K = 0x08;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_8200K = 0x10;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_9300K = 0x20;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_10000K = 0x40;
-        private const int MC_SUPPORTED_COLOR_TEMPERATURE_11500K = 0x80;
+        [Flags]
+        internal enum MC_SUPPORTED_COLOR_TEMPERATURE : uint
+        {
+            COLOR_TEMPERATURE_NONE = 0x00,
+            COLOR_TEMPERATURE_4000K = 0x01,
+            COLOR_TEMPERATURE_5000K = 0x02,
+            COLOR_TEMPERATURE_6500K = 0x04,
+            COLOR_TEMPERATURE_7500K = 0x08,
+            COLOR_TEMPERATURE_8200K = 0x10,
+            COLOR_TEMPERATURE_9300K = 0x20,
+            COLOR_TEMPERATURE_10000K = 0x40,
+            COLOR_TEMPERATURE_11500K = 0x80
+        }
 
         internal enum DisplayConfigOutputTechnology : uint
         {
@@ -804,6 +808,37 @@ namespace MonitorControl
             SW_FORCEMINIMIZE = 11
         }
 
+        [Flags]
+        public enum OPENFILENAME_FLAGS : int
+        {
+            OFN_ALLOWMULTISELECT = 0x00000200,
+            OFN_CREATEPROMPT = 0x00002000,
+            OFN_DONTADDTORECENT = 0x02000000,
+            OFN_ENABLEHOOK = 0x00000020,
+            OFN_ENABLEINCLUDENOTIFY = 0x00400000,
+            OFN_ENABLESIZING = 0x00800000,
+            OFN_ENABLETEMPLATE = 0x00000040,
+            OFN_ENABLETEMPLATEHANDLE = 0x00000080,
+            OFN_EXPLORER = 0x00080000,
+            OFN_EXTENSIONDIFFERENT = 0x00000400,
+            OFN_FILEMUSTEXIST = 0x00001000,
+            OFN_FORCESHOWHIDDEN = 0x10000000,
+            OFN_HIDEREADONLY = 0x00000004,
+            OFN_LONGNAMES = 0x00200000,
+            OFN_NOCHANGEDIR = 0x00000008,
+            OFN_NODEREFERENCELINKS = 0x00100000,
+            OFN_NOLONGNAMES = 0x00040000,
+            OFN_NONETWORKBUTTON = 0x00020000,
+            OFN_NOREADONLYRETURN = 0x00008000,
+            OFN_NOTESTFILECREATE = 0x00010000,
+            OFN_NOVALIDATE = 0x00000100,
+            OFN_OVERWRITEPROMPT = 0x00000002,
+            OFN_PATHMUSTEXIST = 0x00000800,
+            OFN_READONLY = 0x00000001,
+            OFN_SHAREAWARE = 0x00004000,
+            OFN_SHOWHELP = 0x00000010
+        }
+
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct OPENFILENAME
@@ -821,7 +856,7 @@ namespace MonitorControl
             public int nMaxFileTitle;
             public string lpstrInitialDir;
             public string lpstrTitle;
-            public int Flags;
+            public OPENFILENAME_FLAGS Flags;
             public short nFileOffset;
             public short nFileExtension;
             public string lpstrDefExt;
@@ -877,7 +912,7 @@ namespace MonitorControl
         internal extern static bool DestroyPhysicalMonitor(IntPtr hMonitor);
 
         [DllImport("dxva2.dll", SetLastError = true)]
-        internal extern static bool GetMonitorCapabilities(IntPtr hMonitor, out uint pdwMonitorCapabilities, out uint pdwSupportedColorTemperatures);
+        internal extern static bool GetMonitorCapabilities(IntPtr hMonitor, out MC_CAP pdwMonitorCapabilities, out MC_SUPPORTED_COLOR_TEMPERATURE pdwSupportedColorTemperatures);
 
         [DllImport("dxva2.dll", SetLastError = true)]
         internal extern static bool GetMonitorBrightness(IntPtr hMonitor, out uint pdwMinimumBrightness, out uint pdwCurrentBrightness, out uint pdwMaximumBrightness);

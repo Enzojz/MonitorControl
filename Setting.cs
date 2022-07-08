@@ -19,6 +19,8 @@ namespace MonitorControl
         internal bool ReloadProfile = false;
         [DataMember]
         internal bool RunInBackground = true;
+        [DataMember]
+        internal string ProfilePath = "profile.mcp";
     }
 
     internal class Setting : INotifyPropertyChanged
@@ -63,6 +65,18 @@ namespace MonitorControl
                 App.Instance.Message = String.Format("Default profile changed to {0}.", value);
             }
             get => m_data.DefaultProfile ?? "Default";
+        }
+
+        internal string ProfilePath
+        {
+            set
+            {
+                m_data.ProfilePath = value;
+                Save();
+                App.Instance.Message = String.Format("Profile path changed to {0}.", value);
+                OnPropertyChanged("ProfilePath");
+            }
+            get => m_data.ProfilePath;
         }
 
         internal bool Autostart
