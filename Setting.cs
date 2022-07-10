@@ -87,7 +87,7 @@ namespace MonitorControl
                 App.Instance.Message = String.Format("Profile path changed to {0}.", value);
                 OnPropertyChanged("ProfilePath");
             }
-            get => m_data.ProfilePath;
+            get => m_data.ProfilePath ?? "profile.mcp";
         }
 
         internal bool Autostart

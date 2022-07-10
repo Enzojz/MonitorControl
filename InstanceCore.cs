@@ -59,7 +59,11 @@ namespace MonitorControl
                 .Select((m, i) =>
                 {
                     var (physicalMonitor, monitor, center) = m;
-                    var description = monitor.displayName ?? monitor.description ?? new string(physicalMonitor.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray());
+                    var description = (monitor.displayName != null && monitor.displayName.Length > 0) ? 
+                        monitor.displayName : 
+                        (monitor.description != null && monitor.description.Length > 0) ? 
+                            monitor.description :
+                            new string(physicalMonitor.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray());
                     return new Monitor(physicalMonitor, description, monitor.deviceId, center, i);
                 })
                 .ToList();

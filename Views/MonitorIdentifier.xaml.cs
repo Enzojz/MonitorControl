@@ -54,9 +54,9 @@ namespace MonitorControl
             presenter.IsResizable = false;
 
             if (AppWindowTitleBar.IsCustomizationSupported())
-            {
-                ExtendsContentIntoTitleBar = true;  // enable custom titlebar
-            }
+                ExtendsContentIntoTitleBar = true;
+            else
+                presenter.SetBorderAndTitleBar(false, false);
 
             m_backdropHelper = new BackdropManager(this);
             m_backdropHelper.SetBackdrop(BackdropManager.BackdropType.Acrylic);
