@@ -52,11 +52,7 @@ namespace MonitorControl
 
             var presenter = appWindow.Presenter as OverlappedPresenter;
             presenter.IsResizable = false;
-
-            if (AppWindowTitleBar.IsCustomizationSupported())
-                ExtendsContentIntoTitleBar = true;
-            else
-                presenter.SetBorderAndTitleBar(false, false);
+            presenter.SetBorderAndTitleBar(false, false);
 
             m_backdropHelper = new BackdropManager(this);
             m_backdropHelper.SetBackdrop(BackdropManager.BackdropType.Acrylic);

@@ -340,6 +340,7 @@ namespace MonitorControl
         }
 
         internal const int GWLP_WNDPROC = -4;
+        internal const int GWL_STYLE = -16;
 
         internal enum WM : uint
         {
@@ -809,7 +810,7 @@ namespace MonitorControl
         }
 
         [Flags]
-        public enum OPENFILENAME_FLAGS : int
+        internal enum OPENFILENAME_FLAGS : int
         {
             OFN_ALLOWMULTISELECT = 0x00000200,
             OFN_CREATEPROMPT = 0x00002000,
@@ -841,7 +842,7 @@ namespace MonitorControl
 
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct OPENFILENAME
+        internal struct OPENFILENAME
         {
             public int lStructSize;
             public IntPtr hwndOwner;
@@ -866,6 +867,17 @@ namespace MonitorControl
             public IntPtr pvReserved;
             public int dwReserved;
             public int flagsEx;
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct MINMAXINFO
+        {
+            public Point ptReserved;
+            public Point ptMaxSize;
+            public Point ptMaxPosition;
+            public Point ptMinTrackSize;
+            public Point ptMaxTrackSize;
         }
 
 
@@ -941,7 +953,7 @@ namespace MonitorControl
 
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, nuint wParam, nint lParam);
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, uint wParam, nint lParam);
 
         [DllImport("shell32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -1028,6 +1040,9 @@ namespace MonitorControl
 
         [DllImport("comdlg32.dll", CharSet = CharSet.Auto)]
         internal static extern bool GetSaveFileName(ref OPENFILENAME lpofn);
+
+        [DllImport("user32.dll")]
+        internal static extern bool ReleaseCapture();
 
         #endregion
 
@@ -1122,6 +1137,19 @@ namespace MonitorControl
             var PhysicalMonitors = new PHYSICAL_MONITOR[NumberOfPhysicalMonitors];
             GetPhysicalMonitorsFromHMONITOR(hMonitor, NumberOfPhysicalMonitors, PhysicalMonitors);
             return PhysicalMonitors;
+        }
+
+        internal static bool GetMonitorRed(IntPtr hMonitor, out uint pdwMinimumGain, out uint pdwCurrentGain, out uint pdwMaximumGain)
+        {
+            return GetMonitorRedGreenOrBlueGain(hMonitor, MC_GAIN_TYPE.MC_RED_GAIN, out pdwMinimumGain, out pdwCurrentGain, out pdwMaximumGain);
+        }
+        internal static bool GetMonitorBlue(IntPtr hMonitor, out uint pdwMinimumGain, out uint pdwCurrentGain, out uint pdwMaximumGain)
+        {
+            return GetMonitorRedGreenOrBlueGain(hMonitor, MC_GAIN_TYPE.MC_BLUE_GAIN, out pdwMinimumGain, out pdwCurrentGain, out pdwMaximumGain);
+        }
+        internal static bool GetMonitorGreen(IntPtr hMonitor, out uint pdwMinimumGain, out uint pdwCurrentGain, out uint pdwMaximumGain)
+        {
+            return GetMonitorRedGreenOrBlueGain(hMonitor, MC_GAIN_TYPE.MC_GREEN_GAIN, out pdwMinimumGain, out pdwCurrentGain, out pdwMaximumGain);
         }
 
         #endregion

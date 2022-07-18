@@ -44,7 +44,7 @@
             >
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="local:Monitor">
-                    <NavigationViewItem Content="{x:Bind Description}">
+                    <NavigationViewItem Content="{x:Bind Description}" IsEnabled="{x:Bind IsReady, Mode=OneWay}">
                         <NavigationViewItem.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7F4;"/>
                         </NavigationViewItem.Icon>
