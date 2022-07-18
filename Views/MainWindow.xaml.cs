@@ -34,9 +34,9 @@ namespace MonitorControl
 
             this.Title = "Monitor Control";
 
-            m_hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
-            var idWindow = Win32Interop.GetWindowIdFromWindow(m_hWnd);
-            float dpi = WinAPI.GetDpiForWindow(m_hWnd);
+            m_hWindow = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            var idWindow = Win32Interop.GetWindowIdFromWindow(m_hWindow);
+            float dpi = WinAPI.GetDpiForWindow(m_hWindow);
             var dpiScaling = dpi / 96;
             var appWindow = AppWindow.GetFromWindowId(idWindow);
 
@@ -53,7 +53,7 @@ namespace MonitorControl
             var presenter = appWindow.Presenter as OverlappedPresenter;
             presenter.IsResizable = false;
             presenter.IsMaximizable = false;
-            
+
             if (AppWindowTitleBar.IsCustomizationSupported())
             {
                 ExtendsContentIntoTitleBar = true;
@@ -65,24 +65,19 @@ namespace MonitorControl
                 TitleRow.Height = new GridLength(0);
             }
 
-            //var oldStyle = (WinAPI.WS)(WinAPI.GetWindowLongPtrA(hWindow, WinAPI.GWL_STYLE));
-            //var newStyle = WinAPI.WS.WS_GROUP | WinAPI.WS.WS_CLIPSIBLINGS | WinAPI.WS.WS_POPUP | WinAPI.WS.WS_SYSMENU | WinAPI.WS.WS_BORDER;
-            //WinAPI.SetWindowLongPtr(hWindow, WinAPI.GWL_STYLE, (IntPtr)newStyle);
-
             var hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010);
-            WinAPI.SendMessage(m_hWnd, 0x0080, 0, hIcon);
+            WinAPI.SendMessage(m_hWindow, 0x0080, 0, hIcon);
 
             m_backdropHelper = new BackdropManager(this);
             App.SettingManager.ThemeChanged += ThemeChanged;
             ThemeChanged(null, App.SettingManager.ThemeEnum);
 
             m_wndProc = WindowProc;
-            // Thanks to https://www.travelneil.com/wndproc-in-uwp.html so that I avoid to create a raw window
-            m_wndProcLegacy = WinAPI.SetWindowLongPtr(m_hWnd, WinAPI.GWLP_WNDPROC, m_wndProc);
+            WinAPI.SetWindowSubclass(m_hWindow, m_wndProc, UIntPtr.Zero, UIntPtr.Zero);
         }
 
 
-        private IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam)
+        private IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam, UIntPtr uIdSubclass, UIntPtr dwRefData)
         {
             switch (msg)
             {
@@ -93,13 +88,12 @@ namespace MonitorControl
                     Marshal.StructureToPtr(minMaxInfo, lParam, true);
                     break;
             }
-            return WinAPI.CallWindowProc(m_wndProcLegacy, hWnd, msg, wParam, lParam);
+            return WinAPI.DefSubclassProc(hWnd, msg, wParam, lParam);
         }
 
         private Windows.Graphics.SizeInt32 m_size;
-        private IntPtr m_hWnd;
-        private IntPtr m_wndProcLegacy;
-        private WinAPI.WNDPROC m_wndProc;
+        private IntPtr m_hWindow;
+        private WinAPI.SUBCLASSPROC m_wndProc;
 
         private void ThemeChanged(object sender, BackdropManager.BackdropType backdrop)
         {

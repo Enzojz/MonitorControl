@@ -673,6 +673,7 @@ namespace MonitorControl
         }
 
         internal delegate IntPtr WNDPROC(IntPtr hWnd, WM uMsg, IntPtr wParam, IntPtr lParam);
+        internal delegate IntPtr SUBCLASSPROC(IntPtr hWnd, WM uMsg, IntPtr wParam, IntPtr lParam, UIntPtr uIdSubclass, UIntPtr dwRefData);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         internal struct WNDCLASSEX
@@ -972,7 +973,7 @@ namespace MonitorControl
         internal static extern bool UnregisterClass(IntPtr lpClassName, IntPtr hInstance);
 
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern IntPtr DefWindowProcW(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr DefWindowProcW(IntPtr hWnd, WM msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr CreateWindowEx(uint dwExStyle, IntPtr lpClassName, IntPtr lpWindowName, uint dwStyle,
@@ -1043,6 +1044,12 @@ namespace MonitorControl
 
         [DllImport("user32.dll")]
         internal static extern bool ReleaseCapture();
+
+        [DllImport("comctl32.dll")]
+        internal static extern bool SetWindowSubclass(IntPtr hWnd, SUBCLASSPROC pfnSubclass, UIntPtr uIdSubclass, UIntPtr dwRefData);
+
+        [DllImport("comctl32.dll")]
+        internal static extern IntPtr DefSubclassProc(IntPtr hWnd, WM msg, IntPtr wParam, IntPtr lParam);
 
         #endregion
 

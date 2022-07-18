@@ -45,8 +45,7 @@ namespace MonitorControl
 
             SetTrayIcon();
 
-            // Thanks to https://www.travelneil.com/wndproc-in-uwp.html so that I avoid to create a raw window
-            m_wndProcLegacy = WinAPI.SetWindowLongPtr(m_hWindow, WinAPI.GWLP_WNDPROC, m_wndProc);
+            WinAPI.SetWindowSubclass(m_hWindow, m_wndProc, UIntPtr.Zero, UIntPtr.Zero);
 
             Closed += OnClosed;
         }
@@ -59,8 +58,7 @@ namespace MonitorControl
         private IntPtr m_hWindow;
         private BackdropManager m_backdropHelper;
 
-        private IntPtr m_wndProcLegacy;
-        private WinAPI.WNDPROC m_wndProc;
+        private WinAPI.SUBCLASSPROC m_wndProc;
 
         internal Action OpenWindow;
         internal Action ExitApplication;
@@ -88,7 +86,7 @@ namespace MonitorControl
             m_backdropHelper.SetBackdrop(backdrop);
         }
 
-        private IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam)
+        private IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam, UIntPtr uIdSubclass, UIntPtr dwRefData)
         {
             switch (msg)
             {
@@ -120,7 +118,7 @@ namespace MonitorControl
                     }
                     break;
             }
-            return WinAPI.CallWindowProc(m_wndProcLegacy, hWnd, msg, wParam, lParam);
+            return WinAPI.DefSubclassProc(hWnd, msg, wParam, lParam);
         }
 
 
