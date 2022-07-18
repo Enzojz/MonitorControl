@@ -33,6 +33,7 @@ namespace MonitorControl
             if (Autostart)
             {
                 var rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                var n = rkApp.GetValueNames();
                 if (rkApp.GetValue("MonitorControl", null) == null)
                 {
                     m_data.Autostart = false;
@@ -100,6 +101,7 @@ namespace MonitorControl
                     var exePath = Path.ChangeExtension(System.Reflection.Assembly.GetExecutingAssembly().Location, "exe");
                     var autorunPath = String.Format("{0} -silent", exePath);
                     rkApp.SetValue("MonitorControl", autorunPath);
+                    var n = rkApp.GetValueNames();
                 }
                 else
                 {

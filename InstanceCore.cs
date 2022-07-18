@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
+using System.Threading.Tasks;
 
 namespace MonitorControl
 {
@@ -46,6 +47,9 @@ namespace MonitorControl
                     return true;
                 }, IntPtr.Zero);
 
+            var ws = new Stopwatch();
+            ws.Start();
+
             Monitors = hMonitors
                 .SelectMany(hMonitor =>
                 {
@@ -59,14 +63,20 @@ namespace MonitorControl
                 .Select((m, i) =>
                 {
                     var (physicalMonitor, monitor, center) = m;
-                    var description = (monitor.displayName != null && monitor.displayName.Length > 0) ? 
-                        monitor.displayName : 
-                        (monitor.description != null && monitor.description.Length > 0) ? 
+                    var description = (monitor.displayName != null && monitor.displayName.Length > 0) ?
+                        monitor.displayName :
+                        (monitor.description != null && monitor.description.Length > 0) ?
                             monitor.description :
                             new string(physicalMonitor.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray());
                     return new Monitor(physicalMonitor, description, monitor.deviceId, center, i);
                 })
                 .ToList();
+
+            Task.WaitAll(Monitors.Select(m => Task.Run(m.Init)).ToArray());
+            Monitors.ForEach(m => m.SetReady());
+
+            ws.Stop();
+            Debug.WriteLine(ws.Elapsed);
 
             ReadProfile(App.SettingManager.ProfilePath);
             if (App.SettingManager != null && App.SettingManager.ReloadProfile)
@@ -97,7 +107,7 @@ namespace MonitorControl
         }
 
         internal bool ShowMessage { get => m_message != null; set => m_message = null; }
-        
+
         public List<Monitor> Monitors
         {
             get;

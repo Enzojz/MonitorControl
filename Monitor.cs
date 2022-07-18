@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MonitorControl
 {
@@ -18,6 +20,10 @@ namespace MonitorControl
 
             Description = string.Format("#{0}: {1}", index + 1, description);
 
+        }
+
+        internal void Init()
+        {
             WinAPI.GetMonitorCapabilities(hMonitor, out WinAPI.MC_CAP mc, out WinAPI.MC_SUPPORTED_COLOR_TEMPERATURE _);
             for (int i = 0; i < 3 && mc == 0; i++)
             {
@@ -26,30 +32,24 @@ namespace MonitorControl
                     break;
             }
 
-            var f1 = () => { retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness); };
-            var f2 = () => { retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast); };
-            var f3 = () =>
-            {
-                retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref red,
-                (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_RED_GAIN, out mi, out c, out ma)
-            );
-            };
-            var f4 = () =>
-            {
-                retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref green,
-                (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_GREEN_GAIN, out mi, out c, out ma)
-            );
-            };
-            var f5 = () =>
-            {
-                retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue,
-                (IntPtr h, out uint mi, out uint c, out uint ma) => WinAPI.GetMonitorRedGreenOrBlueGain(h, WinAPI.MC_GAIN_TYPE.MC_BLUE_GAIN, out mi, out c, out ma)
-            );
+            if (mc == 0)
+                return;
+
+            var retriveDatas = new Action[] {
+                () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness),
+                () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast),
+                () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref red, WinAPI.GetMonitorRed),
+                () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref green, WinAPI.GetMonitorGreen),
+                () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_RED_GREEN_BLUE_GAIN, ref blue, WinAPI.GetMonitorBlue)
             };
 
-            var f = new List<Action> { f1, f2, f3, f4, f5 };
-            f.AsParallel().ForAll(f => f());
+            Task.WaitAll(retriveDatas.Select(Task.Run).ToArray());
+            IsReady = true;
+        }
 
+        internal void SetReady()
+        {
+            OnPropertyChanged("IsReady");
         }
 
         void retriveItem(WinAPI.MC_CAP mc, WinAPI.MC_CAP flag, ref Item item, GetState fn)
@@ -85,6 +85,8 @@ namespace MonitorControl
         }
 
         #region Properties
+
+        public bool IsReady { get; private set; } = false;
         public uint Brightness
         {
             get => getValue(brightness);
@@ -163,10 +165,11 @@ namespace MonitorControl
         private Item green;
         private Item blue;
         private IntPtr hMonitor;
+
         #endregion
 
         #region PropertyChanged
-        private void OnPropertyChanged(string propertyName)
+        internal void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
