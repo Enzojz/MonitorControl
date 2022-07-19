@@ -57,7 +57,7 @@ namespace MonitorControl
                 if (ofn.lpstrFile != null && ofn.lpstrFile.Length > 0 && File.Exists(ofn.lpstrFile))
                 {
                     App.Instance.ReadProfile(ofn.lpstrFile);
-                    App.Instance.Message = String.Format("Profiles from {0} have been imported!", ofn.lpstrFile);
+                    App.Instance.Message = $"Profiles from {ofn.lpstrFile} have been imported!";
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace MonitorControl
                     if (Path.GetExtension(path).Length == 0)
                         path = Path.ChangeExtension(path, "mcp");
                     App.Instance.WriteProfile(path);
-                    App.Instance.Message = String.Format("Profiles have been exported to: {0}", path);
+                    App.Instance.Message = $"Profiles have been exported to: {path}";
                 }
             }
         }

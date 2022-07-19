@@ -1002,12 +1002,7 @@ namespace MonitorControl
         internal static extern bool GetCursorPos(out Point point);
 
         [DllImport("user32.dll")]
-        internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, WNDPROC dwNewLong);
-        [DllImport("user32.dll")]
         internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-        [DllImport("user32.dll")]
-        internal static extern IntPtr GetWindowLongPtrA(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam);

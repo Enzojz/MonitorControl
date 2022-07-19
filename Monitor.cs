@@ -18,8 +18,7 @@ namespace MonitorControl
             DeviceId = deviceId;
             TopLeft = topLeft;
 
-            Description = string.Format("#{0}: {1}", index + 1, description);
-
+            Description = $"#{index + 1}: {description}";
         }
 
         internal void Init()

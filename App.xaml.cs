@@ -23,7 +23,7 @@ namespace MonitorControl
         /// </summary>
         public App()
         {
-            Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             this.InitializeComponent();
 
 
@@ -33,7 +33,7 @@ namespace MonitorControl
             m_popupMenu.ExitApplication += ExitApplication;
 
 
-            if (!Environment.GetCommandLineArgs().ToList().Exists(p => p == "-silent"))
+            if (!Environment.GetCommandLineArgs().Contains("-silent"))
             {
                 OpenWindow();
             }

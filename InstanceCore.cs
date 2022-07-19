@@ -220,7 +220,7 @@ namespace MonitorControl
                         m.Profile = p[m.DeviceId];
                 }
                 OnPropertyChanged("CurrentProfile");
-                Message = String.Format("Profile {0} has been loaded!", profile);
+                Message = $"Profile {profile} has been loaded!";
             }
         }
 
@@ -231,7 +231,7 @@ namespace MonitorControl
                 if (profiles.ContainsKey(profile))
                 {
                     profiles[profile].Profile.Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile);
-                    Message = String.Format("Profile {0} has been saved!", profile);
+                    Message = $"Profile {profile} has been saved!";
                 }
                 else
                 {
@@ -243,7 +243,7 @@ namespace MonitorControl
                             Monitors = Monitors.ToDictionary(m => m.DeviceId, m => m.Profile)
                         });
                     OnPropertyChanged("Profiles");
-                    Message = String.Format("Profile {0} has been created!", profile);
+                    Message = $"Profile {profile} has been created!";
                 }
                 WriteProfile(App.SettingManager.ProfilePath);
             }
@@ -258,7 +258,7 @@ namespace MonitorControl
                 profiles.Remove(oldName);
                 WriteProfile(App.SettingManager.ProfilePath);
                 OnPropertyChanged("Profiles");
-                Message = String.Format("Profile {0} has been renamed to {1}!", oldName, newName);
+                Message = $"Profile {oldName} has been renamed to {newName}!";
                 if (currentProfile == oldName)
                 {
                     currentProfile = newName;
@@ -274,7 +274,7 @@ namespace MonitorControl
                 profiles.Remove(profile);
                 WriteProfile(App.SettingManager.ProfilePath);
                 OnPropertyChanged("Profiles");
-                Message = String.Format("Profile {0} has been saved!", profile);
+                Message = $"Profile {profile} has been saved!";
                 if (currentProfile == profile)
                 {
                     currentProfile = null;

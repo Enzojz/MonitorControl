@@ -2,9 +2,11 @@
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Security.AccessControl;
 
 namespace MonitorControl
 {
@@ -60,7 +62,7 @@ namespace MonitorControl
                     m_data.Theme = newValue;
                     ThemeChanged(this, m_data.Theme);
                     Save();
-                    App.Instance.Message = String.Format("Theme changed to {0}.", value);
+                    App.Instance.Message = $"Theme changed to {value}.";
                 }
                 catch
                 {
@@ -74,7 +76,7 @@ namespace MonitorControl
             {
                 m_data.DefaultProfile = value;
                 Save();
-                App.Instance.Message = String.Format("Default profile changed to {0}.", value);
+                App.Instance.Message = $"Default profile changed to {value}.";
             }
             get => m_data.DefaultProfile ?? "Default";
         }
@@ -85,7 +87,7 @@ namespace MonitorControl
             {
                 m_data.ProfilePath = value;
                 Save();
-                App.Instance.Message = String.Format("Profile path changed to {0}.", value);
+                App.Instance.Message = $"Profile path changed to {value}.";
                 OnPropertyChanged("ProfilePath");
             }
             get => m_data.ProfilePath ?? "profile.mcp";
@@ -95,17 +97,13 @@ namespace MonitorControl
         {
             set
             {
-                var rkApp = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
                 if (value)
                 {
-                    var exePath = Path.ChangeExtension(System.Reflection.Assembly.GetExecutingAssembly().Location, "exe");
-                    var autorunPath = String.Format("{0} -silent", exePath);
-                    rkApp.SetValue("MonitorControl", autorunPath);
-                    var n = rkApp.GetValueNames();
+                    //Autorun.register();
                 }
                 else
                 {
-                    rkApp.DeleteValue("MonitorControl", false);
+                    //Autorun.deregister();
                 }
 
                 m_data.Autostart = value;

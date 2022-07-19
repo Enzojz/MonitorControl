@@ -31,9 +31,9 @@ namespace MonitorControl
 
             var presenter = appWindow.Presenter as OverlappedPresenter;
             presenter.IsResizable = false;
-            presenter.SetBorderAndTitleBar(false, false);
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
+            presenter.SetBorderAndTitleBar(false, false);
 
             WinAPI.SetWindowLongPtr(m_hWindow, -20, (IntPtr)WinAPI.WS_EX.WS_EX_TOOLWINDOW);
 

@@ -20,7 +20,7 @@
     <Version>2.0.0</Version>
     <Authors>Enzojz</Authors>
     <Product>Monitor Control</Product>
-    <PackageCertificateThumbprint>FA4A1D23DDBD6C5D8EF7BD1AC044C32AF2C61788</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>7A04C4BDC5E8402C065413629CF305CF53A6DDBD</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
   <ItemGroup>
