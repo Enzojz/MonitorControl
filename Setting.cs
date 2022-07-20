@@ -96,47 +96,19 @@ namespace MonitorControl
         {
             set
             {
-                var args = String.Join(" ", new String[]
+                var reg = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                if (value)
                 {
-                    value ? "add" : "delete",
-                    @"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
-                    "/f",
-                    "/v MonitorControl",
-                    value ? $@"/d ""\""{Environment.ProcessPath}\"" -silent""" : null
-                });
-
-                var regInfo = new ProcessStartInfo()
-                {
-                    FileName = "reg.exe",
-                    UseShellExecute = false,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true,
-                    Arguments = args
-                };
-
-                try
-                {
-                    var reg = Process.Start(regInfo);
-                    reg.WaitForExit();
-
-                    if (reg.ExitCode == 0)
-                    {
-                        m_data.Autostart = value;
-                        Save();
-                        App.Instance.Message = String.Format("Monitor Control {0} be launched at startup.", value ? "will" : "will not");
-                    }
-                    else
-                    {
-                        throw new Exception();
-                    }
+                    reg.SetValue("MonitorControl", $@"""{Environment.ProcessPath}"" -silent", RegistryValueKind.String);
                 }
-                catch (Exception ex)
+                else
                 {
-                    m_data.Autostart = checkAutorun();
-                    Save();
-                    App.Instance.Message = "Autostart setting is not placed due to external errors.";
+                    reg.DeleteValue("MonitorControl", false);
                 }
+
+                m_data.Autostart = value;
+                Save();
+                App.Instance.Message = String.Format("Monitor Control {0} be launched at startup.", value ? "will" : "will not");
             }
             get => m_data.Autostart;
         }
