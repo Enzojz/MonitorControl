@@ -23,7 +23,7 @@ namespace MonitorControl
         /// </summary>
         public App()
         {
-            Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(Environment.ProcessPath);
             this.InitializeComponent();
 
 
