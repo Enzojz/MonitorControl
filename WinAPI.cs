@@ -640,7 +640,7 @@ namespace MonitorControl
         }
 
         [Flags]
-        public enum MenuFlags : uint
+        internal enum MenuFlags : uint
         {
             MF_BITMAP = 0x00000004,
             MF_CHECKED = 0x00000008,
@@ -1156,7 +1156,7 @@ namespace MonitorControl
 
         #endregion
 
-        public static byte[] StringToByteArray(string str, Encoding encoding)
+        internal static byte[] StringToByteArray(string str, Encoding encoding)
         {
             int len = encoding.GetByteCount(str);
 

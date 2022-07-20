@@ -1,12 +1,10 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Security.AccessControl;
 
 namespace MonitorControl
 {
@@ -32,16 +30,16 @@ namespace MonitorControl
         public Setting()
         {
             Load();
-            if (Autostart)
-            {
-                var rkApp = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                var n = rkApp.GetValueNames();
-                if (rkApp.GetValue("MonitorControl", null) == null)
-                {
-                    m_data.Autostart = false;
-                }
-            }
+            m_data.Autostart = checkAutorun();
+        }
 
+        bool checkAutorun()
+        {
+            var reg = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+            string value = (string)reg.GetValue("MonitorControl", string.Empty);
+            if (value == string.Empty)
+                return false;
+            return value.Contains(Environment.ProcessPath);
         }
 
         private SettingData m_data;
@@ -93,22 +91,52 @@ namespace MonitorControl
             get => m_data.ProfilePath ?? "profile.mcp";
         }
 
+
         internal bool Autostart
         {
             set
             {
-                if (value)
+                var args = String.Join(" ", new String[]
                 {
-                    //Autorun.register();
-                }
-                else
-                {
-                    //Autorun.deregister();
-                }
+                    value ? "add" : "delete",
+                    @"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
+                    "/f",
+                    "/v MonitorControl",
+                    value ? $@"/d ""\""{Environment.ProcessPath}\"" -silent""" : null
+                });
 
-                m_data.Autostart = value;
-                Save();
-                App.Instance.Message = "Setting saved!";
+                var regInfo = new ProcessStartInfo()
+                {
+                    FileName = "reg.exe",
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                    Arguments = args
+                };
+
+                try
+                {
+                    var reg = Process.Start(regInfo);
+                    reg.WaitForExit();
+
+                    if (reg.ExitCode == 0)
+                    {
+                        m_data.Autostart = value;
+                        Save();
+                        App.Instance.Message = String.Format("Monitor Control {0} be launched at startup.", value ? "will" : "will not");
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    m_data.Autostart = checkAutorun();
+                    Save();
+                    App.Instance.Message = "Autostart setting is not placed due to external errors.";
+                }
             }
             get => m_data.Autostart;
         }
