@@ -37,7 +37,9 @@ namespace MonitorControl
         {
             var reg = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
             string value = (string)reg.GetValue("MonitorControl", string.Empty);
-            return (value == string.Empty) ? false : value.Contains(Environment.ProcessPath);
+            if (value == string.Empty)
+                return false;
+            return value.Contains(Environment.ProcessPath);
         }
 
         private SettingData m_data;
