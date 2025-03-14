@@ -19,7 +19,7 @@
                                     </Style>
                                 </Flyout.FlyoutPresenterStyle>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Text="{x:Bind CreateNew.Name, Mode=OneWay}" VerticalAlignment="Center" Width="300" Margin="0, 0, 10, 0"
+                                    <TextBox Text="{x:Bind CreateNew.Name, Mode=TwoWay}" VerticalAlignment="Center" Width="300" Margin="0, 0, 10, 0"
                                              PlaceholderText="Type the name of the new profile" PreviewKeyDown="ConfirmCreateByEnter" x:Name="NTBox" />
                                     <Button Click="ConfirmCreateByClick" Tag="{Binding Text,ElementName=NTBox, Mode=OneWay}">
                                         Create
