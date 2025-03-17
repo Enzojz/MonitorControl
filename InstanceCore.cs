@@ -6,18 +6,17 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Diagnostics;
-using Microsoft.UI.Xaml;
-using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace MonitorControl
 {
-    internal class InstanceCore : INotifyPropertyChanged, IDisposable
+    public class InstanceCore : INotifyPropertyChanged, IDisposable
     {
 
         public InstanceCore()
         {
             m_timer = new DispatcherTimer();
-            m_timer.Tick += (object sender, object e) => { Message = null; };
+            m_timer.Tick += (object? sender, EventArgs e) => { Message = null; };
 
             var displayConfigs = DisplayConfigs().ToDictionary(d => d.id);
             var displays = WinAPI.GetDisplays()

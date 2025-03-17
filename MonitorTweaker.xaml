@@ -1,11 +1,12 @@
-﻿<Page 
-    x:Class="MonitorControl.MonitorTweaker" 
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    xmlns:local="using:MonitorControl" 
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    mc:Ignorable="d">
+﻿<Page x:Class="MonitorControl.MonitorTweaker"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MonitorControl"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MonitorTweaker">
     <Page.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="Grid.Column" Value="2"/>
@@ -20,7 +21,7 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
-        <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+        <!--<Style TargetType="Slider">
             <Setter Property="Grid.Column" Value="1"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -29,17 +30,17 @@
             <Setter Property="Minimum" Value="0"/>
             <Setter Property="TickFrequency" Value="10"/>
             <Setter Property="TickPlacement" Value="Inline"/>
-        </Style>
-        <Style TargetType="FontIcon">
+        </Style>-->
+        <!--<Style TargetType="FontIcon">
             <Setter Property="Grid.Column" Value="0"/>
             <Setter Property="Height" Value="20"/>
             <Setter Property="Width" Value="20"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
-        </Style>
+        </Style>-->
     </Page.Resources>
-    <Grid RowSpacing="10" ColumnSpacing="10" Margin="20, 10, 20, 10">
+    <Grid Margin="20, 10, 20, 10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"/>
             <ColumnDefinition Width="*"/>
@@ -74,25 +75,26 @@
                 </Path.Data>
             </Path>
         </Viewbox>
-        <FontIcon Grid.Row="3" Glyph="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
-        <FontIcon Grid.Row="3" Glyph="&#xED67;" Foreground="#EE4444"/>
-        <FontIcon Grid.Row="4" Glyph="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
-        <FontIcon Grid.Row="4" Glyph="&#xED67;" Foreground="#44EE44"/>
-        <FontIcon Grid.Row="5" Glyph="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
-        <FontIcon Grid.Row="5" Glyph="&#xED67;" Foreground="#4444EE"/>
 
-        <Slider Grid.Row="1" Value="{x:Bind Monitor.Brightness, Mode=TwoWay}"/>
-        <Slider Grid.Row="2" Value="{x:Bind Monitor.Contrast, Mode=TwoWay}"/>
-        <Slider Grid.Row="3" Value="{x:Bind Monitor.Red, Mode=TwoWay}"/>
-        <Slider Grid.Row="4" Value="{x:Bind Monitor.Green, Mode=TwoWay}"/>
-        <Slider Grid.Row="5" Value="{x:Bind Monitor.Blue, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#EE4444"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#44EE44"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#4444EE"/>
 
-        <TextBlock Grid.Row="1" Text="{x:Bind Monitor.Brightness, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="2" Text="{x:Bind Monitor.Contrast, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="3" Text="{x:Bind Monitor.Red, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="4" Text="{x:Bind Monitor.Green, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="5" Text="{x:Bind Monitor.Blue, Mode=TwoWay}"/>
+        <Slider Grid.Column="1" Grid.Row="1" Value="{Binding Brightness, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
+        <Slider Grid.Column="1" Grid.Row="2" Value="{Binding Contrast, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
+        <Slider Grid.Column="1" Grid.Row="3" Value="{Binding Red, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
+        <Slider Grid.Column="1" Grid.Row="4" Value="{Binding Green, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
+        <Slider Grid.Column="1" Grid.Row="5" Value="{Binding Blue, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
 
-        <TextBlock HorizontalAlignment="Right" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{x:Bind Monitor.Description}" x:Name="Desc"/>
+        <TextBlock Grid.Row="1" Text="{Binding Brightness, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="2" Text="{Binding Contrast, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="3" Text="{Binding Red, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="4" Text="{Binding Green, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="5" Text="{Binding Blue, Mode=TwoWay}"/>
+
+        <TextBlock HorizontalAlignment="Right" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{Binding Monitor.Description}" x:Name="Desc"/>
     </Grid>
 </Page>

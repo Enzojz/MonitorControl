@@ -1,83 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>MonitorControl</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Platforms>x64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-    <UseWinUI>true</UseWinUI>
-    <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
-    <UseWindowsForms>False</UseWindowsForms>
-    <UseWPF>False</UseWPF>
-    <StartupObject>MonitorControl.Program</StartupObject>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <ApplicationIcon>Assets\MonitorControl.ico</ApplicationIcon>
-    <SelfContained>true</SelfContained>
-    <Version>2.0.0</Version>
-    <Authors>Enzojz</Authors>
-    <Product>Monitor Control</Product>
-    <PackageCertificateThumbprint>7A04C4BDC5E8402C065413629CF305CF53A6DDBD</PackageCertificateThumbprint>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>True</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="ThemedWindow.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Home.xaml" />
-    <None Remove="Load.xaml" />
-    <None Remove="MonitorIdentifier.xaml" />
-    <None Remove="MonitorTweaker.xaml" />
-    <None Remove="Setting.xaml" />
-  </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
-    <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
-
-  <!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
-       Tools extension to be activated for this project even if the Windows App SDK Nuget
-       package has not yet been restored -->
-  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\MonitorTweaker.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Load.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\MonitorIdentifier.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="ProcessHolder.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <None Update="profile.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Page Update="Views\Home.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Settings.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
 </Project>

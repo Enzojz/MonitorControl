@@ -1,0 +1,179 @@
+﻿<Page x:Class="MonitorControl.Profiles"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:local="clr-namespace:MonitorControl"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Profiles"
+      DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+      >
+    <StackPanel Orientation="Vertical">
+        <Menu HorizontalAlignment="Right" FontSize="12">
+            <Menu.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </Menu.Resources>
+            <MenuItem>
+                <MenuItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE710;"/>
+                        <TextBlock Text="New Profile"/>
+                    </StackPanel>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem x:Name="ImportButton">
+                <MenuItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE896;"/>
+                        <TextBlock Text="Import"/>
+                    </StackPanel>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem x:Name="ExportButton">
+                <MenuItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE898;"/>
+                        <TextBlock Text="Export"/>
+                    </StackPanel>
+                </MenuItem.Header>
+            </MenuItem>
+        </Menu>
+        <!--<CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" ClosedDisplayMode="Compact" OverflowButtonVisibility="Collapsed">
+                <CommandBar.PrimaryCommands>
+                    <Button Label="New Profile" AllowFocusOnInteraction="True">
+                        <FontIcon Glyph="&#xE710;"/>
+                        <Button.Flyout>
+                            <Flyout x:Name="CreateNewFlyout">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Text="{Binding CreateNew.Name, Mode=TwoWay}" VerticalAlignment="Center" Width="300" Margin="0, 0, 10, 0"
+                                             PlaceholderText="Type the name of the new profile" PreviewKeyDown="ConfirmCreateByEnter" x:Name="NTBox" />
+                                    <Button Click="ConfirmCreateByClick" Tag="{Binding Text,ElementName=NTBox, Mode=OneWay}">
+                                        Create
+                                    </Button>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Label="Import" Click="ImportClick">
+                        <FontIcon Glyph="&#xE896;"/>
+                    </Button>
+                    <Button Label="Export" Click="ExportClick">
+                        <FontIcon Glyph="&#xE898;"/>
+                    </Button>
+                </CommandBar.PrimaryCommands>
+            </CommandBar>-->
+        <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" Padding="5">-->
+        <ListView ItemsSource="{Binding Instance.Profiles, Mode=OneWay}" SelectedItem="{Binding Instance.CurrentProfile, Mode=TwoWay}">
+            <ListView.Resources>
+                <!--<Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+                        <Setter Property="LabelPosition" Value="Collapsed"/>
+                    </Style>-->
+            </ListView.Resources>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl x:Name="cc">
+                        <Grid HorizontalAlignment="Stretch" Height="44">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseEnter">
+                                    <i:CallMethodAction TargetObject="{Binding}" MethodName="PointerEntered"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseLeave">
+                                    <i:CallMethodAction TargetObject="{Binding}" MethodName="PointerExited"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Visibility="{Binding TextBlockVisibility, Mode=OneWay}"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Margin="5" Visibility="{Binding EditVisibility, Mode=OneWay}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="Edit"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE70F;"/>
+                                </Button>
+                                <Button Margin="5" Visibility="{Binding SaveVisibility, Mode=OneWay}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE74E;"/>
+                                </Button>
+                                <Button Margin="5" Visibility="{Binding RemoveVisibility, Mode=OneWay}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="Remove"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE74D;"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </ContentControl>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsEditing}" Value="true">
+                            <DataTrigger.Setters>
+                                <Setter TargetName="cc" Property="Content">
+                                    <Setter.Value>
+                                            <Grid HorizontalAlignment="Stretch" Height="44">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                Visibility="{Binding TextBoxVisibility, Mode=OneWay}" x:Name="TBox">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="PreviewKeyDown">
+                                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEditByEnter"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </TextBox>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Margin="5" Visibility="{Binding TextBoxVisibility, Mode=OneWay}">
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Click">
+                                                                <i:CallMethodAction TargetObject="{Binding}" MethodName="CancelEdit"/>
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                        <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE711;"/>
+                                                    </Button>
+                                    <!--Tag="{Binding Text,ElementName=TBox, Mode=OneWay}"-->
+                                                    <Button Margin="5" Visibility="{Binding TextBoxVisibility, Mode=OneWay}"
+                                                            >
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Click">
+                                                                <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEdit"/>
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                        <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE73E;"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Grid>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <!--</ScrollViewer>-->
+    </StackPanel>
+</Page>

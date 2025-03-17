@@ -1,12 +1,13 @@
-﻿<Page
-    x:Class="MonitorControl.Settings"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:MonitorControl"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
+﻿<Page x:Class="MonitorControl.Settings"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MonitorControl"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Settings"
+      DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Margin="10">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -19,13 +20,13 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Content="Autostart at startup" IsChecked="{x:Bind SettingManager.Autostart, Mode=TwoWay}"/>
-            <CheckBox Grid.Row="1" Content="Run in background" IsChecked="{x:Bind SettingManager.RunInBackground, Mode=TwoWay}"/>
-            <CheckBox Grid.Row="2" Content="Reload profile at startup" IsChecked="{x:Bind SettingManager.ReloadProfile, Mode=TwoWay}"/>
-            <ComboBox Grid.Column="1" Grid.RowSpan="2" Header="Default profile" Margin="0, 10" HorizontalAlignment="Left"
-                      ItemsSource="{x:Bind Instance.Profiles}"
+            <CheckBox Grid.Row="0" Content="Autostart at startup" IsChecked="{Binding SettingManager.Autostart, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="1" Content="Run in background" IsChecked="{Binding SettingManager.RunInBackground, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="2" Content="Reload profile at startup" IsChecked="{Binding SettingManager.ReloadProfile, Mode=TwoWay}"/>
+            <ComboBox Grid.Column="1" Grid.RowSpan="2" Margin="0, 10" HorizontalAlignment="Left"
+                      ItemsSource="{Binding Instance.Profiles}"
                       DisplayMemberPath="Name"
-                      SelectedValue="{x:Bind SettingManager.DefaultProfile, Mode=TwoWay}"
+                      SelectedValue="{Binding SettingManager.DefaultProfile, Mode=TwoWay}"
                       SelectedValuePath="Name"
                       />
             <Grid Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
@@ -35,18 +36,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Margin="5">Profile location:</TextBlock>
-                <TextBlock Grid.Column="1" Text="{x:Bind SettingManager.ProfilePath, Mode=OneWay}" Margin="5"/>
+                <TextBlock Grid.Column="1" Text="{Binding SettingManager.ProfilePath, Mode=OneWay}" Margin="5"/>
                 <Button Grid.Column="2" Click="ProfileLocationClick" Margin="0, 0, 10, 0">Change</Button>
             </Grid>
-            <ComboBox Grid.Column="2" Grid.RowSpan="2" Header="Theme" Margin="0, 10" 
-                      HorizontalAlignment="Left"
-                      SelectedValue="{x:Bind SettingManager.Theme, Mode=TwoWay}"
-                      SelectedValuePath="Content"
-                      >
-                <ComboBoxItem Content="Mica"/>
-                <ComboBoxItem Content="Acrylic"/>
-                <ComboBoxItem Content="Classic"/>
-            </ComboBox>
         </Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0, 20, 0, 0">
             <Image Source="/Assets/Square150x150Logo.scale-200.png"
@@ -66,4 +58,5 @@
             </StackPanel>
         </StackPanel>
     </StackPanel>
+
 </Page>

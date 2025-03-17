@@ -12,8 +12,6 @@ namespace MonitorControl
     internal class SettingData
     {
         [DataMember]
-        internal BackdropManager.BackdropType Theme = BackdropManager.BackdropType.Mica;
-        [DataMember]
         internal string DefaultProfile = "Default";
         [DataMember]
         internal bool Autostart = false;
@@ -25,7 +23,7 @@ namespace MonitorControl
         internal string ProfilePath = "profile.mcp";
     }
 
-    internal class Setting : INotifyPropertyChanged
+    public class Setting : INotifyPropertyChanged
     {
         public Setting()
         {
@@ -44,31 +42,8 @@ namespace MonitorControl
 
         private SettingData m_data;
 
-        public delegate void BackdropEventHander(object sneder, BackdropManager.BackdropType type);
-        public event BackdropEventHander ThemeChanged;
 
-        public BackdropManager.BackdropType ThemeEnum { get => m_data.Theme; }
-
-        internal string Theme
-        {
-            get => m_data.Theme.ToString();
-            set
-            {
-                try
-                {
-                    var newValue = Enum.Parse<BackdropManager.BackdropType>(value);
-                    m_data.Theme = newValue;
-                    ThemeChanged(this, m_data.Theme);
-                    Save();
-                    App.Instance.Message = $"Theme changed to {value}.";
-                }
-                catch
-                {
-                }
-            }
-        }
-
-        internal string DefaultProfile
+        public string DefaultProfile
         {
             set
             {
@@ -79,7 +54,7 @@ namespace MonitorControl
             get => m_data.DefaultProfile ?? "Default";
         }
 
-        internal string ProfilePath
+        public string ProfilePath
         {
             set
             {
@@ -92,7 +67,7 @@ namespace MonitorControl
         }
 
 
-        internal bool Autostart
+        public bool Autostart
         {
             set
             {
@@ -113,7 +88,7 @@ namespace MonitorControl
             get => m_data.Autostart;
         }
 
-        internal bool ReloadProfile
+        public bool ReloadProfile
         {
             set
             {
@@ -124,7 +99,7 @@ namespace MonitorControl
             get => m_data.ReloadProfile;
         }
 
-        internal bool RunInBackground
+        public bool RunInBackground
         {
             set
             {

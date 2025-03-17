@@ -1,41 +1,29 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace MonitorControl
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Profiles.xaml 的交互逻辑
     /// </summary>
-    public sealed partial class Profiles : Page
+    public partial class Profiles : Page
     {
         public Profiles()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            ImportButton.Command = new DelegateCommand(ImportClick);
+            ImportButton.Command = new DelegateCommand(ImportClick);
+            ExportButton.Command = new DelegateCommand(ExportClick);
         }
 
         internal ProfileState CreateNew = new ProfileState(null, null);
 
-        internal InstanceCore Instance => App.Instance;
+        public InstanceCore Instance => App.Instance;
 
-        private void ImportClick(object sender, RoutedEventArgs e)
+        private void ImportClick(object parameter)
         {
             var ofn = new WinAPI.OPENFILENAME()
             {
@@ -61,7 +49,8 @@ namespace MonitorControl
                 }
             }
         }
-        private void ExportClick(object sender, RoutedEventArgs e)
+
+        private void ExportClick(object parameter)
         {
             var ofn = new WinAPI.OPENFILENAME()
             {
@@ -90,20 +79,6 @@ namespace MonitorControl
                     App.Instance.Message = $"Profiles have been exported to: {path}";
                 }
             }
-        }
-
-        public void ConfirmCreateByEnter(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                CreateNewFlyout.Hide();
-                CreateNew.ConfirmEditByEnter(sender, e);
-            }
-        }
-        public void ConfirmCreateByClick(object sender, RoutedEventArgs e)
-        {
-            CreateNewFlyout.Hide();
-            CreateNew.Save(sender, e);
         }
     }
 }

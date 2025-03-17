@@ -1,7 +1,5 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
+﻿using System.Windows.Controls;
+using System.Windows;
 
 namespace MonitorControl
 {
@@ -12,11 +10,11 @@ namespace MonitorControl
         public DataTemplate Setting { get; set; }
         public DataTemplate Home { get; set; }
 
-        protected override DataTemplate SelectTemplateCore(object item, DependencyObject dp)
+        public override DataTemplate SelectTemplate(object item, DependencyObject dp)
         {
             if (item is Monitor)
                 return Monitor;
-            if (item is List<ProfileState>)
+            if (item is int && (int)item == 1)
                 return Profile;
             else if (item is int && (int)item == 0)
                 return Setting;

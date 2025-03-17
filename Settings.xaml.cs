@@ -1,26 +1,26 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using System.Windows.Controls;
 
 namespace MonitorControl
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Settings.xaml 的交互逻辑
     /// </summary>
-    public sealed partial class Settings : Page
+    public partial class Settings : Page
     {
         public Settings()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
-        internal InstanceCore Instance => App.Instance;
-        internal Setting SettingManager => App.SettingManager;
+        public int test => 3;
 
-        private void ProfileLocationClick(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        public InstanceCore Instance => App.Instance;
+        public Setting SettingManager => App.SettingManager;
+
+        private void ProfileLocationClick(object sender, EventArgs e)
         {
             var ofn = new WinAPI.OPENFILENAME()
             {
@@ -30,7 +30,7 @@ namespace MonitorControl
                 lpstrFileTitle = new string(new char[64]),
                 lpstrTitle = "Change Monitor Control Profile Location",
                 Flags = WinAPI.OPENFILENAME_FLAGS.OFN_ENABLESIZING | WinAPI.OPENFILENAME_FLAGS.OFN_EXPLORER | WinAPI.OPENFILENAME_FLAGS.OFN_NOCHANGEDIR | WinAPI.OPENFILENAME_FLAGS.OFN_PATHMUSTEXIST
-                
+
             };
             ofn.nMaxFile = ofn.lpstrFile.Length;
             ofn.nMaxFileTitle = ofn.lpstrFileTitle.Length;

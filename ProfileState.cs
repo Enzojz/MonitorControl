@@ -1,11 +1,10 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace MonitorControl
 {
-    internal class ProfileState : INotifyPropertyChanged
+    public class ProfileState : INotifyPropertyChanged
     {
         internal ProfileState(string name, Profile profile)
         {
@@ -15,36 +14,36 @@ namespace MonitorControl
 
         internal Profile Profile;
 
-        internal Visibility TextBlockVisibility => IsEditing ? Visibility.Collapsed : Visibility.Visible;
-        internal Visibility TextBoxVisibility => !IsEditing ? Visibility.Collapsed : Visibility.Visible;
-        internal Visibility SaveVisibility => (IsActive && !IsEditing) ? Visibility.Visible : Visibility.Collapsed;
-        internal Visibility LoadVisibility => (IsActive && !IsEditing) ? Visibility.Visible : Visibility.Collapsed;
-        internal Visibility RemoveVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
-        internal Visibility EditVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility TextBlockVisibility => IsEditing ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility TextBoxVisibility => !IsEditing ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility SaveVisibility => (IsActive && !IsEditing) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility LoadVisibility => (IsActive && !IsEditing) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility RemoveVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility EditVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
 
         public string Name { get; internal set; }
 
-        private bool IsEditing;
+        public bool IsEditing { get; set; } = false;
 
-        private bool IsActive;
+        public bool IsActive { get; set; } = false;
 
-        public void PointerEntered(object sender, PointerRoutedEventArgs e)
+        public void PointerEntered(object sender, EventArgs e)
         {
             IsActive = true;
             Notify();
 
         }
-        public void PointerExited(object sender, PointerRoutedEventArgs e)
+        public void PointerExited(object sender, EventArgs e)
         {
             IsActive = false;
             Notify();
         }
 
-        public void ConfirmEditByEnter(object sender, KeyRoutedEventArgs e)
+        public void ConfirmEditByEnter(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == Windows.System.VirtualKey.Enter)
+            if (e.Key == System.Windows.Input.Key.Enter)
             {
-                var newName = (sender as TextBox).Text;
+                var newName = (sender as System.Windows.Controls.TextBox).Text;
                 if (newName != null && newName.Length > 0)
                 {
                     IsEditing = false;
@@ -56,16 +55,16 @@ namespace MonitorControl
                     }
                     else
                     {
-                        Instance.RenameProfile(Name, (sender as TextBox).Text);
+                        Instance.RenameProfile(Name, (sender as System.Windows.Controls.TextBox).Text);
                         e.Handled = true;
                     }
                 }
             }
         }
 
-        public void ConfirmEdit(object sender, RoutedEventArgs e)
+        public void ConfirmEdit(object sender, EventArgs e)
         {
-            var newName = (sender as Button).Tag.ToString();
+            var newName = (sender as System.Windows.Controls.Button).Tag.ToString();
             if (newName != null && newName.Length > 0)
             {
                 IsEditing = false;
@@ -74,25 +73,25 @@ namespace MonitorControl
             Notify();
         }
 
-        public void CancelEdit(object sender, RoutedEventArgs e)
+        public void CancelEdit(object sender, EventArgs e)
         {
             IsEditing = false;
             Notify();
         }
 
-        public void Remove(object sender, RoutedEventArgs e)
+        public void Remove(object sender, EventArgs e)
         {
             IsEditing = false;
             Instance.RemoveProfile(Name);
         }
 
-        public void Edit(object sender, RoutedEventArgs e)
+        public void Edit(object sender, EventArgs e)
         {
             IsEditing = true;
             Notify();
         }
 
-        public void Save(object sender, RoutedEventArgs e)
+        public void Save(object sender, EventArgs e)
         {
             IsEditing = false;
             if (Name != null && Name.Length > 0)

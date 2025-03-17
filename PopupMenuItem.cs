@@ -13,7 +13,7 @@ namespace MonitorControl
 
         internal Action Callback { get; set; }
 
-        internal void Clicked (object sender, RoutedEventArgs e)
+        internal void Clicked (object sender, EventArgs e)
         {
             if (Callback != null)
             {

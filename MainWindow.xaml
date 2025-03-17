@@ -1,0 +1,73 @@
+﻿<Window x:Class="MonitorControl.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MonitorControl"
+        mc:Ignorable="d"
+        x:Name="Window"
+        Title="Monitor Control" Width="900">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" Margin="0, 5" ItemsSource="{Binding Monitors}" SelectionChanged="MonitorChanged" x:Name="MonitorList" VerticalAlignment="Top">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Padding="10" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE7F4;"/>
+                        <TextBlock Padding="10" VerticalAlignment="Center" Text="{Binding Description}" IsEnabled="{Binding IsReady, Mode=OneWay}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <ListView Grid.Row="1" Margin="0, 5" SelectionChanged="FnSelected" x:Name="FnList" VerticalAlignment="Bottom">
+            <StackPanel Orientation="Horizontal" x:Name="ProfileFn">
+                <TextBlock Padding="10" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE793;"/>
+                <TextBlock Padding="10" VerticalAlignment="Center" Text="Profiles"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" x:Name="SettingsFn">
+                <TextBlock Padding="10" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE713;"/>
+                <TextBlock Padding="10" VerticalAlignment="Center" Text="Settings"/>
+            </StackPanel>
+        </ListView>
+        <Border 
+            Grid.Column="1" Grid.RowSpan="2"
+            Background="{DynamicResource LayerFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8,0,0,0">
+            <Frame x:Name="ContentFrame">
+                <Frame.ContentTemplateSelector>
+                    <local:MonitorControlDataTemplateSelector>
+                        <local:MonitorControlDataTemplateSelector.Monitor>
+                            <DataTemplate>
+                                <local:MonitorTweaker/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Monitor>
+                        <local:MonitorControlDataTemplateSelector.Profile>
+                            <DataTemplate>
+                                <local:Profiles/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Profile>
+                        <local:MonitorControlDataTemplateSelector.Setting>
+                            <DataTemplate>
+                                <local:Settings/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Setting>
+                        <local:MonitorControlDataTemplateSelector.Home>
+                            <DataTemplate>
+                                <local:Home/>
+                            </DataTemplate>
+                        </local:MonitorControlDataTemplateSelector.Home>
+                    </local:MonitorControlDataTemplateSelector>
+                </Frame.ContentTemplateSelector>
+            </Frame>
+        </Border>
+    </Grid>
+</Window>
