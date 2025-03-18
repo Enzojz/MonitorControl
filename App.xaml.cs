@@ -1,34 +1,25 @@
-﻿using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Threading;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace MonitorControl;
 
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
-public partial class App : System.Windows.Application
+public partial class App : Application
 {
     public App()
     {
-        Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(Environment.ProcessPath);
-        //this.InitializeComponent();
-
-
-        //m_popupMenu = new PopupMenu();
+        Environment.CurrentDirectory = Path.GetDirectoryName(Environment.ProcessPath);
+        InitializeComponent();
 
         //m_popupMenu.OpenWindow += OpenWindow;
         //m_popupMenu.ExitApplication += ExitApplication;
 
     }
 
-    /// <summary>
-    /// Invoked when the application is launched normally by the end user.  Other entry points
-    /// will be used such as when the application is launched to open a specific file.
-    /// </summary>
-    /// <param name="args">Details about the launch request and process.</param>
     protected override void OnStartup(StartupEventArgs args)
     {
         string path = AppDomain.CurrentDomain.BaseDirectory.ToString();
@@ -48,6 +39,8 @@ public partial class App : System.Windows.Application
         {
             OpenWindow();
         }
+
+        m_trayMenu = new TrayMenu() { Visibility = Visibility.Hidden };
     }
 
     internal void OpenWindow()
@@ -65,6 +58,8 @@ public partial class App : System.Windows.Application
             m_window.Show();
             m_window.Activate();
         }
+
+
     }
 
     private void MainWindowClosed(object sender, EventArgs args)
@@ -88,12 +83,13 @@ public partial class App : System.Windows.Application
         //m_popupMenu.Close();
     }
 
+
     internal static InstanceCore Instance { get => m_instance; }
 
     internal static Setting SettingManager { get => m_setting; }
 
     private MainWindow m_window;
-    //private PopupMenu m_popupMenu;
+    private TrayMenu m_trayMenu;
 
     private static InstanceCore m_instance;
     private static Setting m_setting;

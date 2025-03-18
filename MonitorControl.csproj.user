@@ -14,5 +14,8 @@
     <Compile Update="Settings.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="TrayMenu.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

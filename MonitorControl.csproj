@@ -6,12 +6,41 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>True</UseWPF>
-    <UseWindowsForms>True</UseWindowsForms>
+    <UseWindowsForms>False</UseWindowsForms>
     <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <ApplicationIcon>MonitorControl.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\LockScreenLogo.scale-200.png" />
+    <None Remove="Assets\MonitorControl.ico" />
+    <None Remove="Assets\SplashScreen.scale-200.png" />
+    <None Remove="Assets\Square150x150Logo.scale-200.png" />
+    <None Remove="Assets\Square44x44Logo.scale-200.png" />
+    <None Remove="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <None Remove="Assets\StoreLogo.png" />
+    <None Remove="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MonitorControl.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\LockScreenLogo.scale-200.png" />
+    <Resource Include="Assets\MonitorControl.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\SplashScreen.scale-200.png" />
+    <Resource Include="Assets\Square150x150Logo.scale-200.png" />
+    <Resource Include="Assets\Square44x44Logo.scale-200.png" />
+    <Resource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Resource Include="Assets\StoreLogo.png" />
+    <Resource Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
 
 </Project>

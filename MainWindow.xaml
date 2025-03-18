@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:MonitorControl"
         mc:Ignorable="d"
         x:Name="Window"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        Icon="/Assets/MonitorControl.ico"
         Title="Monitor Control" Width="900">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -13,10 +16,19 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0" Margin="0, 5" ItemsSource="{Binding Monitors}" SelectionChanged="MonitorChanged" x:Name="MonitorList" VerticalAlignment="Top">
+        <TextBlock
+                Grid.ColumnSpan="2"
+                    Margin="0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    FontWeight="DemiBold"
+                    AutomationProperties.HeadingLevel="Level1"
+                    Text="Monitor Control" />
+        <ListView Grid.Row="1" Margin="0, 0, 0, 5" ItemsSource="{Binding Monitors}" SelectionChanged="MonitorChanged" x:Name="MonitorList" VerticalAlignment="Top">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -26,7 +38,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Grid.Row="1" Margin="0, 5" SelectionChanged="FnSelected" x:Name="FnList" VerticalAlignment="Bottom">
+        <ListView Grid.Row="2" Margin="0, 5" SelectionChanged="FnSelected" x:Name="FnList" VerticalAlignment="Bottom">
             <StackPanel Orientation="Horizontal" x:Name="ProfileFn">
                 <TextBlock Padding="10" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE793;"/>
                 <TextBlock Padding="10" VerticalAlignment="Center" Text="Profiles"/>
@@ -37,7 +49,7 @@
             </StackPanel>
         </ListView>
         <Border 
-            Grid.Column="1" Grid.RowSpan="2"
+            Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"
             Background="{DynamicResource LayerFillColorDefaultBrush}"
             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"

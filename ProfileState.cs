@@ -14,30 +14,9 @@ namespace MonitorControl
 
         internal Profile Profile;
 
-        public Visibility TextBlockVisibility => IsEditing ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility TextBoxVisibility => !IsEditing ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility SaveVisibility => (IsActive && !IsEditing) ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility LoadVisibility => (IsActive && !IsEditing) ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility RemoveVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility EditVisibility => (IsActive && !IsEditing) && Name != "Default" ? Visibility.Visible : Visibility.Collapsed;
-
         public string Name { get; internal set; }
 
-        public bool IsEditing { get; set; } = false;
-
-        public bool IsActive { get; set; } = false;
-
-        public void PointerEntered(object sender, EventArgs e)
-        {
-            IsActive = true;
-            Notify();
-
-        }
-        public void PointerExited(object sender, EventArgs e)
-        {
-            IsActive = false;
-            Notify();
-        }
+        public bool IsEditing { get; private set; } = false;
 
         public void ConfirmEditByEnter(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -67,48 +46,41 @@ namespace MonitorControl
             var newName = (sender as System.Windows.Controls.Button).Tag.ToString();
             if (newName != null && newName.Length > 0)
             {
-                IsEditing = false;
                 Instance.RenameProfile(Name, newName);
+                SetEditing(false);
             }
-            Notify();
         }
 
         public void CancelEdit(object sender, EventArgs e)
         {
-            IsEditing = false;
-            Notify();
+            SetEditing(false);
         }
 
         public void Remove(object sender, EventArgs e)
         {
-            IsEditing = false;
+            SetEditing(false);
             Instance.RemoveProfile(Name);
         }
 
         public void Edit(object sender, EventArgs e)
         {
-            IsEditing = true;
-            Notify();
+            SetEditing(true);
         }
 
         public void Save(object sender, EventArgs e)
         {
-            IsEditing = false;
             if (Name != null && Name.Length > 0)
             {
                 Instance.SaveProfile(Name);
             }
-            Notify();
+            SetEditing(false);
         }
 
         private InstanceCore Instance => App.Instance;
-        private void Notify()
+        private void SetEditing(bool isEditing)
         {
-            OnPropertyChanged("TextBlockVisibility");
-            OnPropertyChanged("TextBoxVisibility");
-            OnPropertyChanged("SaveVisibility");
-            OnPropertyChanged("RemoveVisibility");
-            OnPropertyChanged("EditVisibility");
+            IsEditing = isEditing;
+            OnPropertyChanged("IsEditing");
         }
 
         #region PropertyChanged

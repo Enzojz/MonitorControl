@@ -10,7 +10,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Windows.UI.WindowManagement;
-using System.Runtime.InteropServices; // For DllImport
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+using System.Windows.Shell; // For DllImport
 
 namespace MonitorControl;
 
@@ -23,10 +25,20 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
+        WindowChrome.SetWindowChrome(
+            this,
+            new WindowChrome
+            {
+                CaptionHeight = 42,
+                CornerRadius = default,
+                GlassFrameThickness = new Thickness(-1),
+                ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
+                UseAeroCaptionButtons = true
+            }
+        );
 
         //this.Title = "Monitor Control";
 
-        //m_hWindow = WinRT.Interop.WindowNative.GetWindowHandle(this);
         //var idWindow = Win32Interop.GetWindowIdFromWindow(m_hWindow);
         float dpi = WinAPI.GetDpiForWindow(m_hWindow);
         var dpiScaling = dpi / 96;
@@ -43,27 +55,6 @@ public partial class MainWindow : Window
 
         //appWindow.Resize(m_size);
 
-        //var presenter = appWindow.Presenter as OverlappedPresenter;
-        //presenter.IsResizable = false;
-        //presenter.IsMaximizable = false;
-
-        //if (AppWindowTitleBar.IsCustomizationSupported())
-        //{
-        //    ExtendsContentIntoTitleBar = true;
-        //    SetTitleBar(this.AppTitleBar);
-        //}
-        //else
-        //{
-        //    AppTitleBar.Visibility = Visibility.Collapsed;
-        //    TitleRow.Height = new GridLength(0);
-        //}
-
-        //var hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010);
-        //WinAPI.SendMessage(m_hWindow, 0x0080, 0, hIcon);
-
-        //m_backdropHelper = new BackdropManager(this);
-        //App.SettingManager.ThemeChanged += ThemeChanged;
-        //ThemeChanged(null, App.SettingManager.ThemeEnum);
 
         //m_wndProc = WindowProc;
         //WinAPI.SetWindowSubclass(m_hWindow, m_wndProc, UIntPtr.Zero, UIntPtr.Zero);
@@ -82,6 +73,7 @@ public partial class MainWindow : Window
         }
         return WinAPI.DefSubclassProc(hWnd, msg, wParam, lParam);
     }
+    
 
     private Windows.Graphics.SizeInt32 m_size;
     private IntPtr m_hWindow;

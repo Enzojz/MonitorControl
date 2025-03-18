@@ -11,38 +11,33 @@
       DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
       >
     <StackPanel Orientation="Vertical">
-        <Menu HorizontalAlignment="Right" FontSize="12">
-            <Menu.Resources>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+            <StackPanel.Resources>
                 <Style TargetType="TextBlock">
-                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Margin" Value="5, 0"/>
+                    <Setter Property="FontSize" Value="12"/>
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
-            </Menu.Resources>
-            <MenuItem>
-                <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE710;"/>
-                        <TextBlock Text="New Profile"/>
-                    </StackPanel>
-                </MenuItem.Header>
-            </MenuItem>
-            <MenuItem x:Name="ImportButton">
-                <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE896;"/>
-                        <TextBlock Text="Import"/>
-                    </StackPanel>
-                </MenuItem.Header>
-            </MenuItem>
-            <MenuItem x:Name="ExportButton">
-                <MenuItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE898;"/>
-                        <TextBlock Text="Export"/>
-                    </StackPanel>
-                </MenuItem.Header>
-            </MenuItem>
-        </Menu>
+            </StackPanel.Resources>
+            <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE710;"/>
+                    <TextBlock Text="New Profile"/>
+                </StackPanel>
+            </Button>
+            <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" x:Name="ImportButton">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE896;"/>
+                    <TextBlock Text="Import"/>
+                </StackPanel>
+            </Button>
+            <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" x:Name="ExportButton">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE898;"/>
+                    <TextBlock Text="Export"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
         <!--<CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" ClosedDisplayMode="Compact" OverflowButtonVisibility="Collapsed">
                 <CommandBar.PrimaryCommands>
                     <Button Label="New Profile" AllowFocusOnInteraction="True">
@@ -75,32 +70,33 @@
             </CommandBar>-->
         <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" Padding="5">-->
         <ListView ItemsSource="{Binding Instance.Profiles, Mode=OneWay}" SelectedItem="{Binding Instance.CurrentProfile, Mode=TwoWay}">
-            <ListView.Resources>
-                <!--<Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-                        <Setter Property="FontSize" Value="15"/>
-                        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
-                        <Setter Property="LabelPosition" Value="Collapsed"/>
-                    </Style>-->
-            </ListView.Resources>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ContentControl x:Name="cc">
-                        <Grid HorizontalAlignment="Stretch" Height="44">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseEnter">
-                                    <i:CallMethodAction TargetObject="{Binding}" MethodName="PointerEntered"/>
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="MouseLeave">
-                                    <i:CallMethodAction TargetObject="{Binding}" MethodName="PointerExited"/>
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                        <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Visibility="{Binding TextBlockVisibility, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button Margin="5" Visibility="{Binding EditVisibility, Mode=OneWay}">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver}" Value="true">
+                                                <DataTrigger.Setters>
+                                                    <Setter Property="Visibility" Value="Visible"></Setter>
+                                                </DataTrigger.Setters>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Path=IsMouseOver}" Value="false">
+                                                <DataTrigger.Setters>
+                                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                                </DataTrigger.Setters>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" ToolTipService.ToolTip="Edit">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Click">
                                             <i:CallMethodAction TargetObject="{Binding}" MethodName="Edit"/>
@@ -108,7 +104,7 @@
                                     </i:Interaction.Triggers>
                                     <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE70F;"/>
                                 </Button>
-                                <Button Margin="5" Visibility="{Binding SaveVisibility, Mode=OneWay}">
+                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" ToolTipService.ToolTip="Save">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Click">
                                             <i:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
@@ -116,7 +112,7 @@
                                     </i:Interaction.Triggers>
                                     <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE74E;"/>
                                 </Button>
-                                <Button Margin="5" Visibility="{Binding RemoveVisibility, Mode=OneWay}">
+                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" ToolTipService.ToolTip="Remove">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Click">
                                             <i:CallMethodAction TargetObject="{Binding}" MethodName="Remove"/>
@@ -132,40 +128,37 @@
                             <DataTrigger.Setters>
                                 <Setter TargetName="cc" Property="Content">
                                     <Setter.Value>
-                                            <Grid HorizontalAlignment="Stretch" Height="44">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBox Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                                Visibility="{Binding TextBoxVisibility, Mode=OneWay}" x:Name="TBox">
+                                        <Grid HorizontalAlignment="Stretch" Height="44">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="TBox">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="PreviewKeyDown">
+                                                        <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEditByEnter"/>
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </TextBox>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" Tag="{Binding Text,ElementName=TBox, Mode=OneWay}" ToolTipService.ToolTip="Cancel">
                                                     <i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="PreviewKeyDown">
-                                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEditByEnter"/>
+                                                        <i:EventTrigger EventName="Click">
+                                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="CancelEdit"/>
                                                         </i:EventTrigger>
                                                     </i:Interaction.Triggers>
-                                                </TextBox>
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                    <Button Margin="5" Visibility="{Binding TextBoxVisibility, Mode=OneWay}">
-                                                        <i:Interaction.Triggers>
-                                                            <i:EventTrigger EventName="Click">
-                                                                <i:CallMethodAction TargetObject="{Binding}" MethodName="CancelEdit"/>
-                                                            </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
-                                                        <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE711;"/>
-                                                    </Button>
-                                    <!--Tag="{Binding Text,ElementName=TBox, Mode=OneWay}"-->
-                                                    <Button Margin="5" Visibility="{Binding TextBoxVisibility, Mode=OneWay}"
-                                                            >
-                                                        <i:Interaction.Triggers>
-                                                            <i:EventTrigger EventName="Click">
-                                                                <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEdit"/>
-                                                            </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
-                                                        <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE73E;"/>
-                                                    </Button>
-                                                </StackPanel>
-                                            </Grid>
+                                                    <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE711;"/>
+                                                </Button>
+                                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" ToolTipService.ToolTip="Confirm">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="Click">
+                                                            <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEdit"/>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                    <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE73E;"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger.Setters>
