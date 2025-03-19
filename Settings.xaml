@@ -16,28 +16,27 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Content="Autostart at startup" IsChecked="{Binding SettingManager.Autostart, Mode=TwoWay}"/>
-            <CheckBox Grid.Row="1" Content="Run in background" IsChecked="{Binding SettingManager.RunInBackground, Mode=TwoWay}"/>
-            <CheckBox Grid.Row="2" Content="Reload profile at startup" IsChecked="{Binding SettingManager.ReloadProfile, Mode=TwoWay}"/>
-            <ComboBox Grid.Column="1" Grid.RowSpan="2" Margin="0, 10" HorizontalAlignment="Left"
+            <CheckBox Margin="5" Grid.Row="0" VerticalAlignment="Center" Content="Autostart at startup" IsChecked="{Binding SettingManager.Autostart, Mode=TwoWay}"/>
+            <CheckBox Margin="5" Grid.Row="1" VerticalAlignment="Center" Content="Run in background" IsChecked="{Binding SettingManager.RunInBackground, Mode=TwoWay}"/>
+            <CheckBox Margin="5" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Content="Reload profile at startup" IsChecked="{Binding SettingManager.ReloadProfile, Mode=TwoWay}"/>
+            <ComboBox Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5"
                       ItemsSource="{Binding Instance.Profiles}"
                       DisplayMemberPath="Name"
                       SelectedValue="{Binding SettingManager.DefaultProfile, Mode=TwoWay}"
                       SelectedValuePath="Name"
                       />
-            <Grid Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
+            <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Margin="5">Profile location:</TextBlock>
-                <TextBlock Grid.Column="1" Text="{Binding SettingManager.ProfilePath, Mode=OneWay}" Margin="5"/>
-                <Button Grid.Column="2" Click="ProfileLocationClick" Margin="0, 0, 10, 0">Change</Button>
+                <TextBlock VerticalAlignment="Top" Grid.Column="0" Margin="5">Profile location:</TextBlock>
+                <TextBlock VerticalAlignment="Top" Grid.Column="1" Text="{Binding SettingManager.ProfilePath, Mode=OneWay}" Margin="5"/>
+                <Button VerticalAlignment="Top" Grid.Column="2" Click="ProfileLocationClick" Margin="5">Browse</Button>
             </Grid>
         </Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0, 20, 0, 0">
@@ -47,9 +46,9 @@
                    Margin="5"
                    />
             <StackPanel Orientation="Vertical" Margin="20, 5, 5, 5">
+                <TextBlock FontWeight="Medium">Monitor Control 3.0</TextBlock>
                 <TextBlock>
-                    <Bold>Monitor Control 2.0</Bold><LineBreak/>
-                    Created by Enzojz 2018 - 2022<LineBreak/>
+                    Created by Enzojz 2018 - 2025<LineBreak/>
                     <LineBreak/>
                     This application was dedicated to my second daughter.<LineBreak/>
                     She slept alongside my computer so I developed it in order to dim my<LineBreak/>
