@@ -1,43 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>True</UseWPF>
-    <UseWindowsForms>False</UseWindowsForms>
-    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
-    <ApplicationIcon>MonitorControl.ico</ApplicationIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>True</UseWPF>
+		<UseWindowsForms>False</UseWindowsForms>
+		<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+		<ApplicationIcon>MonitorControl.ico</ApplicationIcon>
+		<PublishSingleFile>true</PublishSingleFile>
+		<Title>Monitor.Control</Title>
+		<Authors>Enzojz</Authors>
+		<Version>3.0.0</Version>
+		<Copyright>Copyright Enzojz</Copyright>
+		<PackageIcon>Square150x150Logo.scale-200.png</PackageIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+	  <None Include="..\MonitorControl.Wpf\Assets\Square150x150Logo.scale-200.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
-  <ItemGroup>
-	<Resource Include="Assets\MonitorControl.ico" />
-    <Resource Include="Assets\Square150x150Logo.scale-200.png" />
-    <Resource Include="Assets\Square44x44Logo.scale-200.png" />
-    <Resource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Resource Include="Assets\StoreLogo.png" />
-    <Resource Include="Assets\Wide310x150Logo.scale-200.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Assets\MonitorControl.ico" />
+		<Resource Include="Assets\Square150x150Logo.scale-200.png" />
+		<Resource Include="Assets\Square44x44Logo.scale-200.png" />
+		<Resource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+		<Resource Include="Assets\StoreLogo.png" />
+		<Resource Include="Assets\Wide310x150Logo.scale-200.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>
