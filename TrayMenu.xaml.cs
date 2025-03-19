@@ -1,9 +1,12 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Shell;
 using Windows.Devices.Geolocation;
+using Windows.Graphics.Imaging;
 
 namespace MonitorControl
 {
@@ -126,7 +129,7 @@ namespace MonitorControl
                 hWnd = m_hWindow,
                 uFlags = WinAPI.NotifyFlags.NIF_ICON | WinAPI.NotifyFlags.NIF_MESSAGE,
                 uID = 1,
-                hIcon = WinAPI.LoadImage(IntPtr.Zero, "Assets/MonitorControl.ico", 1, 32, 32, 0x00000010),
+                hIcon = (new Icon(new System.IO.MemoryStream(Properties.Resources.AppIcon))).Handle,
                 uCallbackMessage = WinAPI.WM.WM_USER,
             };
 

@@ -9,6 +9,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         mc:Ignorable="d"
+        Icon="/Assets/MonitorControl.ico"
         Title="TrayMenu">
     <StackPanel>
         <ListView ItemsSource="{Binding Profiles}" SelectedItem="{Binding CurrentProfile, Mode=TwoWay}" SelectionChanged="TrayMenuSelectionChanged">

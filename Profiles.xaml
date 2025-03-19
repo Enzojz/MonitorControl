@@ -106,15 +106,16 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="TBox">
+                                            <TextBox Text="{Binding EditName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                                     FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Mode=Self}}">
                                                 <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="PreviewKeyDown">
+                                                    <i:EventTrigger EventName="KeyDown">
                                                         <i:CallMethodAction TargetObject="{Binding}" MethodName="ConfirmEditByEnter"/>
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </TextBox>
                                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" Tag="{Binding Text,ElementName=TBox, Mode=OneWay}" ToolTipService.ToolTip="Cancel">
+                                                <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" ToolTipService.ToolTip="Cancel">
                                                     <i:Interaction.Triggers>
                                                         <i:EventTrigger EventName="Click">
                                                             <i:CallMethodAction TargetObject="{Binding}" MethodName="CancelEdit"/>

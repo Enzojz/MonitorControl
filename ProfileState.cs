@@ -15,38 +15,28 @@ namespace MonitorControl
         internal Profile Profile;
 
         public string Name { get; internal set; }
+        public string EditName { get; set; } = null;
 
-        public bool IsEditing { get; private set; } = false;
+        public bool IsEditing { get => EditName != null; }
 
         public void ConfirmEditByEnter(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Enter)
             {
-                var newName = (sender as System.Windows.Controls.TextBox).Text;
-                if (newName != null && newName.Length > 0)
+                if (EditName != null && EditName.Length > 0)
                 {
-                    IsEditing = false;
-                    if (Name == null || Name.Length == 0)
-                    {
-                        Instance.SaveProfile(newName);
-                        Name = null;
-                        OnPropertyChanged("Name");
-                    }
-                    else
-                    {
-                        Instance.RenameProfile(Name, (sender as System.Windows.Controls.TextBox).Text);
-                        e.Handled = true;
-                    }
+                    Instance.RenameProfile(Name, EditName);
+                    SetEditing(false);
+                    e.Handled = true;
                 }
             }
         }
 
         public void ConfirmEdit(object sender, EventArgs e)
         {
-            var newName = (sender as System.Windows.Controls.Button).Tag.ToString();
-            if (newName != null && newName.Length > 0)
+            if (EditName != null && EditName.Length > 0)
             {
-                Instance.RenameProfile(Name, newName);
+                Instance.RenameProfile(Name, EditName);
                 SetEditing(false);
             }
         }
@@ -79,8 +69,16 @@ namespace MonitorControl
         private InstanceCore Instance => App.Instance;
         private void SetEditing(bool isEditing)
         {
-            IsEditing = isEditing;
+            if (isEditing)
+            {
+                EditName = Name;
+            }
+            else
+            {
+                EditName = null;
+            }
             OnPropertyChanged("IsEditing");
+            OnPropertyChanged("EditName");
         }
 
         #region PropertyChanged

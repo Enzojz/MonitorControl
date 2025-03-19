@@ -13,17 +13,31 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\LockScreenLogo.scale-200.png" />
-	<Resource Include="Assets\MonitorControl.ico"/>
-    <Resource Include="Assets\SplashScreen.scale-200.png" />
+	<Resource Include="Assets\MonitorControl.ico" />
     <Resource Include="Assets\Square150x150Logo.scale-200.png" />
     <Resource Include="Assets\Square44x44Logo.scale-200.png" />
     <Resource Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Resource Include="Assets\StoreLogo.png" />
     <Resource Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
