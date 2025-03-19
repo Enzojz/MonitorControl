@@ -10,8 +10,12 @@
       Title="Profiles"
       DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
       >
-    <StackPanel Orientation="Vertical">
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
             <StackPanel.Resources>
                 <Style TargetType="TextBlock">
                     <Setter Property="Margin" Value="5, 0"/>
@@ -19,7 +23,7 @@
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
             </StackPanel.Resources>
-            <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent">
+            <Button Margin="5, 0" BorderBrush="Transparent" Background="Transparent" x:Name="CreateButton">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE710;"/>
                     <TextBlock Text="New Profile"/>
@@ -38,38 +42,7 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <!--<CommandBar Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" ClosedDisplayMode="Compact" OverflowButtonVisibility="Collapsed">
-                <CommandBar.PrimaryCommands>
-                    <Button Label="New Profile" AllowFocusOnInteraction="True">
-                        <FontIcon Glyph="&#xE710;"/>
-                        <Button.Flyout>
-                            <Flyout x:Name="CreateNewFlyout">
-                                <Flyout.FlyoutPresenterStyle>
-                                    <Style TargetType="FlyoutPresenter">
-                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-                                        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-                                    </Style>
-                                </Flyout.FlyoutPresenterStyle>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox Text="{Binding CreateNew.Name, Mode=TwoWay}" VerticalAlignment="Center" Width="300" Margin="0, 0, 10, 0"
-                                             PlaceholderText="Type the name of the new profile" PreviewKeyDown="ConfirmCreateByEnter" x:Name="NTBox" />
-                                    <Button Click="ConfirmCreateByClick" Tag="{Binding Text,ElementName=NTBox, Mode=OneWay}">
-                                        Create
-                                    </Button>
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                    <Button Label="Import" Click="ImportClick">
-                        <FontIcon Glyph="&#xE896;"/>
-                    </Button>
-                    <Button Label="Export" Click="ExportClick">
-                        <FontIcon Glyph="&#xE898;"/>
-                    </Button>
-                </CommandBar.PrimaryCommands>
-            </CommandBar>-->
-        <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" Padding="5">-->
-        <ListView ItemsSource="{Binding Instance.Profiles, Mode=OneWay}" SelectedItem="{Binding Instance.CurrentProfile, Mode=TwoWay}">
+        <ListView Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Instance.Profiles, Mode=OneWay}" SelectedItem="{Binding Instance.CurrentProfile, Mode=TwoWay}" Margin="5">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ContentControl x:Name="cc">
@@ -167,6 +140,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <!--</ScrollViewer>-->
-    </StackPanel>
+    </Grid>
 </Page>

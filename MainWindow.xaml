@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:MonitorControl"
         mc:Ignorable="d"
         x:Name="Window"
-        SizeToContent="Height"
         ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         Icon="/Assets/MonitorControl.ico"
-        Title="Monitor Control" Width="900">
+        Title="Monitor Control" Width="900" Height="350">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
@@ -25,7 +25,7 @@
                     Margin="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    FontWeight="DemiBold"
+                    FontWeight="Medium"
                     AutomationProperties.HeadingLevel="Level1"
                     Text="Monitor Control" />
         <ListView Grid.Row="1" Margin="0, 0, 0, 5" ItemsSource="{Binding Monitors}" SelectionChanged="MonitorChanged" x:Name="MonitorList" VerticalAlignment="Top">
@@ -80,6 +80,45 @@
                     </local:MonitorControlDataTemplateSelector>
                 </Frame.ContentTemplateSelector>
             </Frame>
+        </Border>
+        <Border x:Name="MessageBox" IsHitTestVisible="False"
+            Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Stretch"
+            Padding="5"
+            BorderThickness="1"
+            Background="{DynamicResource LayerFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            Margin="10"
+            CornerRadius="8" DataContext="{Binding DataContext, ElementName=Window}"
+        >
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ShowMessage}" Value="true">
+                            <DataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ShowMessage}" Value="false">
+                            <DataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xf136;" Foreground="Black" Margin="5"/>
+                <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xf137;" Foreground="Green" Margin="5"/>
+                <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xf13e;" Foreground="White" Margin="5"/>
+                <TextBlock Grid.Column="1" FontWeight="Medium"  Text="{Binding Message, Mode=OneWay}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5">
+                </TextBlock>
+            </Grid>
         </Border>
     </Grid>
 </Window>

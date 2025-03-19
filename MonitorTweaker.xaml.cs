@@ -11,13 +11,14 @@ namespace MonitorControl
         {
             InitializeComponent();
 
-            //DataContextChanged += (s, e) => Bindings.Update();
-            //DataContextChanged += (s, e) =>
-            //{
-            //    var win = new MonitorIdentifier(Monitor.Description, Monitor.TopLeft);
-            //    win.Activate();
-            //};
+            DataContextChanged += (s, e) =>
+            {
+                if (Monitor != null)
+                {
+                    new MonitorIdentifier(Monitor.Description, Monitor.TopLeft);
+                }
+            };
         }
-        public Monitor Monitor => this.DataContext as Monitor;
+        public Monitor Monitor => DataContext as Monitor;
     }
 }

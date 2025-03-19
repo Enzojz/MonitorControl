@@ -12,29 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\LockScreenLogo.scale-200.png" />
-    <None Remove="Assets\MonitorControl.ico" />
-    <None Remove="Assets\SplashScreen.scale-200.png" />
-    <None Remove="Assets\Square150x150Logo.scale-200.png" />
-    <None Remove="Assets\Square44x44Logo.scale-200.png" />
-    <None Remove="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <None Remove="Assets\StoreLogo.png" />
-    <None Remove="Assets\Wide310x150Logo.scale-200.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="MonitorControl.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\LockScreenLogo.scale-200.png" />
-    <Resource Include="Assets\MonitorControl.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+	<Resource Include="Assets\MonitorControl.ico"/>
     <Resource Include="Assets\SplashScreen.scale-200.png" />
     <Resource Include="Assets\Square150x150Logo.scale-200.png" />
     <Resource Include="Assets\Square44x44Logo.scale-200.png" />

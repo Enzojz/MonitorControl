@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -15,15 +16,27 @@ public partial class App : Application
         Environment.CurrentDirectory = Path.GetDirectoryName(Environment.ProcessPath);
         InitializeComponent();
 
-        //m_popupMenu.OpenWindow += OpenWindow;
-        //m_popupMenu.ExitApplication += ExitApplication;
-
+        //Process.GetProcessesByName(current.ProcessName)
+        //    .Where(p => p.Id != current.Id)
+        //    .ToList()
+        //    .ForEach(p =>
+        //    {
+        //        try
+        //        {
+        //            WinAPI.PostMessage(p.MainWindowHandle, WinAPI.WM.WM_QUIT, 0, 0);
+        //        }
+        //        catch
+        //        {
+        //            p.Kill();
+        //        }
+        //    });
     }
 
     protected override void OnStartup(StartupEventArgs args)
     {
         string path = AppDomain.CurrentDomain.BaseDirectory.ToString();
         Directory.SetCurrentDirectory(path);
+
 
         if (m_setting == null)
         {
@@ -35,12 +48,19 @@ public partial class App : Application
             m_instance = new InstanceCore();
         }
 
+
+        m_trayMenu = new TrayMenu()
+        {
+            OpenWindow = OpenWindow,
+            ExitApplication = ExitApplication,
+            Visibility = Visibility.Hidden
+        };
+
         if (!Environment.GetCommandLineArgs().Contains("-silent"))
         {
             OpenWindow();
         }
 
-        m_trayMenu = new TrayMenu() { Visibility = Visibility.Hidden };
     }
 
     internal void OpenWindow()
@@ -80,7 +100,7 @@ public partial class App : Application
         if (m_instance != null)
             m_instance.Dispose();
 
-        //m_popupMenu.Close();
+        m_trayMenu.Close();
     }
 
 

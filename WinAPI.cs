@@ -1004,6 +1004,9 @@ namespace MonitorControl
         [DllImport("user32.dll")]
         internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        internal static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hwnd, WM msg, IntPtr wParam, IntPtr lParam);
 
@@ -1045,6 +1048,10 @@ namespace MonitorControl
 
         [DllImport("comctl32.dll")]
         internal static extern IntPtr DefSubclassProc(IntPtr hWnd, WM msg, IntPtr wParam, IntPtr lParam);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern bool PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
         #endregion
 

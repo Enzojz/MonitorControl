@@ -17,6 +17,7 @@ namespace MonitorControl
         {
             m_timer = new DispatcherTimer();
             m_timer.Tick += (object? sender, EventArgs e) => { Message = null; };
+            m_timer.Interval = new TimeSpan(0, 0, 3);
 
             var displayConfigs = DisplayConfigs().ToDictionary(d => d.id);
             var displays = WinAPI.GetDisplays()
@@ -87,7 +88,7 @@ namespace MonitorControl
         DispatcherTimer m_timer;
 
         private string m_message;
-        internal string Message
+        public string Message
         {
             get => m_message;
             set
@@ -98,14 +99,16 @@ namespace MonitorControl
 
                 if (value != null)
                 {
-                    m_timer.Interval = new TimeSpan(0, 0, 1);
                     m_timer.Start();
+                } else
+                {
+                    m_timer.Stop();
                 }
 
             }
         }
 
-        internal bool ShowMessage { get => m_message != null; set => m_message = null; }
+        public bool ShowMessage { get => m_message != null; set => m_message = null; }
 
         public List<Monitor> Monitors
         {
@@ -221,6 +224,11 @@ namespace MonitorControl
                 OnPropertyChanged("CurrentProfile");
                 Message = $"Profile {profile} has been loaded!";
             }
+        }
+
+        public bool CanSaveProfile(string profile)
+        {
+            return profile != null && profile.Length > 0 && !profiles.ContainsKey(profile);
         }
 
         public void SaveProfile(string profile)

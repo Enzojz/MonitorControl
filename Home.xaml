@@ -15,9 +15,9 @@
                    Margin="5"
                    />
         <StackPanel Orientation="Vertical" Margin="20, 5, 5, 5">
+            <TextBlock FontWeight="Medium">Monitor Control 3.0</TextBlock>
             <TextBlock>
-                    <Bold>Monitor Control 2.0</Bold><LineBreak/>
-                    Created by Enzojz 2018 - 2022<LineBreak/>
+                    Created by Enzojz 2018 - 2025<LineBreak/>
                     <LineBreak/>
                     Monitor Control helps you to tweak colors and brightness of your monitor<LineBreak/>
                      in an easy way. The tweakings can be saved in multiple profiles and can be<LineBreak/>

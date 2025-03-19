@@ -21,24 +21,6 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
-        <!--<Style TargetType="Slider">
-            <Setter Property="Grid.Column" Value="1"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="Maximum" Value="100"/>
-            <Setter Property="Minimum" Value="0"/>
-            <Setter Property="TickFrequency" Value="10"/>
-            <Setter Property="TickPlacement" Value="Inline"/>
-        </Style>-->
-        <!--<Style TargetType="FontIcon">
-            <Setter Property="Grid.Column" Value="0"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
-        </Style>-->
     </Page.Resources>
     <Grid Margin="20, 10, 20, 10">
         <Grid.ColumnDefinitions>
@@ -55,33 +37,17 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Viewbox Grid.Row="1">
-            <Path Fill="{Binding ElementName=Desc, Path=Foreground}">
-                <Path.Data>
-                    M 245.2 104.95 L 245.2 104.95 c -0.1 0 -0.2 0 -0.3 0 s -0.2 0 -0.3 0 l 0 0 c -77.1 0.4 -139.7 63.2 -139.7 140.4 s 62.6 140 139.8 140.4 l 0 0
-                    c 0.1 0 0.2 0 0.3 0 s 0.2 0 0.3 0 l 0 0 c 77 -0.4 139.7 -63.2 139.7 -140.4 S 322.3 105.35 245.2 104.95 Z M 244.9 343.65 c -54 -0.2 -98 -44.2
-                    -98 -98.3 s 43.9 -98.1 98 -98.3 c 54 0.2 98 44.2 98 98.3 S 299 343.45 244.9 343.65 Z M 224 0.05 h 42.7 v 74.5 H 224 V 0.05 Z M 224 416.15 h
-                    42.7 v 74.5 H 224 V 416.15 Z M 74.4 266.65 H 0 v -42.7 h 74.5 v 42.7 H 74.4 Z M 416.2 224.05 h 74.5 v 42.7 h -74.5 V 224.05 Z M 56.8 86.95 L
-                    87 56.75 l 52.7 52.7 l -30.2 30.2 L 56.8 86.95 Z M 433.8 403.75 l -30.2 30.2 l -52.7 -52.7 l 30.2 -30.2 L 433.8 403.75 Z M 86.9 433.95 l
-                    -30.2 -30.2 l 52.7 -52.7 l 30.2 30.2 L 86.9 433.95 Z M 433.8 86.95 l -52.7 52.7 l -30.2 -30.2 l 52.7 -52.7 L 433.8 86.95 Z
-                </Path.Data>
-            </Path>
-        </Viewbox>
-        <Viewbox Grid.Row="2">
-            <Path Fill="{Binding ElementName=Desc, Path=Foreground}">
-                <Path.Data>
-                    M 0 90 c 0 49.626 40.374 90 90 90 s 90 -40.374 90 -90 S 139.626 0 90 0 S 0 40.374 0 90 Z M 90 20 v 140 c -38.598 0 -70 -31.402 -70 -70 S
-                    51.402 20 90 20 Z
-                </Path.Data>
-            </Path>
-        </Viewbox>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#EE4444"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#44EE44"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;" Foreground="{Binding ElementName=Desc, Path=Foreground}"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" Width="20" Height="20" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#4444EE"/>
+        <TextBlock HorizontalAlignment="Right" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{Binding Description}" Margin="10" FontWeight="Medium" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE706;"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE7A1;"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#EE4444"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#44EE44"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#4444EE"/>
 
         <Slider Grid.Column="1" Grid.Row="1" Value="{Binding Brightness, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
         <Slider Grid.Column="1" Grid.Row="2" Value="{Binding Contrast, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
@@ -94,7 +60,5 @@
         <TextBlock Grid.Row="3" Text="{Binding Red, Mode=TwoWay}"/>
         <TextBlock Grid.Row="4" Text="{Binding Green, Mode=TwoWay}"/>
         <TextBlock Grid.Row="5" Text="{Binding Blue, Mode=TwoWay}"/>
-
-        <TextBlock HorizontalAlignment="Right" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{Binding Monitor.Description}" x:Name="Desc"/>
     </Grid>
 </Page>

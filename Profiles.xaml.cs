@@ -14,12 +14,10 @@ namespace MonitorControl
         public Profiles()
         {
             InitializeComponent();
-            ImportButton.Command = new DelegateCommand(ImportClick);
+            CreateButton.Command = new DelegateCommand(_ => (new CreateProfile()).ShowDialog());
             ImportButton.Command = new DelegateCommand(ImportClick);
             ExportButton.Command = new DelegateCommand(ExportClick);
         }
-
-        internal ProfileState CreateNew = new ProfileState(null, null);
 
         public InstanceCore Instance => App.Instance;
 

@@ -3,12 +3,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Shell;
+using Windows.Devices.Geolocation;
 
 namespace MonitorControl
 {
-    /// <summary>
-    /// TrayMenu.xaml 的交互逻辑
-    /// </summary>
     public partial class TrayMenu : Window
     {
         public TrayMenu()
@@ -22,7 +20,7 @@ namespace MonitorControl
                     CaptionHeight = 0,
                     CornerRadius = default,
                     GlassFrameThickness = new Thickness(-1),
-                    ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
+                    ResizeBorderThickness = default,
                     UseAeroCaptionButtons = true
                 }
             );
@@ -31,36 +29,38 @@ namespace MonitorControl
             helper.EnsureHandle();
             m_hWindow = helper.Handle;
 
-            m_wndProc = this.WindowProc;
+            m_wndProc = WindowProc;
+            WinAPI.SetWindowLongPtr(m_hWindow, -16, (IntPtr)(WinAPI.WS.WS_CAPTION));
 
             SetTrayIcon();
 
             WinAPI.SetWindowSubclass(m_hWindow, m_wndProc, UIntPtr.Zero, UIntPtr.Zero);
-            Closed += OnClosed;
-        }
-
-        private void OnClosed(object sender, EventArgs args)
-        {
-            RemoveTrayIcon();
+            
+            DataContext = App.Instance;
+            
+            Loaded += (_, _) => SetPosition();
+            Closed += (_, _) => RemoveTrayIcon();
         }
 
         private IntPtr m_hWindow;
 
         private WinAPI.SUBCLASSPROC m_wndProc;
 
-        internal Action OpenWindow;
-        internal Action ExitApplication;
-        
-        internal void SetPosition(int x, int y)
+        public Action OpenWindow;
+        public Action ExitApplication;
+
+        internal void SetPosition()
         {
-            //ItemList.ItemsSource = MenuItems;
+            WinAPI.Point pt;
+            WinAPI.GetCursorPos(out pt);
+
             float dpi = WinAPI.GetDpiForWindow(m_hWindow);
             var dpiScaling = dpi / 96;
 
-            var width = 200 * dpiScaling;
-            var height = (App.Instance.Profiles.Count * 40 + 84) * dpiScaling;
+            var width = this.ActualWidth * dpiScaling;
+            var height = this.ActualHeight * dpiScaling;
 
-            WinAPI.SetWindowPos(m_hWindow, -1, (int)(x - width), (int)(y - height), (int)width, (int)height, 0x0040);
+            WinAPI.SetWindowPos(m_hWindow, -1, (int)(pt.x - width), (int)(pt.y - height), (int)width, (int)height, 0x0040);
             WinAPI.SetForegroundWindow(m_hWindow);
         }
 
@@ -86,9 +86,9 @@ namespace MonitorControl
                     switch ((WinAPI.WM)lParam)
                     {
                         case WinAPI.WM.WM_RBUTTONDOWN:
-                            WinAPI.Point pt;
-                            WinAPI.GetCursorPos(out pt);
-                            SetPosition(pt.x, pt.y);
+                            SetPosition();
+                            Show();
+                            Activate();
                             break;
                         case WinAPI.WM.WM_LBUTTONDOWN:
                             OpenWindow();
@@ -118,37 +118,6 @@ namespace MonitorControl
             WinAPI.Shell_NotifyIcon(WinAPI.NotifyIconMessage.NIM_DELETE, ref data);
         }
 
-        public PopupMenuItem[] MenuItems
-        {
-            get
-            {
-                return App.Instance.Profiles
-                    .Select(profile => new PopupMenuItem()
-                    {
-                        Text = profile.Name,
-                        IsChecked = App.Instance.CurrentProfile != null && App.Instance.CurrentProfile.Profile.Guid == profile.Profile.Guid,
-                        Callback = () =>
-                        {
-                            Hide();
-                            App.Instance.LoadProfile(profile.Name);
-                        }
-                    })
-                    .Union(
-                    new PopupMenuItem[]
-                    {
-                        new PopupMenuItem(),
-                        new PopupMenuItem() {
-                            Text = "Show Monitor Control",
-                            Callback = OpenWindow
-                        },
-                        new PopupMenuItem() {
-                            Text = "Exit",
-                            Callback = ExitApplication
-                        }
-                    }
-                    ).ToArray();
-            }
-        }
         internal void SetTrayIcon()
         {
             var data = new WinAPI.NOTIFYICONDATA
@@ -162,6 +131,24 @@ namespace MonitorControl
             };
 
             WinAPI.Shell_NotifyIcon(WinAPI.NotifyIconMessage.NIM_ADD, ref data);
+        }
+
+        private void TrayMenuSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Hide();
+        }
+
+        private void OpenWindowClicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Hide();
+            OpenWindow();
+        }
+
+        private void ExitClicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Hide();
+            ExitApplication();
+
         }
     }
 }

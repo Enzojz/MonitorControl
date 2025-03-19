@@ -3,24 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:MonitorControl"
-        WindowStyle="None"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
         mc:Ignorable="d"
-        Title="TrayMenu" Height="450" Width="800">
-    <ListView>
-        <ListView.ItemTemplateSelector>
-                <local:PopupMenuDataTemplateSelector>
-                <local:PopupMenuDataTemplateSelector.Item>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Text}" />
-                    </DataTemplate>
-                </local:PopupMenuDataTemplateSelector.Item>
-                <local:PopupMenuDataTemplateSelector.Seperator>
-                    <DataTemplate>
-                        <TextBlock Text="---"/>
-                    </DataTemplate>
-                </local:PopupMenuDataTemplateSelector.Seperator>
-            </local:PopupMenuDataTemplateSelector>
-        </ListView.ItemTemplateSelector>
-    </ListView>
+        Title="TrayMenu">
+    <StackPanel>
+        <ListView ItemsSource="{Binding Profiles}" SelectedItem="{Binding CurrentProfile, Mode=TwoWay}" SelectionChanged="TrayMenuSelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Separator/>
+        <ListViewItem MouseLeftButtonUp="OpenWindowClicked">
+            <TextBlock Text="Open Monitor Control"></TextBlock>
+        </ListViewItem>
+        <ListViewItem MouseLeftButtonUp="ExitClicked">
+            <TextBlock Text="Exit"></TextBlock>
+        </ListViewItem>
+    </StackPanel>
 </Window>
