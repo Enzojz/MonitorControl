@@ -11,6 +11,11 @@
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/MonitorControl.ico"
         Title="Monitor Control" Width="900" MinHeight="350">
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:HalfConverter x:Key="hc"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
@@ -92,19 +97,37 @@
                 <TextBlock
                     Margin="10"
                     VerticalAlignment="Center"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE70D;">
+                    <TextBlock.RenderTransform>
+                        <RotateTransform
+                            Angle="0" 
+                            CenterX="{Binding RenderSize.Width, Converter={StaticResource hc}, RelativeSource={RelativeSource AncestorType=TextBlock}}"
+                            CenterY="{Binding RenderSize.Height, Converter={StaticResource hc}, RelativeSource={RelativeSource AncestorType=TextBlock}}"/>
+                    </TextBlock.RenderTransform>
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="false">
-                                    <DataTrigger.Setters>
-                                        <Setter Property="Text" Value="&#xE70D;"/>
-                                    </DataTrigger.Setters>
-                                </DataTrigger>
                                 <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="true">
-                                    <DataTrigger.Setters>
-                                        <Setter Property="Text" Value="&#xE70E;"/>
-                                    </DataTrigger.Setters>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation 
+                                                    From="0" To="-180"
+                                                    Duration="0:0:0.25" 
+                                                    Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation 
+                                                    From="-180" To="0"
+                                                    Duration="0:0:0.25" 
+                                                    Storyboard.TargetProperty="(TextBlock.RenderTransform).(RotateTransform.Angle)"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.ExitActions>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -139,7 +162,7 @@
                     </Style.Triggers>
                 </Style>
             </Viewbox.Style>
-                <ItemsControl ItemsSource="{Binding Monitors, Mode=OneWay}">
+            <ItemsControl ItemsSource="{Binding Monitors, Mode=OneWay}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Width="{Binding MonitorsRect.Width}" Height="{Binding MonitorsRect.Height}">

@@ -1,9 +1,26 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using System.Windows.Shell; // For DllImport
 
 namespace MonitorControl;
+
+[ValueConversion(typeof(double), typeof(double))]
+public class HalfConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return 0.5 * (double)value;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
