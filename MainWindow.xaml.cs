@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Shell; // For DllImport
 
 namespace MonitorControl;
@@ -24,7 +25,28 @@ public partial class MainWindow : Window
                 UseAeroCaptionButtons = true
             }
         );
-    }    
+
+        var helper = new WindowInteropHelper(this);
+        helper.EnsureHandle();
+        m_hWindow = helper.Handle;
+
+        m_wndProc = WindowProc;
+        WinAPI.SetWindowSubclass(m_hWindow, m_wndProc, UIntPtr.Zero, UIntPtr.Zero);
+    }
+    private IntPtr WindowProc(IntPtr hWnd, WinAPI.WM msg, IntPtr wParam, IntPtr lParam, UIntPtr uIdSubclass, UIntPtr dwRefData)
+    {
+        switch (msg)
+        {
+            case WinAPI.WM.WM_DISPLAYCHANGE:
+                App.Instance.EnumMonitors();
+                break;
+        }
+        return WinAPI.DefSubclassProc(hWnd, msg, wParam, lParam);
+    }
+
+    private IntPtr m_hWindow;
+
+    private WinAPI.SUBCLASSPROC m_wndProc;
 
     private void MonitorChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -52,5 +74,10 @@ public partial class MainWindow : Window
         {
             MonitorList.SelectedItem = null;
         }
+    }
+
+    private void MonitorClick(object sender, RoutedEventArgs e)
+    {
+        MonitorList.SelectedItem = (sender as Button).DataContext;
     }
 }

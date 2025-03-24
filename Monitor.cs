@@ -6,25 +6,25 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace MonitorControl
 {
     delegate bool GetState(IntPtr a, out uint min, out uint current, out uint max);
     public class Monitor : INotifyPropertyChanged, IDisposable
     {
-        internal Monitor(WinAPI.PHYSICAL_MONITOR m, String description, String deviceId, Vector2 topLeft, int index)
+        internal Monitor(WinAPI.PHYSICAL_MONITOR m, string description, string deviceId, Rectangle rect, int index)
         {
             hMonitor = m.hPhysicalMonitor;
             DeviceId = deviceId;
-            TopLeft = topLeft;
+            Rect = rect;
 
             Description = $"#{index + 1}: {description}";
         }
 
         internal void Init()
         {
-            WinAPI.GetMonitorCapabilities(hMonitor, out WinAPI.MC_CAP mc, out WinAPI.MC_SUPPORTED_COLOR_TEMPERATURE _);
-            for (int i = 0; i < 3 && mc == 0; i++)
+            for (int i = 0; i < 5 && mc == 0; i++)
             {
                 WinAPI.GetMonitorCapabilities(hMonitor, out mc, out _);
                 if (mc != 0)
@@ -34,6 +34,16 @@ namespace MonitorControl
             if (mc == 0)
                 return;
 
+            retriveDatas();
+
+            OnPropertyChanged("IsReady");
+            OnPropertyChanged("BrightnessSupported");
+            OnPropertyChanged("ContrastSupported");
+            OnPropertyChanged("RGBSupported");
+        }
+
+        private void retriveDatas()
+        {
             var retriveDatas = new Action[] {
                 () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_BRIGHTNESS, ref brightness, WinAPI.GetMonitorBrightness),
                 () => retriveItem(mc, WinAPI.MC_CAP.MC_CAPS_CONTRAST, ref contrast, WinAPI.GetMonitorContrast),
@@ -43,12 +53,12 @@ namespace MonitorControl
             };
 
             Task.WaitAll(retriveDatas.Select(Task.Run).ToArray());
-            IsReady = true;
-        }
 
-        internal void SetReady()
-        {
-            OnPropertyChanged("IsReady");
+            OnPropertyChanged("Brightness");
+            OnPropertyChanged("Contrast");
+            OnPropertyChanged("Red");
+            OnPropertyChanged("Green");
+            OnPropertyChanged("Blue");
         }
 
         void retriveItem(WinAPI.MC_CAP mc, WinAPI.MC_CAP flag, ref Item item, GetState fn)
@@ -85,7 +95,11 @@ namespace MonitorControl
 
         #region Properties
 
-        public bool IsReady { get; private set; } = false;
+        public bool BrightnessSupported { get => brightness.enabled; }
+        public bool ContrastSupported { get => contrast.enabled; }
+        public bool RGBSupported { get => red.enabled && blue.enabled && green.enabled; }
+        public bool IsReady { get => BrightnessSupported && ContrastSupported && RGBSupported; }
+
         public uint Brightness
         {
             get => getValue(brightness);
@@ -145,7 +159,9 @@ namespace MonitorControl
         public string Description { private set; get; }
         public string DeviceId { private set; get; }
 
-        public Vector2 TopLeft { private set; get; }
+        private WinAPI.MC_CAP mc = 0;
+
+        public Rectangle Rect { private set; get; }
         #endregion
 
         private struct Item
@@ -170,7 +186,7 @@ namespace MonitorControl
         #region PropertyChanged
         internal void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -182,7 +198,7 @@ namespace MonitorControl
             WinAPI.DestroyPhysicalMonitor(hMonitor);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         #endregion
     }
 

@@ -7,9 +7,10 @@
         mc:Ignorable="d"
         x:Name="Window"
         ResizeMode="NoResize"
+        SizeToContent="Height"
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/MonitorControl.ico"
-        Title="Monitor Control" Width="900" Height="350">
+        Title="Monitor Control" Width="900" MinHeight="350">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250" />
@@ -17,9 +18,101 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="RowDefinition">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="true">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Height" Value="*"/>
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="false">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Height" Value="0"/>
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
+        <ToggleButton 
+            WindowChrome.IsHitTestVisibleInChrome="True" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left"
+            MinWidth="48"
+            MinHeight="32"
+            BorderBrush="Transparent" x:Name="DisplayLayoutToggle">
+            <ToggleButton.Template>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        x:Name="EnclosingBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            RecognizesAccessKey="True"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Border>
+                </ControlTemplate>
+            </ToggleButton.Template>
+            <ToggleButton.Style>
+                <Style TargetType="ToggleButton">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ControlAltFillColorQuarternaryBrush}" />
+                        </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ToggleButton.Style>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    Text="&#xE7F4;" />
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="false">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Text" Value="&#xE70D;"/>
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="true">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Text" Value="&#xE70E;"/>
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </ToggleButton>
+
         <TextBlock
                 Grid.ColumnSpan="2"
                     Margin="0"
@@ -28,7 +121,53 @@
                     FontWeight="Medium"
                     AutomationProperties.HeadingLevel="Level1"
                     Text="Monitor Control" />
-        <ListView Grid.Row="1" Margin="0, 0, 0, 5" ItemsSource="{Binding Monitors}" SelectionChanged="MonitorChanged" x:Name="MonitorList" VerticalAlignment="Top">
+
+        <Viewbox Stretch="Uniform" Grid.Row="1" Grid.ColumnSpan="2" Margin="100, 5">
+            <Viewbox.Style>
+                <Style TargetType="Viewbox">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="true">
+                            <DataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=DisplayLayoutToggle}" Value="false">
+                            <DataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Viewbox.Style>
+                <ItemsControl ItemsSource="{Binding Monitors, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding MonitorsRect.Width}" Height="{Binding MonitorsRect.Height}">
+                            <Canvas.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="-1" ScaleY="-1"/>
+                                    <TranslateTransform X="{Binding MonitorsRect.Left}" Y="{Binding MonitorsRect.Top}"/>
+                                    <ScaleTransform ScaleX="-1" ScaleY="-1"/>
+                                </TransformGroup>
+                            </Canvas.RenderTransform>
+                        </Canvas>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Viewbox Width="{Binding Rect.Width}" Height="{Binding Rect.Height}">
+                            <Viewbox.RenderTransform>
+                                <TranslateTransform X="{Binding Rect.X}" Y="{Binding Rect.Y}" />
+                            </Viewbox.RenderTransform>
+                            <Button Width="160" Height="90" Click="MonitorClick">
+                                <TextBlock Text="{Binding Description}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                            </Button>
+                        </Viewbox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Viewbox>
+        <ListView Grid.Row="2" Margin="0, 0, 0, 5" ItemsSource="{Binding Monitors, Mode=OneWay}" SelectionChanged="MonitorChanged" x:Name="MonitorList" VerticalAlignment="Top">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -38,7 +177,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Grid.Row="2" Margin="0, 5" SelectionChanged="FnSelected" x:Name="FnList" VerticalAlignment="Bottom">
+        <ListView Grid.Row="3" Margin="0, 5" SelectionChanged="FnSelected" x:Name="FnList" VerticalAlignment="Bottom">
             <StackPanel Orientation="Horizontal" x:Name="ProfileFn">
                 <TextBlock Padding="10" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE793;"/>
                 <TextBlock Padding="10" VerticalAlignment="Center" Text="Profiles"/>
@@ -49,10 +188,11 @@
             </StackPanel>
         </ListView>
         <Border 
-            Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"
+            Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"
             Background="{DynamicResource LayerFillColorDefaultBrush}"
             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
+            Height="320"
             CornerRadius="8,0,0,0">
             <Frame x:Name="ContentFrame">
                 <Frame.ContentTemplateSelector>
@@ -82,7 +222,7 @@
             </Frame>
         </Border>
         <Border x:Name="MessageBox" IsHitTestVisible="False"
-            Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"
+            Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Stretch"
             Padding="5"

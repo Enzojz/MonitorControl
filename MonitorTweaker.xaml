@@ -40,25 +40,25 @@
 
         <TextBlock HorizontalAlignment="Right" Grid.ColumnSpan="3" Grid.Column="0" Grid.Row="0" Text="{Binding Description}" Margin="10" FontWeight="Medium" />
 
-        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE706;"/>
-        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE7A1;"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#EE4444"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#44EE44"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#4444EE"/>
+        <TextBlock Grid.Row="1" IsEnabled="{Binding BrightnessSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE706;"/>
+        <TextBlock Grid.Row="2" IsEnabled="{Binding ContrastSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE7A1;"/>
+        <TextBlock Grid.Row="3" IsEnabled="{Binding RGBSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
+        <TextBlock Grid.Row="3" IsEnabled="{Binding RGBSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#EE4444"/>
+        <TextBlock Grid.Row="4" IsEnabled="{Binding RGBSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
+        <TextBlock Grid.Row="4" IsEnabled="{Binding RGBSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#44EE44"/>
+        <TextBlock Grid.Row="5" IsEnabled="{Binding RGBSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED66;"/>
+        <TextBlock Grid.Row="5" IsEnabled="{Binding RGBSupported}" Grid.Column="0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xED67;" Foreground="#4444EE"/>
 
-        <Slider Grid.Column="1" Grid.Row="1" Value="{Binding Brightness, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
-        <Slider Grid.Column="1" Grid.Row="2" Value="{Binding Contrast, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
-        <Slider Grid.Column="1" Grid.Row="3" Value="{Binding Red, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
-        <Slider Grid.Column="1" Grid.Row="4" Value="{Binding Green, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
-        <Slider Grid.Column="1" Grid.Row="5" Value="{Binding Blue, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both"/>
+        <Slider Grid.Column="1" Grid.Row="1" Value="{Binding Brightness, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both" IsEnabled="{Binding BrightnessSupported}"/>
+        <Slider Grid.Column="1" Grid.Row="2" Value="{Binding Contrast, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both" IsEnabled="{Binding ContrastSupported}"/>
+        <Slider Grid.Column="1" Grid.Row="3" Value="{Binding Red, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both" IsEnabled="{Binding RGBSupported}"/>
+        <Slider Grid.Column="1" Grid.Row="4" Value="{Binding Green, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both" IsEnabled="{Binding RGBSupported}"/>
+        <Slider Grid.Column="1" Grid.Row="5" Value="{Binding Blue, Mode=TwoWay}" Margin="5" Maximum="100" Minimum="0" TickFrequency="10" TickPlacement="Both" IsEnabled="{Binding RGBSupported}"/>
 
-        <TextBlock Grid.Row="1" Text="{Binding Brightness, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="2" Text="{Binding Contrast, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="3" Text="{Binding Red, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="4" Text="{Binding Green, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="5" Text="{Binding Blue, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="1" IsEnabled="{Binding BrightnessSupported}" Text="{Binding Brightness, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="2" IsEnabled="{Binding ContrastSupported}" Text="{Binding Contrast, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="3" IsEnabled="{Binding RGBSupported}" Text="{Binding Red, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="4" IsEnabled="{Binding RGBSupported}" Text="{Binding Green, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="5" IsEnabled="{Binding RGBSupported}" Text="{Binding Blue, Mode=TwoWay}"/>
     </Grid>
 </Page>

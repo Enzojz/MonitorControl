@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -82,7 +83,7 @@ public partial class App : Application
 
     }
 
-    private void MainWindowClosed(object sender, EventArgs args)
+    private void MainWindowClosed(object? sender, EventArgs args)
     {
         m_window.Closed -= MainWindowClosed;
         m_window = null;

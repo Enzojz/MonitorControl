@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -18,7 +19,7 @@ namespace MonitorControl
 {
     public partial class MonitorIdentifier : Window
     {
-        public MonitorIdentifier(string label, Vector2 topLeft)
+        public MonitorIdentifier(string label, Rectangle rect)
         {
             InitializeComponent();
             this.label.Text = label;
@@ -43,7 +44,7 @@ namespace MonitorControl
 
             Loaded += (s, e) =>
             {
-                WinAPI.SetWindowPos(m_hWindow, -1, (int)(topLeft.X + 50), (int)(topLeft.Y + 50), 0, 0, 0x0001);
+                WinAPI.SetWindowPos(m_hWindow, -1, (int)(rect.X + 50), (int)(rect.Y + 50), 0, 0, 0x0001);
             };
 
             var timer = new DispatcherTimer();

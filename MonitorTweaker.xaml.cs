@@ -15,7 +15,7 @@ namespace MonitorControl
             {
                 if (Monitor != null)
                 {
-                    new MonitorIdentifier(Monitor.Description, Monitor.TopLeft);
+                    new MonitorIdentifier(Monitor.Description, Monitor.Rect);
                 }
             };
         }

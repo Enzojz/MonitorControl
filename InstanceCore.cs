@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
-using System.Runtime.Serialization;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Threading;
+using System.Drawing;
+using System.Linq;
+using System.Numerics;
 
 namespace MonitorControl
 {
@@ -19,6 +18,17 @@ namespace MonitorControl
             m_timer.Tick += (object? sender, EventArgs e) => { Message = null; };
             m_timer.Interval = new TimeSpan(0, 0, 3);
 
+            EnumMonitors();
+
+            ReadProfile(App.SettingManager.ProfilePath);
+            if (App.SettingManager != null && App.SettingManager.ReloadProfile)
+            {
+                LoadProfile(App.SettingManager.DefaultProfile);
+            }
+        }
+
+        internal void EnumMonitors()
+        {
             var displayConfigs = DisplayConfigs().ToDictionary(d => d.id);
             var displays = WinAPI.GetDisplays()
                 .Select(display =>
@@ -47,42 +57,36 @@ namespace MonitorControl
                     return true;
                 }, IntPtr.Zero);
 
-            var ws = new Stopwatch();
-            ws.Start();
-
             Monitors = hMonitors
                 .SelectMany(hMonitor =>
                 {
                     var monitorInfo = WinAPI.GetMonitorInfo(hMonitor);
-                    var topLeft = new System.Numerics.Vector2(monitorInfo.Monitor.left, monitorInfo.Monitor.top);
                     var physicalMonitors = WinAPI.GetPhysicalMonitorsFromHMONITOR(hMonitor).ToList();
                     var monitors = displays.GetValueOrDefault(monitorInfo.DeviceName);
+                    var rect = new Rectangle(monitorInfo.Monitor.left, monitorInfo.Monitor.top,
+                        monitorInfo.Monitor.right - monitorInfo.Monitor.left,
+                        monitorInfo.Monitor.bottom - monitorInfo.Monitor.top
+                        );
                     Debug.Assert(physicalMonitors.Count == monitors.Count);
-                    return physicalMonitors.Zip(monitors).Select(m => (m.First, m.Second, topLeft));
+                    return physicalMonitors.Zip(monitors).Select(m => (m.First, m.Second, rect));
                 })
+                .OrderBy(m => { return new Vector2(m.rect.Location.X, m.rect.Location.Y).LengthSquared(); })
                 .Select((m, i) =>
                 {
-                    var (physicalMonitor, monitor, center) = m;
+                    var (physicalMonitor, monitor, rect) = m;
                     var description = (monitor.displayName != null && monitor.displayName.Length > 0) ?
                         monitor.displayName :
                         (monitor.description != null && monitor.description.Length > 0) ?
                             monitor.description :
                             new string(physicalMonitor.szPhysicalMonitorDescription.TakeWhile(c => c != 0).ToArray());
-                    return new Monitor(physicalMonitor, description, monitor.deviceId, center, i);
+                    return new Monitor(physicalMonitor, description, monitor.deviceId, rect, i);
                 })
                 .ToList();
 
             Task.WaitAll(Monitors.Select(m => Task.Run(m.Init)).ToArray());
-            Monitors.ForEach(m => m.SetReady());
 
-            ws.Stop();
-            Debug.WriteLine(ws.Elapsed);
-
-            ReadProfile(App.SettingManager.ProfilePath);
-            if (App.SettingManager != null && App.SettingManager.ReloadProfile)
-            {
-                LoadProfile(App.SettingManager.DefaultProfile);
-            }
+            OnPropertyChanged("Monitors");
+            OnPropertyChanged("MonitorsRect");
         }
 
         DispatcherTimer m_timer;
@@ -100,7 +104,8 @@ namespace MonitorControl
                 if (value != null)
                 {
                     m_timer.Start();
-                } else
+                }
+                else
                 {
                     m_timer.Stop();
                 }
@@ -114,6 +119,25 @@ namespace MonitorControl
         {
             get;
             private set;
+        }
+
+        public Rectangle MonitorsRect
+        {
+            get
+            {
+                if (Monitors != null && Monitors.Count > 0)
+                {
+                    var right = Monitors.Select(m => m.Rect.Right).Max();
+                    var left = Monitors.Select(m => m.Rect.Left).Min();
+                    var top = Monitors.Select(m => m.Rect.Top).Min();
+                    var bottom = Monitors.Select(m => m.Rect.Bottom).Max();
+                    return new Rectangle(left, top, right - left, bottom - top);
+                }
+                else
+                {
+                    return new Rectangle(0, 0, 0, 0);
+                }
+            }
         }
 
         public ProfileState CurrentProfile
@@ -200,7 +224,7 @@ namespace MonitorControl
                         profiles = mapProfiles.ToDictionary(v => v.Key, v => new ProfileState(v.Key, v.Value));
                         OnPropertyChanged("Profiles");
                     }
-                    catch (SerializationException e)
+                    catch
                     {
                         CreateNewProfile();
                     }
@@ -301,11 +325,11 @@ namespace MonitorControl
         #endregion
 
         #region PropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
